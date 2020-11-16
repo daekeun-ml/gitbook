@@ -7,7 +7,7 @@
 * Knowledge Distillation\(KD, 지식 증류\)로 BERT 모델을 다이어트해보는 것이 목적
   * KD는 Larger\(Teacher\) model로부터 Compact\(Student\) model를 생성하는 Hinton이 제안한 기법 
 
-![](.gitbook/assets/_2019-12-17__4.45.23.png)
+![](../.gitbook/assets/_2019-12-17__4.45.23.png)
 
 ## 2. Experiment
 
@@ -15,7 +15,7 @@
 * IMDB 리뷰 데이터셋에서 BERT는 93.46% 정확도, DistilBERT는 92.82% 정확도
 * 추론 시에는 BERT 대비 60% 더 빠르고 ELMo+BiLSTM 대비 120% 더 빠름
 
-![](.gitbook/assets/_2019-12-17__5.01.05.png)
+![](../.gitbook/assets/_2019-12-17__5.01.05.png)
 
 ## References
 

@@ -21,17 +21,15 @@
 * [SSD \(Single Shot Multibox Detector\)](computer-vision/ssd.md)
 * [Data Augmentation Tips](computer-vision/data-augmentation-tips.md)
 
-## Natural Language Processing
+## Natural Language Processing <a id="nlp"></a>
 
----
-
-* [QRNN\(Quasi-Recurrent Neural Network\)](qrnn.md)
-* [Transformer is All You Need](transformer.md)
-* [BERT\(Bi-directional Encoder Representations from Transformers\)](bert.md)
-* [DistilBERT, a distilled version of BERT](distilbert.md)
-* [\[Hands-on\] Fine Tuning Naver Movie Review Sentiment Classification with KoBERT using GluonNLP](bert-fine-tuning-naver-movie.md)
-* [OpenAI GPT-2](gpt-2.md)
-* [XLNet: Generalized Autoregressive Pretraining for Language Understanding](xlnet.md)
+* [QRNN\(Quasi-Recurrent Neural Network\)](nlp/qrnn.md)
+* [Transformer is All You Need](nlp/transformer.md)
+* [BERT\(Bi-directional Encoder Representations from Transformers\)](nlp/bert.md)
+* [DistilBERT, a distilled version of BERT](nlp/distilbert.md)
+* [\[Hands-on\] Fine Tuning Naver Movie Review Sentiment Classification with KoBERT using GluonNLP](nlp/bert-fine-tuning-naver-movie.md)
+* [OpenAI GPT-2](nlp/gpt-2.md)
+* [XLNet: Generalized Autoregressive Pretraining for Language Understanding](nlp/xlnet.md)
 
 ## Recommendation System <a id="recommendation"></a>
 

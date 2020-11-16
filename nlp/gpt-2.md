@@ -21,7 +21,7 @@
   * GPT-2 medium은 BERT와 파라메터 개수 동일
   * 약 15억개의 파라메터 개수로 GPT 대비 10배 이상 많음
 
-![](.gitbook/assets/_2019-12-18__9.38.10.png)
+![](../.gitbook/assets/_2019-12-18__9.38.10.png)
 
 * 주요 파라메터 변경
   * 어휘 개수: 50,527개
@@ -36,13 +36,13 @@
 
 * 시작 토큰으로 `<|endoftext|>` 사용. 이제부턴 편의상 `<s>`라고 칭함
 * 토큰 임베딩 행렬에서 해당 vocab 검색 후 Positional encoding 결과 가산
-* ![](.gitbook/assets/_2019-12-18__8.00.39.png) ![](.gitbook/assets/_2019-12-18__8.01.05.png) ![](.gitbook/assets/_2019-12-18__9.47.24.png) 
+* ![](../.gitbook/assets/_2019-12-18__8.00.39.png) ![](../.gitbook/assets/_2019-12-18__8.01.05.png) ![](../.gitbook/assets/_2019-12-18__9.47.24.png) 
 * Decoder들을 거쳐 나온 출력 벡터에 토큰 임베딩 행렬을 곱해 출력 토큰의 logit\(확률\) 계산
 * 입력 토큰이 Decoder 레이어를 통해 연속적으로 처리된 다음 최종 벡터\(vocab 총 개수\)가 생성됨. 최종 벡터는 top\_1이나 top\_k를 통해 가장 확률이 높은 단어를 다음 단어로 선택
   * top\_1: vocab 중에서 가장 확률이 높은 vocab를 선택 \(top\_k = 1\)
   * top\_k: 상위 k개의 vocab를 선택 후 샘플링
 
-![](.gitbook/assets/_2019-12-18__9.50.15.png)
+![](../.gitbook/assets/_2019-12-18__9.50.15.png)
 
 ## References
 

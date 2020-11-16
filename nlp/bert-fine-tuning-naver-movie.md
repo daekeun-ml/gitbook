@@ -15,7 +15,7 @@ This document is for people who need fine-tuning KoBERT model. Currently, the or
   * [https://mccormickml.com/2019/07/22/BERT-fine-tuning/](https://mccormickml.com/2019/07/22/BERT-fine-tuning/)
 * Naver Movie Review data is publicly available at [https://github.com/e9t/nsmc/,](https://github.com/e9t/nsmc/) and consists of 150,000 training data and 50,000 test data. This data is often used for NLP benchmarking like IMDB review data in Korea. Sample data is shown below.
 
-![](.gitbook/assets/naver-movie-sample.png)
+![](../.gitbook/assets/naver-movie-sample.png)
 
 ## Prerequisites
 
@@ -472,9 +472,9 @@ Overfitting occurs from the 4th epoch usually because the validation metrics are
 
 Even training only 1 epoch shows **88% accuracy,** so we will convert it to the SageMaker for hands-on lab in the future.
 
-![](.gitbook/assets/kobert-evaluation-df.png)
+![](../.gitbook/assets/kobert-evaluation-df.png)
 
-![](.gitbook/assets/kobert-evaluation%20%281%29.png)
+![](../.gitbook/assets/kobert-evaluation%20%281%29.png)
 
 After completing the training, compress the vocab file\(`.spiece`\) and model file into `model.tar.gz` and save it in Amazon S3 in order to create the SageMaker endpoint.
 
@@ -683,5 +683,5 @@ print(pred_out)
 
 Below is an example of test sentences.
 
-![](.gitbook/assets/kobert.png)
+![](../.gitbook/assets/kobert.png)
 

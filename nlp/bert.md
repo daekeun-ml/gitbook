@@ -17,7 +17,7 @@ description: 'Background과 개념 위주로 간단히 요약, 자세한 내용�
 * Seq2seq, Transformer, OpenAI GPT-2의 **자동 회귀\(AR; Auto-Regressive\) 모델이 아닌 오토인코더\(Auto-Encoding\) 모델**
 * 11 개의 NLP tasks에서 SOTA\(state-of-the-art\) 달성
 
-![](.gitbook/assets/_2019-12-26__9.29.37.png)
+![](../.gitbook/assets/_2019-12-26__9.29.37.png)
 
 ## 2. Wordpiece Tokenizing
 
@@ -36,19 +36,19 @@ description: 'Background과 개념 위주로 간단히 요약, 자세한 내용�
 
 ### Example
 
-![](.gitbook/assets/untitled%20%2811%29.png)
+![](../.gitbook/assets/untitled%20%2811%29.png)
 
 ### **Iter 0**
 
-* ![](.gitbook/assets/iter0-1.png) ![](.gitbook/assets/iter0-2.png) ![](.gitbook/assets/iter0-3.png) ![](.gitbook/assets/iter0-4.png) 
+* ![](../.gitbook/assets/iter0-1.png) ![](../.gitbook/assets/iter0-2.png) ![](../.gitbook/assets/iter0-3.png) ![](../.gitbook/assets/iter0-4.png) 
 
 ### **Iter 1**
 
-* ![](.gitbook/assets/iter1-1.png) ![](.gitbook/assets/untitled-6%20%284%29.png)![](.gitbook/assets/untitled-7%20%283%29.png) 
+* ![](../.gitbook/assets/iter1-1.png) ![](../.gitbook/assets/untitled-6%20%284%29.png)![](../.gitbook/assets/untitled-7%20%283%29.png) 
 
 ### Iter 2
 
-* ![](.gitbook/assets/iter2-1.png) ![](.gitbook/assets/iter2-2.png) ![](.gitbook/assets/iter2-3.png) 
+* ![](../.gitbook/assets/iter2-1.png) ![](../.gitbook/assets/iter2-2.png) ![](../.gitbook/assets/iter2-3.png) 
 
 ## 3. Training Task
 
@@ -67,7 +67,7 @@ Pre-training 시에는 Masked Language Model\(MLM\)의 loss와 Next Sentence Pre
 
 * NLI\(Natural Language Inference\), QA\(Question Answering\)의 파인튜닝을 위해 마스크된 단어를 맞추는 태스크 \(MLM만으로는 충분하지 않음\)
 
-![](.gitbook/assets/untitled-11%20%281%29.png)
+![](../.gitbook/assets/untitled-11%20%281%29.png)
 
 * 두 문장을 사전 학습시에 같이 넣어줘서 두 문장이 연관된 문장인지, 연관되지 않은 문장인지 맞추게 함 \(IsNext, NotNext 여부 학습\)
 * 두번째 문장은 corpus의 다음 문장을 50% 확률로 랜덤하게 가져옴
@@ -104,7 +104,7 @@ Pre-training 시에는 Masked Language Model\(MLM\)의 loss와 Next Sentence Pre
 
 ### Input representation
 
-![](.gitbook/assets/untitled-12%20%281%29.png)
+![](../.gitbook/assets/untitled-12%20%281%29.png)
 
 * 첫번째 token은 항상 **`[CLS]` \(**클래스 토큰\)이며 IsNext/NotNext 분류 문제를 해결할 때 사용
 * **`[SEP]`**는 문장의 끝을 나타내는 식별자 토큰으로 두 문장을 구분하는 역할로도 쓰임. \(예: token A 다음에 **`[SEP]`**, token B 다음에 **`[SEP]`**\)
@@ -119,7 +119,7 @@ Pre-training 시에는 Masked Language Model\(MLM\)의 loss와 Next Sentence Pre
 * 음수에 대해서도 미분이 가능해 약간의 기울기 전달 가능
 * 아래 수식의 간단한 증명은 [https://datascience.stackexchange.com/questions/49522/what-is-gelu-activation](https://datascience.stackexchange.com/questions/49522/what-is-gelu-activation) 에서 확인 가능
 
-![](.gitbook/assets/untitled-13%20%281%29.png)
+![](../.gitbook/assets/untitled-13%20%281%29.png)
 
 ### BERT의 연산 비용이 왜 높을까?
 
@@ -140,19 +140,19 @@ Pre-training 시에는 Masked Language Model\(MLM\)의 loss와 Next Sentence Pre
 * 1 batch는 Token A, Token B로 이루어져 있어야 함
 * max sequence length=16이라고 가정할 때, target sequence length = \(16-3\) = 13 \(`[CLS]` , `[SEP]`, `[SEP]` 토큰이 필요하므로\)
 
-![](.gitbook/assets/untitled-14.png)
+![](../.gitbook/assets/untitled-14.png)
 
 * 실제 문장 순서대로 정의 시 Token A와 Token B에 들어갈 문장은 random하게 선택 \(예; Sent1만 Token A에 들어갈 수 있거나, Sent1 & Sent2가 Token A, Sent3이 Token B에 들어갈 수 있음\)
 
-![](.gitbook/assets/untitled-15.png)
+![](../.gitbook/assets/untitled-15.png)
 
 * 만약 random index가 2라면 Sent2까지 Token A이고 Sent3은 Token B로
 
-![](.gitbook/assets/untitled-16.png)
+![](../.gitbook/assets/untitled-16.png)
 
 * 틀린 문장 순서대로 정의 시에는 다른 랜덤한 문서에서 랜덤한 문장의 시작점에서 문장을 가져옴
 
-![](.gitbook/assets/untitled-17%20%281%29.png)
+![](../.gitbook/assets/untitled-17%20%281%29.png)
 
 * 문서 내에 문장이 하나만 있을 경우는 Token A에 문장을 넣고 틀린 문장을 랜덤한 문서에서 가져옴
 * Randomness를 주고 bias를 피하기 위한 trick으로 문장 두 개의 단어 총 수가 최대 토큰 개수를 넘지 못할때까지 Token A, Token B 중 더 긴 Token 리스트에 대해 50% 확률로 문장 맨 앞 또는 맨 뒤의 토큰을 제거
@@ -165,25 +165,25 @@ Pre-training 시에는 Masked Language Model\(MLM\)의 loss와 Next Sentence Pre
   * Mask 토큰에 해당하는 위치를 placeholder로 저장
   * 최대 mask length는 하이퍼파라메터로 지정
 
-![](.gitbook/assets/untitled-18.png)
+![](../.gitbook/assets/untitled-18.png)
 
-![](.gitbook/assets/untitled-19%20%281%29.png)
+![](../.gitbook/assets/untitled-19%20%281%29.png)
 
 ### Masking
 
 Key masking만 사용 \(Transformer는 Query masking, Key masking 둘 다 사옹\)
 
-![](.gitbook/assets/untitled-20.png)
+![](../.gitbook/assets/untitled-20.png)
 
 ### **Mask Language Model** Loss 계산
 
-![](.gitbook/assets/untitled-22%20%281%29.png)
+![](../.gitbook/assets/untitled-22%20%281%29.png)
 
-![](.gitbook/assets/untitled-23.png)
+![](../.gitbook/assets/untitled-23.png)
 
 ### Next Sentence Prediction\(NSP\) Loss 계산
 
-![](.gitbook/assets/untitled-24.png)
+![](../.gitbook/assets/untitled-24.png)
 
 ## 6. Word Embedding PyTorch Example
 

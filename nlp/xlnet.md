@@ -34,9 +34,9 @@ mem: 이전 context에서 가져온 정보
 
 $$\text{input sequence}: x = (x_1, x_2, ..., x_T) \\ \text{likelihood} : \mathbb{E}_{z\backsim Z_T}[\Pi_{t=1}^Tp(x_{z_t} \mid x_{z<t})] \\ \text{objective}: \max_{\theta} \space \mathbb{E}_{z\backsim Z_T}[\Sigma_{t=1}^T \log \space p_{\theta}(x_{z_t} \mid x_{z<t})]$$
 
-![](.gitbook/assets/_2019-12-26__10.45.55.png)
+![](../.gitbook/assets/_2019-12-26__10.45.55.png)
 
-![](.gitbook/assets/_2019-12-26__9.37.09.png)
+![](../.gitbook/assets/_2019-12-26__9.37.09.png)
 
 ## Two-Stream Self-Attention
 
@@ -44,7 +44,7 @@ $$\text{input sequence}: x = (x_1, x_2, ..., x_T) \\ \text{likelihood} : \mathbb
 * Content Stream: 예측하고자 하는 토큰의 정보를 같이 사용
 * Query Stream: 해당 토큰의 이전 정보까지만 가져오고 해당 위치에 있는 위치 임베딩과 random init 벡터만 가져옴
 
-![](.gitbook/assets/_2019-12-26__9.39.31.png)
+![](../.gitbook/assets/_2019-12-26__9.39.31.png)
 
 ## Transformer-XL
 
