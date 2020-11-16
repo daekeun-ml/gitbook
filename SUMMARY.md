@@ -44,12 +44,10 @@
 * [MAB Algorithm Benchmarking](reinforcement-learning/mab-benchmarking.md)
 * [Policy Gradient Overview](reinforcement-learning/policy-gradient-overview.md)
 
-## IoT on AWS <a id="iot"></a>
+## iot on aws <a id="iot"></a>
 
----
-
-* [MXNet Installation on NVIDIA Jetson Nano](mxnet-installation-jetson-nano.md)
-* [Neo-DLR on NVIDIA Jetson Nano](neo-dlr-on-nvidia-jetson-nano.md)
+* [MXNet Installation on NVIDIA Jetson Nano](iot/mxnet-installation-jetson-nano.md)
+* [Neo-DLR on NVIDIA Jetson Nano](iot/neo-dlr-on-nvidia-jetson-nano.md)
 
 ## Model Deployment'
 
