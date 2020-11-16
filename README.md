@@ -40,7 +40,7 @@
 | linkedin | [https://www.linkedin.com/in/daekeun-kim/](https://www.linkedin.com/in/daekeun-kim/) |
 | GitHub | [https://github.com/daekeun-ml](https://github.com/daekeun-ml) |
 | Public Speaking | [AWS AIML 특집 웨비나 - SageMaker Demo](https://www.youtube.com/watch?v=miIVGlq6OUk) |
-|  | [AWS Seoul Summit 2020 - AWS로 강화 학습 시작하](https://www.youtube.com/watch?v=eIz_rC7hEyE) |
+|  | [AWS Seoul Summit 2020 - AWS로 강화 학습 시작하기](https://www.youtube.com/watch?v=eIz_rC7hEyE) |
 |  | [AWS Seoul Summit 2020 - AWS 스마트 팩토리](https://www.youtube.com/watch?v=R0sMMphzOhw) |
 |  | [AWS Builders 300 - KoBERT Fine-tuning on AWS](https://attendee.gotowebinar.com/recording/6067766376359184398) |
 
