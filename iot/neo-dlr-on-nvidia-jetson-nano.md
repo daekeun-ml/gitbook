@@ -7,7 +7,7 @@
 
 ## Prerequisites
 
-[https://www.notion.so/daekeun/MXNet-Installation-on-NVIDIA-Jetson-Nano-82ea5cf56c2c4c9aaabcd4ceb8e1d9dc](https://www.notion.so/daekeun/MXNet-Installation-on-NVIDIA-Jetson-Nano-82ea5cf56c2c4c9aaabcd4ceb8e1d9dc)
+{% page-ref page="mxnet-installation-jetson-nano.md" %}
 
 ## 1. Neo-DLR 패키지 인스톨 및 테스트
 
