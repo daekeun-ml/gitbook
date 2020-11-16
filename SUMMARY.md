@@ -1,57 +1,50 @@
 # Table of contents
 
 * [About me](README.md)
-* [커리어 요약](career.md)
-* [데이터 과학이란?](data-science.md)
 
-## Tabular Data
+## Miscellaneous
 
-* [XGBoost Algorithm Overview](tabular-data/xgboost.md)
+* [Introduction](miscellaneous/about-me/README.md)
+  * [커리어 요약](miscellaneous/about-me/career-1.md)
+  * [데이터 과학이란?](miscellaneous/about-me/data-science.md)
 
-## Computer Vision
+## Machine Learning <a id="ml"></a>
 
-* [\[Hands-on\] Fast Training ImageNet on on-demand EC2 GPU instances with Horovod](computer-vision/imagenet-horovod.md)
-* [R-CNN\(Regions with Convolutional Neuron Networks\)](computer-vision/r-cnn.md)
-* [Fast R-CNN](computer-vision/fast-r-cnn.md)
-* [Faster R-CNN](computer-vision/faster-r-cnn.md)
-* [Mask R-CNN](computer-vision/mask-r-cnn.md)
-* [YOLO \(You Only Look Once\)](computer-vision/yolo.md)
-* [YOLO v2\(YOLO 9000\) Better, Faster, Stronger](computer-vision/yolo-v2.md)
-* [YOLO v3](computer-vision/yolo-v3.md)
-* [SSD \(Single Shot Multibox Detector\)](computer-vision/ssd.md)
-* [Data Augmentation Tips](computer-vision/data-augmentation-tips.md)
-
-## Natural Language Processing <a id="nlp"></a>
-
-* [QRNN\(Quasi-Recurrent Neural Network\)](nlp/qrnn.md)
-* [Transformer is All You Need](nlp/transformer.md)
-* [BERT\(Bi-directional Encoder Representations from Transformers\)](nlp/bert.md)
-* [DistilBERT, a distilled version of BERT](nlp/distilbert.md)
-* [\[Hands-on\] Fine Tuning Naver Movie Review Sentiment Classification with KoBERT using GluonNLP](nlp/bert-fine-tuning-naver-movie.md)
-* [OpenAI GPT-2](nlp/gpt-2.md)
-* [XLNet: Generalized Autoregressive Pretraining for Language Understanding](nlp/xlnet.md)
-
-## Recommendation System <a id="recommendation"></a>
-
-* [Recommendation System Overview](recommendation/recommendation-overview.md)
-* [Learning to Rank](recommendation/learning-to-rank.md)
-* [T-REC\(Towards Accurate Bug Triage for Technical Groups\) 논문 리뷰](recommendation/t-rec.md)
-
-## Reinforcement Learning
-
-* [MAB\(Multi-Armed Bandits\) Overview](reinforcement-learning/mab-overview.md)
-* [MAB\(Multi-Armed Bandits\) Analysis](reinforcement-learning/mab-analysis.md)
-* [MAB Algorithm Benchmarking](reinforcement-learning/mab-benchmarking.md)
-* [Policy Gradient Overview](reinforcement-learning/policy-gradient-overview.md)
-
-## iot on aws <a id="iot"></a>
-
-* [MXNet Installation on NVIDIA Jetson Nano](iot/mxnet-installation-jetson-nano.md)
-* [Neo-DLR on NVIDIA Jetson Nano](iot/neo-dlr-on-nvidia-jetson-nano.md)
-
-## Model Deployment'
-
-* [MobileNet V1/V2/V3 Overview](model-deployment/mobilenet.md)
-* [TensorRT Overview](model-deployment/tensorrt.md)
-* [Multi Model Server and SageMaker Multi-Model Endpoint Overview](model-deployment/mms.md)
+* [Deployment](ml/deployment/README.md)
+  * [MobileNet V1/V2/V3 Overview](ml/deployment/mobilenet.md)
+  * [TensorRT Overview](ml/deployment/tensorrt.md)
+  * [Multi Model Server and SageMaker Multi-Model Endpoint Overview](ml/deployment/mms.md)
+* [Tabular Data](ml/tabular/README.md)
+  * [XGBoost Algorithm Overview](ml/tabular/xgboost.md)
+* [Computer Vision](ml/cv/README.md)
+  * [\[Hands-on\] Fast Training ImageNet on on-demand EC2 GPU instances with Horovod](ml/cv/imagenet-horovod.md)
+  * [R-CNN\(Regions with Convolutional Neuron Networks\)](ml/cv/r-cnn.md)
+  * [Fast R-CNN](ml/cv/fast-r-cnn.md)
+  * [Faster R-CNN](ml/cv/faster-r-cnn.md)
+  * [Mask R-CNN](ml/cv/mask-r-cnn.md)
+  * [YOLO \(You Only Look Once\)](ml/cv/yolo.md)
+  * [YOLO v2\(YOLO 9000\) Better, Faster, Stronger](ml/cv/yolo-v2.md)
+  * [YOLO v3](ml/cv/yolo-v3.md)
+  * [SSD \(Single Shot Multibox Detector\)](ml/cv/ssd.md)
+  * [Data Augmentation Tips](ml/cv/data-augmentation-tips.md)
+* [Natural Language Processing](ml/nlp-1/README.md)
+  * [QRNN\(Quasi-Recurrent Neural Network\)](ml/nlp-1/qrnn.md)
+  * [Transformer is All You Need](ml/nlp-1/transformer.md)
+  * [BERT\(Bi-directional Encoder Representations from Transformers\)](ml/nlp-1/bert.md)
+  * [DistilBERT, a distilled version of BERT](ml/nlp-1/distilbert.md)
+  * [\[Hands-on\] Fine Tuning Naver Movie Review Sentiment Classification with KoBERT using GluonNLP](ml/nlp-1/bert-fine-tuning-naver-movie.md)
+  * [OpenAI GPT-2](ml/nlp-1/gpt-2.md)
+  * [XLNet: Generalized Autoregressive Pretraining for Language Understanding](ml/nlp-1/xlnet.md)
+* [Recommendation System](ml/recsys/README.md)
+  * [Recommendation System Overview](ml/recsys/recommendation-overview.md)
+  * [Learning to Rank](ml/recsys/learning-to-rank.md)
+  * [T-REC\(Towards Accurate Bug Triage for Technical Groups\) 논문 리뷰](ml/recsys/t-rec.md)
+* [Reinforcement Learning](ml/rl/README.md)
+  * [MAB\(Multi-Armed Bandits\) Overview](ml/rl/mab-overview.md)
+  * [MAB Algorithm Benchmarking](ml/rl/mab-benchmarking.md)
+  * [MAB\(Multi-Armed Bandits\) Analysis](ml/rl/mab-analysis.md)
+  * [Policy Gradient Overview](ml/rl/policy-gradient-overview.md)
+* [IoT on AWS](ml/iot/README.md)
+  * [MXNet Installation on NVIDIA Jetson Nano](ml/iot/mxnet-installation-jetson-nano.md)
+  * [Neo-DLR on NVIDIA Jetson Nano](ml/iot/neo-dlr-on-nvidia-jetson-nano.md)
 
