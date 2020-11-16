@@ -10,10 +10,6 @@
 
 ## Machine Learning <a id="ml"></a>
 
-* [Deployment](ml/deployment/README.md)
-  * [MobileNet V1/V2/V3 Overview](ml/deployment/mobilenet.md)
-  * [TensorRT Overview](ml/deployment/tensorrt.md)
-  * [Multi Model Server and SageMaker Multi-Model Endpoint Overview](ml/deployment/mms.md)
 * [Tabular Data](ml/tabular/README.md)
   * [XGBoost Algorithm Overview](ml/tabular/xgboost.md)
 * [Computer Vision](ml/cv/README.md)
@@ -47,4 +43,8 @@
 * [IoT on AWS](ml/iot/README.md)
   * [MXNet Installation on NVIDIA Jetson Nano](ml/iot/mxnet-installation-jetson-nano.md)
   * [Neo-DLR on NVIDIA Jetson Nano](ml/iot/neo-dlr-on-nvidia-jetson-nano.md)
+* [Deployment](ml/deployment/README.md)
+  * [MobileNet V1/V2/V3 Overview](ml/deployment/mobilenet.md)
+  * [TensorRT Overview](ml/deployment/tensorrt.md)
+  * [Multi Model Server and SageMaker Multi-Model Endpoint Overview](ml/deployment/mms.md)
 
