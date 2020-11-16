@@ -24,7 +24,7 @@
 * Research Engineer & Computer Vision Engineer @ Atalgo \(Startup\) \(2008.02~2010.01\)
 * Assistant Manager & Web Developer @ Nara-i-net \(2001.09~2004.09\)
 
-## 특허
+## 특허 \(1저자\)
 
 * Method and Device for Generating Compensation data of Display Device \(kr 10-2018-0074907\)
 * Display Device and Method for Driving the same \(kr 10-2018-0073296\)
