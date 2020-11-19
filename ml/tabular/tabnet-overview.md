@@ -60,7 +60,7 @@ $$
 \text{GLU}(x) = \sigma(x) \otimes x
 $$
 
-![](../../.gitbook/assets/feature_transformer.png)
+![](../../.gitbook/assets/feature-transformer.png)
 
 ### Attentive transformer
 
