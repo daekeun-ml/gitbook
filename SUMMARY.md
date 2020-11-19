@@ -12,6 +12,13 @@
 
 * [Tabular Data](ml/tabular/README.md)
   * [XGBoost Algorithm Overview](ml/tabular/xgboost.md)
+  * [TabNet Overview](ml/tabular/tabnet-overview.md)
+  * [Imbalanced Learning](ml/tabular/imbalanced-learning/README.md)
+    * [Overview](ml/tabular/imbalanced-learning/overview.md)
+    * [Oversampling Basic \(SMOTE variants\)](ml/tabular/imbalanced-learning/oversampling-basic-smote-variants.md)
+    * [Undersampling Basic](ml/tabular/imbalanced-learning/undersampling-basic.md)
+    * [Cost-sensitive Learning](ml/tabular/imbalanced-learning/cost-sensitive-learning.md)
+    * [RBF\(Radial Basis Function\)-based Approach](ml/tabular/imbalanced-learning/rbf-radial-basis-function-based-approach.md)
 * [Computer Vision](ml/cv/README.md)
   * [\[Hands-on\] Fast Training ImageNet on on-demand EC2 GPU instances with Horovod](ml/cv/imagenet-horovod.md)
   * [R-CNN\(Regions with Convolutional Neuron Networks\)](ml/cv/r-cnn.md)
