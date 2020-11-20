@@ -90,7 +90,7 @@ $$
 
 ### Sparsemax
 
-Sparsemax activation 함수는 Softmax에 sparsity를 강화한 활성화 함수로 미분이 가능하며, Sparse Feature Selection의 핵심적인 역할을 하게 됩니다. 이 activation function은 Martins et al. \(2016\) 의 논문에서 소개되었는데, NLP 도메인에서 매우 많은 어휘 집합에 대한 multinomial distribution을 모델링합니다.
+Sparsemax activation 함수는 Softmax에 sparsity를 강화한 활성화 함수로 미분이 가능하며, Sparse Feature Selection의 핵심적인 역할을 하게 됩니다. 이 activation function은 [Martins et al. \(2016\)](https://arxiv.org/abs/1602.02068)의 논문에서 소개되었는데, NLP 도메인에서 매우 많은 어휘 집합에 대한 multinomial distribution을 모델링합니다.
 
 보통 Sparsity 하면 떠오르는 게 L1 페널티겠죠? 하지만, L1 페널티는 target output이나 activation 결과가 아닌 weight에 영향을 주므로 activation 결과에 직접적인 영향을 주려면 activation function을 hard function 형태로 변환하는 것이 필요합니다.
 
@@ -118,6 +118,10 @@ def sparsemax(z):
     threshold = (z_cumsum[k_max-1] - 1) / k_max
     return np.maximum(z-threshold, 0)
 ```
+
+> [Peters et al. \(2019\) ](https://arxiv.org/pdf/1905.05702.pdf%29)가 제안한 Entmax 함수도 사용 가능합니다. 이 함수는 sparsemax의 일반화 버전으로 좀 더 훈련이 용이하다고 합니다.
+>
+>  ![](../../.gitbook/assets/entmax.png)
 
 ### Attentive transformer Code Snippets
 
@@ -169,7 +173,7 @@ if ni < self.num_decision_steps - 1:
 
 ## 4. Semi-supervised Learning
 
-[https://arxiv.org/pdf/1908.07442.pdf](https://arxiv.org/pdf/1908.07442.pdf)상기에서 설명했던 인코더에 곧바로 디코더를 연결하면 Autoencoder 구조가 완성됩니다. Autoencoder는 별도의 정답 레이블 정보가 필요하지 않기 때문에 unsupervised learning입니다. 이를 적용하면 tabular 데이터에서 종종 보이는 결측값들을 대체할 수 있습니다. \(아래 그림의 왼쪽 참조\)
+상기에서 설명했던 인코더에 곧바로 디코더를 연결하면 Autoencoder 구조가 완성됩니다. Autoencoder는 별도의 정답 레이블 정보가 필요하지 않기 때문에 unsupervised learning입니다. 이를 적용하면 tabular 데이터에서 종종 보이는 결측값들을 대체할 수 있습니다. \(아래 그림의 왼쪽 참조\)
 
 물론 이미 훌륭한 imputation 기법들이 많이 존재하고, 결측값의 비중이 매우 높은 경우에 적용하는 것이 좋습니다. 또한, 결측치를 채운 데이터셋에 레이블 정보를 포함하여 supervised learning으로 fine-tuning을 적용할 수 있습니다. \(아래 그림의 오른쪽 참조\)
 
@@ -199,7 +203,9 @@ preds = clf.predict(X_test)
 ## References
 
 * Paper
-  * [https://arxiv.org/pdf/1908.07442.pdf](https://arxiv.org/pdf/1908.07442.pdf)
+  * TabNet: [https://arxiv.org/pdf/1908.07442.pdf](https://arxiv.org/pdf/1908.07442.pdf)
+  * Sparsemax: [https://arxiv.org/abs/1602.02068](https://arxiv.org/abs/1602.02068)
+  * Sparse Sequence-to-Sequence Models \(Entmax\): [https://arxiv.org/pdf/1905.05702.pdf](https://arxiv.org/pdf/1905.05702.pdf)
 * Code
   * TabNet official implementation: [https://github.com/google-research/google-research/tree/master/tabnet](https://github.com/google-research/google-research/tree/master/tabnet)
   * TabNet for TensorFlow 2.0: [https://github.com/titu1994/tf-TabNet](https://github.com/titu1994/tf-TabNet)
