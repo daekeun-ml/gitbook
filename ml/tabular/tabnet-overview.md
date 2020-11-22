@@ -200,16 +200,6 @@ clf.fit(
 preds = clf.predict(X_test)
 ```
 
-$$\begin{equation}W^{t+1} = \mathop{\arg\min}_{W} \{G^{(1:t)}W+\lambda_1||W||_1+\frac{1}{2}\lambda_2||W||_2^2+\frac{1}{2}\sum_{s=1}^{t}\sigma^{(1:t)}||W-W^{(s)}||_2^2\}\tag{1}\end{equation}$$
-
-Where $$G ^ {(1: T)} =  sum {s=1}^{t}G^{(s)}$$ $$_sigma^{\(s\)}=\frac{1}{\eta^\(s\)}-\frac{1}{\eta^{\(s-1\)}}$$ ，_
-
-_$$\sigma^{\(1:t\)}=\sum^{t}_ {s = 1}  sigma ^ {\(s\)} =  frac {1} { ETA ^ {\(T\)}} $$ , expand formula \(1\), $$\begin{equation}W^{t+1} = \mathop{\arg\min}_{W} \{(G^{(1:t)}-\sum_{t=1}^s\sigma^{(s)}W^{(s)})W+\lambda_1||W||_1+\frac{1}{2}(\lambda_2+\sum_{t=1}^s\sigma^{(s)})||W||_2^2+\frac{1}{2}\sum_{s=1}^{t}\sigma^{(s)}||W^{(s)}||_2^2\}\tag{2}\end{equation}$$
-
-$$
-\sigma^{(1:t)}=\sum^{t} {s = 1}  sigma ^ {(s)} =  \frac {1} { ETA ^ {(T)}}
-$$
-
 ## References
 
 * Paper
