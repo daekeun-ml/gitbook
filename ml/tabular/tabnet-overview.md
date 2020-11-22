@@ -102,9 +102,9 @@ Sparsemax activation 함수는 Softmax에 sparsity를 강화한 활성화 함수
 
 ![](../../.gitbook/assets/sparsemax2.png) ![](../../.gitbook/assets/sparsemax-loss.png) 
 
-Psuedo 코드와 실제 구현 코드는 아래와 같습니다.
+Pseudo 코드와 실제 구현 코드는 아래와 같습니다.
 
-![Psuedo code](../../.gitbook/assets/sparsemax.png)
+![Pseudo code](../../.gitbook/assets/sparsemax.png)
 
 ```python
 def sparsemax(z):
