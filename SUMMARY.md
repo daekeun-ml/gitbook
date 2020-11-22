@@ -14,7 +14,7 @@
   * [XGBoost Algorithm Overview](ml/tabular/xgboost.md)
   * [TabNet Overview](ml/tabular/tabnet-overview.md)
   * [Imbalanced Learning](ml/tabular/imbalanced-learning/README.md)
-    * [Overview](ml/tabular/imbalanced-learning/overview.md)
+    * [Introduction](ml/tabular/imbalanced-learning/overview.md)
     * [Oversampling Basic \(SMOTE variants\)](ml/tabular/imbalanced-learning/oversampling-basic-smote-variants.md)
     * [Undersampling Basic](ml/tabular/imbalanced-learning/undersampling-basic.md)
     * [Cost-sensitive Learning](ml/tabular/imbalanced-learning/cost-sensitive-learning.md)
