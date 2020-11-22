@@ -1,14 +1,16 @@
 # XGBoost Algorithm Overview
 
 {% hint style="info" %}
-아래 내용은 Decision Tree, Bagging, AdaBoost, GBM\(Gradient Boosting Machine\)에 대해 알고 있다는 것을 전제로 한다. 수식들로 인해 아래 과정들이 복잡해 보일 수 있지만, 펜을 잡고 논문과 공식 사이트의 설명을 같이 참조하면 쉽게 이해 가능하다.
+아래 내용은 Decision Tree, Bagging, AdaBoost, GBDT\(Gradient Boosting Decision Tree\)에 대해 알고 있다는 것을 전제로 한다. 수식들로 인해 아래 과정들이 복잡해 보일 수 있지만, 펜을 잡고 논문과 공식 사이트의 설명을 같이 참조하면 쉽게 이해 가능하다.
 {% endhint %}
 
 ## 1. XGBoost\(Extreme Gradient Boosting\) 특장점
 
 * LightGBM, CatBoost과 같이 캐글에서 각광받고 있는 gradient boosting 알고리즘
-* Parallel Processing: GBM에 기반하고 있지만, GBM과 달리 병렬 처리가 가능하여 수행 시간이 훨씬 빠름 \(LightGBM보다는 느림\)
+* Parallel Processing: GBDT에 기반하고 있지만, GBDT과 달리 병렬 처리가 가능하여 수행 시간이 훨씬 빠름 \(LightGBM보다는 느림\)
 * Robust to Overfitting: Greedy 알고리즘을 사용하여 가지치기\(pruning\)를 수행하고 early stopping 기능을 지원하기 때문에 과적합이 잘 일어나지 않음
+* Cost Function: Cost Function에 대해 1차, 2차 도함수 정보를 모두 사용
+* Regularization: Decision Tree 구성 시 Regularization Term을 추가하여 overfitting 방
 * Flexible Loss function: 사용자 정의 Loss function을 원하는 대로 정의할 수 있음
 * Sparsity aware: Missing Value에 대해서 자체적으로 처리함
 
@@ -16,7 +18,7 @@
 
 ### Objective Function: Training Loss + Regularization
 
-$$K$$개의 트리가 있고 모델 $$f_k$$를 더해 $$\hat{y}$$ 예측할 때, 이 트리들이 모여서 구성되는 모델 $$F$$\(CART; Classification And Regression Trees의 모든 tree 세트\)는 아래와 같이 표현할 수 있다.
+$$K$$개의 트리가 있고 모델 $$f_k$$를 더해 $$\hat{y}$$를 예측할 때, 이 트리들이 모여서 구성되는 모델 $$F$$\(CART; Classification And Regression Trees의 모든 tree 세트\)는 아래와 같이 표현할 수 있다.
 
 $$
 \hat{y}_i = \sum_{k=1}^K f_k(x_i), f_k \in F \tag {1}
@@ -80,7 +82,7 @@ $$
 
 Decision Tree 달리 XGBoost에서는 트리의 비중을 조절하는 정규화 함수를 적극 사용한다.
 
-우선, 트리 함수 $$f_t(x)$$ 를 아래와 같이 정의하자. \( $$w$$: leaf 노드의 score, $$q$$: 데이터 포인트들을 $$q$$번째 leaf 노드에 할당하는 함수, $$T$$: leaf 노드의 개수\)
+우선, 트리 함수 $$f_t(x)$$ 를 아래와 같이 정의하자. \($$w$$: leaf 노드의 score, $$q$$: 데이터 포인트들을 $$q$$번째 leaf 노드에 할당하는 함수, $$T$$: leaf 노드의 개수\)
 
 $$
 f_t(x) = w_{q(x)}, w \in R^T, q:R^d\rightarrow \{1,2,\cdots,T\} \tag{9}
@@ -120,7 +122,7 @@ $$
 argmin_j{[G_j + \frac{1}{2}(H+\lambda)j^2]= -\dfrac{G}{H}, \;H > 0} \\ min_j{[G_j + \frac{1}{2}(H+\lambda)j^2]= -\dfrac{1}{2}\dfrac{G^2}{H}}\tag{13}
 $$
 
-따라서, 2차식에 대한 최적화 문제는 아래 형태로 최적화가 가능하다.
+loss function을 최소화하기 위해 $$w_j$$에 대한 loss function의 도함수를 0으로 설정하, 2차식에 대한 최적화 문제는 아래 형태로 최적화가 가능하다.
 
 $$
 \begin{aligned}w_j^\ast &= -\frac{G_j}{H_j+\lambda}\\ \text{obj}^\ast &= -\frac{1}{2} \sum_{j=1}^T \frac{G_j^2}{H_j+\lambda} + \gamma T\end{aligned} \tag{14}
@@ -130,17 +132,19 @@ $$
 
 #### Tree 분기
 
-Decision Tree 기반 알고리즘은 과적합을 방지하기 위해 가지치기\(pruning\)가 필수이다. 이를 위해서는 이상적으로는 모든 트리를 생성하고, 이 중 가장 최적의 트리를 선택해야 하지만, 실제로 그렇게 적용하기 어렵기 때문에 XGBoost는 Level-wise tree growth 전략으로 한 번에 한 단계의 트리를 최적화한다. \(참고로, LightGBM은 leaf-wise tree growth 전략으로 더 복잡한 트리를 생성하지만, GOSS \(Gradient-based One-Side Sampling\) 와 EFB \(Exclusive Feature Bundling\) 등의 차별화된 최적화 방법으로 XGBoost보다 빠른 학습 속도를 자랑한다.\)
+Decision Tree 기반 알고리즘은 과적합을 방지하기 위해 가지치기\(pruning\)가 필수이다. 이를 위해서는 이상적으로는 모든 트리를 생성하고, 이 중 가장 최적의 트리를 선택해야 하지만, 실제로 그렇게 적용하는 것은 NP-hard 문제로 매우 어렵기 때문에 XGBoost는 Level-wise tree growth 전략으로 한 번에 한 단계의 트리를 최적화한다. \(참고로, LightGBM은 leaf-wise tree growth 전략으로 더 복잡한 트리를 생성하지만, GOSS \(Gradient-based One-Side Sampling\) 와 EFB \(Exclusive Feature Bundling\) 등의 차별화된 최적화 방법으로 XGBoost보다 빠른 학습 속도를 자랑한다.\)
 
-좀 더 구체적으로 설명하면, 트리를 greedy하게 키우면서 트리의 가지를 나누는 시점에서 왼쪽 가지와 오른쪽 가지에 대한 sore를 계산하여 Information Gain을 계산하고 Gain이 음수일 때에는 가지치기를 수행한다. 특정 depth에서 가지치기 수행 시의 Information Gain은 아래와 같이 표현 가능하다.
+좀 더 구체적으로 설명하면, 트리를 greedy하게 키우면서 트리의 가지를 나누는 시점에서 왼쪽 가지와 오른쪽 가지에 대한 score를 계산하여 Information Gain을 계산하고 Gain이 음수일 때에는 가지치기를 수행한다. 특정 depth에서 가지치기 수행 시의 Information Gain은 아래와 같이 표현 가능하다.
 
 $$
 Gain = \frac{1}{2} \left[\frac{G_L^2}{H_L+\lambda}+\frac{G_R^2}{H_R+\lambda}-\frac{(G_L+G_R)^2}{H_L+H_R+\lambda}\right] - \gamma \tag{15}
 $$
 
-대괄호 안의 첫번째 항은 좌측 leaf score\(i.e., left side children score\), 두번째 항은 우측 leaf score, 마지막 항은 원래 leaf의 score를 산출하며, 마지막 gamma는 추가 leaf의 정규화 term이다. 가지 $L$과 $R$은 서로 중복이 발하지 않는 disjoint set이다. 만약 대괄호 안의 값이 $$\gamma$$보다 작다면, information gain이 음수가 되므로 더 이상 가지를 치지 않는 것이 좋다는 의미이다.
+대괄호 안의 첫번째 항은 좌측 leaf score\(i.e., left side children score\), 두번째 항은 우측 leaf score, 마지막 항은 원래 leaf의 score를 산출하며, 마지막 gamma는 추가 leaf의 정규화 term이다. 가지 $$L$$과 $$R$$은 서로 중복이 발하지 않는 disjoint set이다. 만약 대괄호 안의 값이 $$\gamma$$보다 작다면, information gain이 음수가 되므로 더 이상 가지를 치지 않는 것이 좋다는 의미이다.
 
 이에 대한 psuedo 코드는 아래와 같다.\(Exact Greedy Algorithm for Split Finding\) 다만, 실제 구현은 missing value까지 고려한 Sparsity-aware Split Finding을 사용한다.
+
+![](../../.gitbook/assets/_2020-11-02__11.50.46.png)
 
 마지막으로 Gain이 높은 $$T$$개의 트리들을 조합하여 부스팅을 수행하면 최적의 모델을 생성할 수 있다.
 
