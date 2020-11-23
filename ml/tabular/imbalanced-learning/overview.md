@@ -42,7 +42,7 @@ ROC 곡선은 TN\(True Negative\)에 속한 데이터가 많다면 \(즉, 다수
 * PR 기준으로 평가 시,
   * 1번 모델: $$\text{Recall} = 0.9, \; \text{Precision} = 90/100 = 0.9$$
   * 2번 모델: $$\text{Recall} = 0.9, \; \text{Precision} = 90/100 = 0.9$$
-  * 두 모델의 Precision 차이는 $0.9 - 0.0045 = 0.855$입니다.
+  * 두 모델의 Precision 차이는 $$0.9 - 0.0045 = 0.855$$입니다.
 * 불균형 클래스 데이터셋에서 두 모델의 성능 차이를 명확히 파악하려면, PR 커브도 필요하다는 것을 알 수 있습니다.
 
 ### AUROC \(Area Under a ROC Curve, aka ROC AUC, AUC\)
