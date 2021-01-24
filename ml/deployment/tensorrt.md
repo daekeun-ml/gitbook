@@ -120,7 +120,7 @@ This parser can be used to parse an ONNX model. For more details on the C++ ONNX
 
 * FP32의 데이터를 FP16이나 -127~127 범위의 INT8으로 양자화
 * 원 데이터 x에\(clipping 수행\) scaling factor를 곱하면 간단하게 변환 가능
-  * scaling factor  $s = 127/r$, $r$은 float point range로 절대값이 $r$보다 큰 값들은 모두 clipping
+  * scaling factor  $$s = 127/r$$, $$r$$은 float point range로 절대값이 $$r$$보다 큰 값들은 모두 clipping
 * 단, **INT8로 정밀도를 낮추면 모델 정확도에 영향을 주기 때문에, 추가 캘리브레이션 필요**
 * EntropyCalibrator, EntropyCalibrator2, MinMaxCalibrator 지원
 
@@ -181,28 +181,13 @@ threshold = ( m + 0.5 ) * ( width of a bin )
 * 3×3 행렬 계산의 연산 횟수 대폭 저감 \(2.25배 성능 향상\)
 * 곱셈 연산을 곱셈 + 덧셈으로 바꿈
 * size 4의 이미지 f와 size 3의 필터 g가 있다고 가정하자.
-* $$  f=\begin{bmatrix}     1 & 2 & 3 & 4    \end{bmatrix},   g=\begin{bmatrix}     -1 & -2  & -3   \end{bmatrix}$$ 
-
-  ```text
-  $f=\begin{bmatrix}
-    1 & 2 & 3 & 4
-  \end{bmatrix}$,    $g=\begin{bmatrix}
-    -1 & -2 & -3
-  \end{bmatrix}$
-  ```
-
-  im2col을 이용하면 dot-product로 계산할 수 있다.
-
-  $$\begin{bmatrix}    1 & 2 & 3 \\    2 & 3 & 4  \end{bmatrix}   \begin{bmatrix}    -1 \\ -2 \\ -3  \end{bmatrix} =   \begin{bmatrix}    m_1+m_2+m_3 \\ m_2-m_3-m_4  \end{bmatrix}$$ 
-
-  왼쪽 숫자들을 일반화하면, 아래와 같이 변환할 수 있고
-
-  $$\begin{bmatrix}    d_0 & d_1 & d_2 \\    d_1 & d_2 & d_3  \end{bmatrix}   \begin{bmatrix}    g_0 \\ g_1 \\ g_2  \end{bmatrix} =   \begin{bmatrix}    m_1+m_2+m_3 \\ m_2-m_3-m_4  \end{bmatrix}$$ 
-
-  이를 $$m_1, m_2, m_3, m_4$$에 대해 치환할 수 있다..
-
-  $$m_1 = (d_0 - d_2)g_0 \\ m_2 = (d_1 + d_2)\dfrac{g_0+g_1+g_2}{2} \\ m_3 = (d_2 - d_1)\dfrac{g_0-g_1+g_2}{2} \\ m_4 = (d_2 - d_3)g_2$$
-
+  * $$  f=\begin{bmatrix}     1 & 2 & 3 & 4    \end{bmatrix},   g=\begin{bmatrix}     -1 & -2  & -3   \end{bmatrix}$$ 
+* im2col을 이용하면 dot-product로 계산할 수 있다. 
+  * $$\begin{bmatrix}    1 & 2 & 3 \\    2 & 3 & 4  \end{bmatrix}   \begin{bmatrix}    -1 \\ -2 \\ -3  \end{bmatrix} =   \begin{bmatrix}    m_1+m_2+m_3 \\ m_2-m_3-m_4  \end{bmatrix}$$ 
+* 왼쪽 숫자들을 일반화하면, 아래와 같이 변환할 수 있고
+  *  $$\begin{bmatrix}    d_0 & d_1 & d_2 \\    d_1 & d_2 & d_3  \end{bmatrix}   \begin{bmatrix}    g_0 \\ g_1 \\ g_2  \end{bmatrix} =   \begin{bmatrix}    m_1+m_2+m_3 \\ m_2-m_3-m_4  \end{bmatrix}$$ 
+* 이를 $$m_1, m_2, m_3, m_4$$에 대해 치환할 수 있다. 
+  * $$m_1 = (d_0 - d_2)g_0 \\ m_2 = (d_1 + d_2)\dfrac{g_0+g_1+g_2}{2} \\ m_3 = (d_2 - d_1)\dfrac{g_0-g_1+g_2}{2} \\ m_4 = (d_2 - d_3)g_2$$
 * 이 4개의 값으로 dot-product 연산을 대체할 수 있고 $$\dfrac{g_0+g_1+g_2}{2}, \dfrac{g_0-g_1+g_2}{2}$$ 은 각 convolution operation마다 재계산할 필요가 없으므로 계산 복잡도가 감소한다.
 * `os.environ['TF_ENABLE_WINOGRAD_NONFUSED'] = '1'`로 설정 가능
 
