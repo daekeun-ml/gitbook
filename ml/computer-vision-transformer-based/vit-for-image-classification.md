@@ -9,8 +9,9 @@ description: 'An Image is Worth 16x16 Words: Transformers for Image Recognition 
 ### CNN 기반 모델의 한계
 
 * Inductive bias
+  * From wikipedia: The **inductive bias** \(also known as **learning bias**\) of a learning algorithm is the set of assumptions that the learner uses to predict outputs of given inputs that it has not encountered.
 * Conv 필터의 weight 사이즈는 고정된 사이즈로 필터 영역 밖에 있는 픽셀을 참조할 수 없음.
-* weight는 학습 이후 고정되기 때문에,  테스트 데이터의 분포가 학습 데이터와 다르다면 성능이 저하될 가능성이 높음 \(weight를 adaptive하게 수정할 수 없기 때문에\)
+* weight는 학습 이후 고정되기 때문에,  테스트 데이터의 분포가 학습 데이터와 다르다면 성능이 저하될 가능성이 높음. \(weight를 adaptive하게 수정할 수 없기 때문에\)
 * Transformer 기반의 네트워크는 상기 이슈들에 대해 강건하기 때문에 Transformer를 비전에 접목하려는 연구가 활발히 이루어짐.
 
 ### Local Self-attention
@@ -24,7 +25,7 @@ description: 'An Image is Worth 16x16 Words: Transformers for Image Recognition 
 
 ![](../../.gitbook/assets/image-transformer%20%281%29.png)
 
-* 실험 결과, baseline보다 조금 더 낮은 Negative log-likelihood를 보
+* 실험 결과, baseline보다 조금 더 낮은 Negative log-likelihood를 보임.
   *  3.83 vs 3.77
 
 #### Stand-Alone Self-Attention in Vision Models \([https://arxiv.org/pdf/1906.05909.pdf](https://arxiv.org/pdf/1906.05909.pdf)\)
@@ -40,7 +41,7 @@ $$
 y_{ij} = \sum_{a,b \in \mathcal{N}_ k(i,j)} \text{softmax}_{ab}(q^T_{ij}k_{ab} + q^T_{ij}r_{a-i,b-j})v_{ab}
 $$
 
-* 실험 결과, 12% 적은 FLOPS와 29% 적은 파라메터로 ResNet보다 살짝 좋은 성능을 보임
+* 실험 결과, 12% 적은 FLOPS와 29% 적은 파라메터로 ResNet보다 살짝 좋은 성능을 보임.
   * Top 1 Accuracy: 76.9%\(baseline\), 77.4%\(conv-stem + attention\), 77.6%\(Full attention\)
 
 ![](../../.gitbook/assets/standalone-selfattention.png)
@@ -55,7 +56,7 @@ $$
   * Squeeze에서는 Conv layer의 각 채널에 대한 피쳐들을 global average pooling으로 집계하여 global 정보 수집
   * Excitation: 각 채널의 가중치 산출로 Attention
   * 2017 ImageNet Contest에서 우
-* Conv layer multi-head self-attention layer를 결
+* Conv layer multi-head self-attention layer를 같이 사
   * CNN의 translation equivariance를 유지하면서 전역적인 정보를 같이 고려하기 위한 목
 
 ![](../../.gitbook/assets/attention-augmented-conv.png)
@@ -67,7 +68,7 @@ $$
 ### Overview
 
 * Convolution 미사용 \(단, 실제 구현에서는 계산 효율성을 위해 Conv 사용\)
-* Transformer Encoder \(BERT\) 구조와 대부분 유사하며, 입력 데이터
+* Transformer Encoder \(BERT\) 구조와 대부분 유사하며, sequence 토큰을 입력 데이터의 patch로 대
 * Big Transfer\(BiT\)에 비해 계산 비용은 1/15이면서, SOTA 달성
 
 ![](../../.gitbook/assets/vit-overview.png)
@@ -92,11 +93,11 @@ $$
 
 * Transformer 인코더
   * LayerNorm\(LN\) - Multi-head Self-Attention\(MSA\)을 인코더의 각 블록에 적용하고 residual connection을 합산
-  * LN - MLP와 residual connection 적용. MLP는 FCN-GELU-FCN으로 구성되어 있
+  * LN - MLP와 residual connection 적용. MLP는 FCN-GELU-FCN으로 구성되어 있.
 
 ### Pre-training
 
-* 입력 이미지를 16x16 패치로 분할 후 flatten하여 각 패치를 단어처럼 다룸
+* 입력 이미지를 16x16 패치로 분할 후 flatten하여 각 패치를 단어처럼 다룸.
 * Flatten된 패치에서 linear embedding 수행
 * Positional Embedding 가산
 * Sequence를 Transformer 인코더에 피드
@@ -137,7 +138,7 @@ $$
 
 * Google Research의 공식 구현\(TensorFlow\): [https://github.com/google-research/vision\_transformer](https://github.com/google-research/vision_transformer)
 * 스터디 목적으로 적합한 구현\(PyTorch, 추천\): [https://github.com/FrancescoSaverioZuppichini/ViT](https://github.com/FrancescoSaverioZuppichini/ViT)
-* 
+
 ```python
 class PatchEmbedding(nn.Module):
     def __init__(self, in_channels: int = 3, patch_size: int = 16, emb_size: int = 768, img_size: int = 224):
