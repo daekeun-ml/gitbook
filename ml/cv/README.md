@@ -1,2 +1,2 @@
-# Computer Vision
+# Computer Vision \(CNN-based\)
 
