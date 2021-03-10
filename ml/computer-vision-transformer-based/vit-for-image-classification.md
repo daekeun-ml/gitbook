@@ -117,7 +117,7 @@ $$
 
 ### Accuracy
 
-* pre-training 시에 대용량 데이터셋이 필요해서 학습 시간이 느리다는 단점이 있지만, Transformer 구조만으로 SOTA 달
+* pre-training 시에 대용량 데이터셋이 필요해서 학습 시간이 느리다는 단점이 있지만, Transformer 구조만으로 SOTA 달성
 
 
 
@@ -180,5 +180,6 @@ PatchEmbedding()(x).shape
 * Movie Clip
   * [https://www.youtube.com/watch?v=WsQLdu2JMgI](https://www.youtube.com/watch?v=WsQLdu2JMgI)
 * Implementation
-  * d
+  * [https://github.com/google-research/vision\_transformer](https://github.com/google-research/vision_transformer)
+  * [https://github.com/FrancescoSaverioZuppichini/ViT](https://github.com/FrancescoSaverioZuppichini/ViT)
 
