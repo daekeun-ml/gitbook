@@ -37,7 +37,7 @@ $$
 
 ### Temperature
 
-* 더 많은 knowledge를 전달하기 위한 방법으로 Temperature\(T\)가 높을 수록 더 soft한 확률분포를 얻을 수 있음  \(T = 1일 때, Softmax 동일\); $$\begin{align} p_i = \frac {\exp(\frac{z_i}{T})} {\sum_{j} \exp(\frac{z_j}{T})} \end{align}$$ 
+* 더 많은 knowledge를 전달하기 위한 방법으로 Temperature\(T\)가 높을 수록 더 soft한 확률분포를 얻을 수 있음  \(T = 1일 때, Softmax와 동일\); $$\begin{align} p_i = \frac {\exp(\frac{z_i}{T})} {\sum_{j} \exp(\frac{z_j}{T})} \end{align}$$ 
 
 
 
@@ -87,11 +87,11 @@ $$
 
 ![](../../.gitbook/assets/deit-experiment2.png)
 
-* Hard distillation 전반적으로 좋고, class token과 distillation token을 동시 사용하는 것이 성능이 좀 더 음
+* Hard distillation 전반적으로 좋고, class token과 distillation token을 동시 사용하는 것이 성능이 좀 더 좋음
 
 ![](../../.gitbook/assets/deit-experiment3%20%281%29.png)
 
-Distillation 모델이 CNN 모델보다 좀 더 연관성이 높음 &gt; Convnet의 inductive bias가 잘 전달됨을 알 수 있
+Distillation 모델이 CNN 모델보다 좀 더 연관성이 높음 &gt; Convnet의 inductive bias가 잘 전달됨을 알 수 있음
 
 ![](../../.gitbook/assets/deit-experiment4.png)
 
@@ -111,8 +111,3 @@ Distillation 모델이 CNN 모델보다 좀 더 연관성이 높음 &gt; Convnet
   * PR-297: [https://www.youtube.com/watch?v=DjEvzeiWBTo](https://www.youtube.com/watch?v=DjEvzeiWBTo)
 * Implementation
   * [https://github.com/facebookresearch/deit](https://github.com/facebookresearch/deit)
-* 
-
-
-
-
