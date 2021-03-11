@@ -472,7 +472,7 @@ Overfitting occurs from the 4th epoch usually because the validation metrics are
 
 Even training only 1 epoch shows **88% accuracy,** so we will convert it to the SageMaker for hands-on lab in the future.
 
-![](../../.gitbook/assets/kobert-evaluation-df.png)
+![](../../.gitbook/assets/kobert-evaluation-df%20%281%29.png)
 
 ![](../../.gitbook/assets/kobert-evaluation%20%281%29.png)
 

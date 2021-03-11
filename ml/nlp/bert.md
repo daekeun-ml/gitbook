@@ -36,19 +36,19 @@ description: 'Background과 개념 위주로 간단히 요약, 자세한 내용�
 
 ### Example
 
-![](../../.gitbook/assets/untitled%20%2811%29.png)
+![](../../.gitbook/assets/untitled%20%283%29%20%281%29.png)
 
 ### **Iter 0**
 
-* ![](../../.gitbook/assets/iter0-1.png) ![](../../.gitbook/assets/iter0-2.png) ![](../../.gitbook/assets/iter0-3.png) ![](../../.gitbook/assets/iter0-4.png) 
+* ![](../../.gitbook/assets/untitled-1%20%2811%29%20%281%29.png) ![](../../.gitbook/assets/untitled-2%20%288%29%20%282%29.png) ![](../../.gitbook/assets/untitled-3%20%289%29%20%281%29.png) ![](../../.gitbook/assets/untitled-4%20%285%29%20%282%29.png) 
 
 ### **Iter 1**
 
-* ![](../../.gitbook/assets/iter1-1.png) ![](../../.gitbook/assets/untitled-6%20%284%29.png)![](../../.gitbook/assets/untitled-7%20%283%29.png) 
+* ![](../../.gitbook/assets/iter1-1%20%282%29.png) ![](../../.gitbook/assets/untitled-6%20%284%29%20%281%29.png)![](../../.gitbook/assets/untitled-7%20%283%29%20%281%29.png) 
 
 ### Iter 2
 
-* ![](../../.gitbook/assets/iter2-1.png) ![](../../.gitbook/assets/iter2-2.png) ![](../../.gitbook/assets/iter2-3.png) 
+* ![](../../.gitbook/assets/iter2-1.png) ![](../../.gitbook/assets/iter2-2.png) ![](../../.gitbook/assets/iter2-3%20%282%29.png) 
 
 ## 3. Training Task
 
@@ -67,7 +67,7 @@ Pre-training 시에는 Masked Language Model\(MLM\)의 loss와 Next Sentence Pre
 
 * NLI\(Natural Language Inference\), QA\(Question Answering\)의 파인튜닝을 위해 마스크된 단어를 맞추는 태스크 \(MLM만으로는 충분하지 않음\)
 
-![](../../.gitbook/assets/untitled-11%20%281%29.png)
+![](../../.gitbook/assets/untitled-11%20%281%29%20%281%29.png)
 
 * 두 문장을 사전 학습시에 같이 넣어줘서 두 문장이 연관된 문장인지, 연관되지 않은 문장인지 맞추게 함 \(IsNext, NotNext 여부 학습\)
 * 두번째 문장은 corpus의 다음 문장을 50% 확률로 랜덤하게 가져옴
@@ -140,11 +140,11 @@ Pre-training 시에는 Masked Language Model\(MLM\)의 loss와 Next Sentence Pre
 * 1 batch는 Token A, Token B로 이루어져 있어야 함
 * max sequence length=16이라고 가정할 때, target sequence length = \(16-3\) = 13 \(`[CLS]` , `[SEP]`, `[SEP]` 토큰이 필요하므로\)
 
-![](../../.gitbook/assets/untitled-14.png)
+![](../../.gitbook/assets/untitled-14%20%281%29.png)
 
 * 실제 문장 순서대로 정의 시 Token A와 Token B에 들어갈 문장은 random하게 선택 \(예; Sent1만 Token A에 들어갈 수 있거나, Sent1 & Sent2가 Token A, Sent3이 Token B에 들어갈 수 있음\)
 
-![](../../.gitbook/assets/untitled-15.png)
+![](../../.gitbook/assets/untitled-15%20%281%29.png)
 
 * 만약 random index가 2라면 Sent2까지 Token A이고 Sent3은 Token B로
 
@@ -165,9 +165,9 @@ Pre-training 시에는 Masked Language Model\(MLM\)의 loss와 Next Sentence Pre
   * Mask 토큰에 해당하는 위치를 placeholder로 저장
   * 최대 mask length는 하이퍼파라메터로 지정
 
-![](../../.gitbook/assets/untitled-18.png)
+![](../../.gitbook/assets/untitled-18%20%281%29.png)
 
-![](../../.gitbook/assets/untitled-19%20%281%29.png)
+![](../../.gitbook/assets/untitled-19%20%281%29%20%281%29.png)
 
 ### Masking
 
@@ -177,7 +177,7 @@ Key masking만 사용 \(Transformer는 Query masking, Key masking 둘 다 사옹
 
 ### **Mask Language Model** Loss 계산
 
-![](../../.gitbook/assets/untitled-22%20%281%29.png)
+![](../../.gitbook/assets/untitled-22%20%281%29%20%281%29.png)
 
 ![](../../.gitbook/assets/untitled-23.png)
 

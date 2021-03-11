@@ -44,4 +44,3 @@
 |  | [AWS Seoul Summit 2020 - AWS 스마트 팩토리](https://www.youtube.com/watch?v=R0sMMphzOhw) |
 |  | [AWS Builders 300 - KoBERT Fine-tuning on AWS](https://attendee.gotowebinar.com/recording/6067766376359184398) |
 
-

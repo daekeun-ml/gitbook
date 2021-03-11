@@ -54,7 +54,7 @@ Please let me know if you want to access the bucket because I did not grant any 
 
   * \[Optional\] For your convenience, use symbolic link such that:
 
-![](../../.gitbook/assets/symbolic.png)
+![](../../.gitbook/assets/_2019-10-01__8.45.01%20%282%29.png)
 
 * \[Important Step\] You need to install OpenCV also. \(Both 3.x and 4.x work well\). If you do not install OpenCV, then you cannot convert ImageNet raw data to RecordIO files since `im2rec.py` utilizes some OpenCV functions. You may refer to [https://www.pyimagesearch.com/2018/08/15/how-to-install-opencv-4-on-ubuntu/](https://www.pyimagesearch.com/2018/08/15/how-to-install-opencv-4-on-ubuntu/).
 * \[Caution\] I strongly recommend to use Python2 instead of Python3 because many codes of Tensorflow models repository does not work on Python3. Please refer to [https://stackoverflow.com/questions/38546672/inception-build-imagenet-data-py-typeerror-rgb-has-type-class-str-but-ex](https://stackoverflow.com/questions/38546672/inception-build-imagenet-data-py-typeerror-rgb-has-type-class-str-but-ex).
@@ -126,7 +126,7 @@ Please note that ImageNet server is sometimes unstable so download speed is not 
     $ tar xzf ILSVRC2012_bbox_train_v2.tar.gz
   ```
 
-![](../../.gitbook/assets/_2019-10-01__9.02.11%20%281%29.png)
+![](../../.gitbook/assets/_2019-10-01__9.02.11%20%281%29%20%281%29.png)
 
 ### Data Transformation
 
@@ -159,7 +159,7 @@ Please note that ImageNet server is sometimes unstable so download speed is not 
 * Please refer to the website for the remaining steps; [https://docs.aws.amazon.com/dlami/latest/devguide/tutorial-horovod-tensorflow.html](https://docs.aws.amazon.com/dlami/latest/devguide/tutorial-horovod-tensorflow.html). Note that all code and all feature sets\(TFRecord and RecordIO\) must be on the same path on each server.
 * After training, please check the training log and evaluation log by checking `imagenet_resnet` folder:
 
-![](../../.gitbook/assets/_2019-10-01__10.23.12%20%281%29.png)
+![](../../.gitbook/assets/_2019-10-01__10.23.12%20%281%29%20%281%29.png)
 
 * vd\_train\_log \(32 GPUS; 4 p3dn.24xlarge instances\)
 
@@ -193,7 +193,7 @@ Please note that ImageNet server is sometimes unstable so download speed is not 
 
 * eval\_hvd\_train.log \(64 GPUS; 8 p3dn.24xlarge instances\)
 
-![](../../.gitbook/assets/_2019-10-01__10.25.25%20%281%29.png)
+![](../../.gitbook/assets/_2019-10-01__10.25.25%20%281%29%20%281%29.png)
 
 ## References
 

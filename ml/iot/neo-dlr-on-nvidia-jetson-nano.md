@@ -102,7 +102,7 @@ optimized_ic = ic.compile_model(target_instance_family='jetson_nano',
 
 * Option 2: SageMaker UI에서 직접 컴파일
 
-![](../../.gitbook/assets/2020-04-14__4.10.35_-1-.png)
+![](../../.gitbook/assets/_2020-04-14__4.10.35_-1-.png)
 
 s3에 저장된 모델 아티팩트\(예: model-jetson\_nano.tar.gz\)를 jetson\_nano로 복사
 
@@ -159,9 +159,9 @@ pred_class = probs[0].argmax()
 print(pred_class)
 ```
 
-![](../../.gitbook/assets/screenshot_from_2020-04-14_14-17-27_-1-.png)
+![](../../.gitbook/assets/screenshot_from_2020-04-14_14-17-27_-1-%20%282%29.png)
 
-![](../../.gitbook/assets/2_-1-.png)
+![](../../.gitbook/assets/2_-1-%20%281%29.png)
 
 \[Note1\] 정답 레이블은 **55**가 되어야 하지만, epoch 횟수가 적고 0-255 스케일의 데이터가 아닌 z-normalized된 데이터를 Input으로 넣어서 결과가 제대로 안 나옴. 이는 epoch 횟수를 30회 정도로 조정하고 optimizer를 adam으로 지정 후, 0-255 스케일의 데이터를 그대로 넣으면 정확도가 많이 향상됨. \(단, Neo 컴파일 전/후 결과는 약간 다름\)
 

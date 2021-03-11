@@ -202,7 +202,7 @@ MovileNetV3-Small
 
 MobileNetV3-Large
 
-![](../../.gitbook/assets/mobilenetv3-large.png)
+![](../../.gitbook/assets/_2020-07-20__9.07.36%20%281%29.png)
 
 * 하이퍼파라메터
   * RMSProp Optimizer with 0.9 momentum

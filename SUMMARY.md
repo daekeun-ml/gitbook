@@ -32,6 +32,7 @@
   * [Data Augmentation Tips](ml/cv/data-augmentation-tips.md)
 * [Computer Vision \(Transformer-based\)](ml/computer-vision-transformer-based/README.md)
   * [ViT for Image Classification](ml/computer-vision-transformer-based/vit-for-image-classification.md)
+  * [DeiT\(Training Data-efficient Image Transformers & Distillation through Attention\)](ml/computer-vision-transformer-based/deit-training-data-efficient-image-transformers-and-distillation-through-attention.md)
 * [Natural Language Processing](ml/nlp/README.md)
   * [QRNN\(Quasi-Recurrent Neural Network\)](ml/nlp/qrnn.md)
   * [Transformer is All You Need](ml/nlp/transformer.md)

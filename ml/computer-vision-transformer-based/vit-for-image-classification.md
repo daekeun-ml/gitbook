@@ -26,7 +26,7 @@ description: 'An Image is Worth 16x16 Words: Transformers for Image Recognition 
 ![](../../.gitbook/assets/image-transformer%20%281%29.png)
 
 * 실험 결과, baseline보다 조금 더 낮은 Negative log-likelihood를 보임.
-  *  3.83 vs 3.77
+  * 3.83 vs 3.77
 
 #### Stand-Alone Self-Attention in Vision Models \([https://arxiv.org/pdf/1906.05909.pdf](https://arxiv.org/pdf/1906.05909.pdf)\)
 
@@ -78,7 +78,7 @@ $$
 $$
 
 * 입력 이미지 $$\mathbf{x} \in \mathbb{R}^{H \times W \times C}$$는  $$\mathbf{x}_p \in \mathbb{R}^{N \times (P^2 \cdot C)}$$의 패치\(patch\)로 분할됨. $$N$$은 이미지 패치의 개수로 입력 sequence 길이로 간주됨.
-* $$\mathbf{x}_p $$는 embedding 파라메터$$\mathbf{E} \in \mathbb{R}^{(P^2 \cdot C) \times D}$$을 통해 $$D$$ dimension으로 선형 변환됨. 이 때 이미지의 클래스 정보를 첫번째 위치에 concatenate하므로 실제 dimension은 $$\mathbf{z}_0 \in \mathbb{R}^{(N + 1) \times D}$$
+* $$\mathbf{x}_p$$는 embedding 파라메터$$\mathbf{E} \in \mathbb{R}^{(P^2 \cdot C) \times D}$$을 통해 $$D$$ dimension으로 선형 변환됨. 이 때 이미지의 클래스 정보를 첫번째 위치에 concatenate하므로 실제 dimension은 $$\mathbf{z}_0 \in \mathbb{R}^{(N + 1) \times D}$$
 * $$\mathbf{z}_0$$는 Transformer 인코더에 피드되어 계산 수행
 
 $$
@@ -120,11 +120,7 @@ $$
 
 * pre-training 시에 대용량 데이터셋이 필요해서 학습 시간이 느리다는 단점이 있지만, Transformer 구조만으로 SOTA 달성
 
-
-
 ![](../../.gitbook/assets/vit-experiment1.png)
-
-
 
 ### Inspecting ViT
 
@@ -144,13 +140,13 @@ class PatchEmbedding(nn.Module):
     def __init__(self, in_channels: int = 3, patch_size: int = 16, emb_size: int = 768, img_size: int = 224):
         self.patch_size = patch_size
         super().__init__()
-        
+
         #self.projection = nn.Sequential(
         #    # break-down the image in s1 x s2 patches and flat them
         #    Rearrange('b c (h s1) (w s2) -> b (h w) (s1 s2 c)', s1=patch_size, s2=patch_size),
         #    nn.Linear(patch_size * patch_size * in_channels, emb_size)
         #)        
-        
+
         self.projection = nn.Sequential(
             # using a conv layer instead of a linear one -> performance gains
             nn.Conv2d(in_channels, emb_size, kernel_size=patch_size, stride=patch_size),
@@ -158,7 +154,7 @@ class PatchEmbedding(nn.Module):
         )
         self.cls_token = nn.Parameter(torch.randn(1,1, emb_size))
         self.positions = nn.Parameter(torch.randn((img_size // patch_size) **2 + 1, emb_size))
-        
+
     def forward(self, x: Tensor) -> Tensor:
         b, _, _, _ = x.shape
         x = self.projection(x)
@@ -168,7 +164,7 @@ class PatchEmbedding(nn.Module):
         # add position embedding
         x += self.positions
         return x
-    
+
 PatchEmbedding()(x).shape
 ```
 
@@ -179,7 +175,7 @@ PatchEmbedding()(x).shape
 * Blog
   * Google AI Blog: [https://ai.googleblog.com/2020/12/transformers-for-image-recognition-at.html](https://ai.googleblog.com/2020/12/transformers-for-image-recognition-at.html)
 * Movie Clip
-  * [https://www.youtube.com/watch?v=WsQLdu2JMgI](https://www.youtube.com/watch?v=WsQLdu2JMgI)
+  * PR-281: [https://www.youtube.com/watch?v=D72\_Cn-XV1g](https://www.youtube.com/watch?v=D72_Cn-XV1g)
 * Implementation
   * [https://github.com/google-research/vision\_transformer](https://github.com/google-research/vision_transformer)
   * [https://github.com/FrancescoSaverioZuppichini/ViT](https://github.com/FrancescoSaverioZuppichini/ViT)
