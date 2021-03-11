@@ -10,7 +10,7 @@
 * Parallel Processing: GBDT에 기반하고 있지만, GBDT과 달리 병렬 처리가 가능하여 수행 시간이 훨씬 빠름 \(LightGBM보다는 느림\)
 * Robust to Overfitting: Greedy 알고리즘을 사용하여 가지치기\(pruning\)를 수행하고 early stopping 기능을 지원하기 때문에 과적합이 잘 일어나지 않음
 * Cost Function: Cost Function에 대해 1차, 2차 도함수 정보를 모두 사용
-* Regularization: Decision Tree 구성 시 Regularization Term을 추가하여 overfitting 방
+* Regularization: Decision Tree 구성 시 Regularization Term을 추가하여 overfitting 방지
 * Flexible Loss function: 사용자 정의 Loss function을 원하는 대로 정의할 수 있음
 * Sparsity aware: Missing Value에 대해서 자체적으로 처리함
 

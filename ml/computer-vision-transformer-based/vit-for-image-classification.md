@@ -21,7 +21,7 @@ description: 'An Image is Worth 16x16 Words: Transformers for Image Recognition 
 * 모든 픽셀을 사용하는 대신, 현재 픽셀의 인접 영역만 사용
 * Positional Encoding
   * 1D attention: raster-scan order \(상단 왼쪽부터 하단 오른쪽까지 순차적으로 스캐닝\) 
-  * 2D attention: 사각형 블록 내에서 raster-scan order 수
+  * 2D attention: 사각형 블록 내에서 raster-scan order 수행
 
 ![](../../.gitbook/assets/image-transformer%20%281%29.png)
 
@@ -31,7 +31,7 @@ description: 'An Image is Worth 16x16 Words: Transformers for Image Recognition 
 #### Stand-Alone Self-Attention in Vision Models \([https://arxiv.org/pdf/1906.05909.pdf](https://arxiv.org/pdf/1906.05909.pdf)\)
 
 * 기본적으로는 ResNet 구조를 사용하지만, Conv Layer들을 모두 Local Self-Attention Layer로 대체
-  * Vanilla Transformer에서 Scaling과 Mask Layer가 제외됨
+  * Vanilla Transformer에서 Scaling과 Mask Layer가 제외됨.
 * Positional Encoding을 위해 현재 픽셀 기준으로 상대 위치\(relative distance\) 정보 추가 \(Figure 4.\)
   * Recall: Vanilla Transformer는 sin 곡선
   * $$a-i$$는 row offset, $$b-j$$는 column offset
@@ -52,12 +52,12 @@ $$
 
 * SENet과 유
 * Recall: SENet\(Squeeze-and-Excitation\) 
-  * Channel과 spatial 정보를 분리하여 연
+  * Channel과 spatial 정보를 분리하여 연산
   * Squeeze에서는 Conv layer의 각 채널에 대한 피쳐들을 global average pooling으로 집계하여 global 정보 수집
   * Excitation: 각 채널의 가중치 산출로 Attention
-  * 2017 ImageNet Contest에서 우
-* Conv layer multi-head self-attention layer를 같이 사
-  * CNN의 translation equivariance를 유지하면서 전역적인 정보를 같이 고려하기 위한 목
+  * 2017 ImageNet Contest에서 우승
+* Conv layer multi-head self-attention layer를 같이 사용
+  * CNN의 translation equivariance를 유지하면서 전역적인 정보를 같이 고려하기 위한 목적
 
 ![](../../.gitbook/assets/attention-augmented-conv.png)
 
