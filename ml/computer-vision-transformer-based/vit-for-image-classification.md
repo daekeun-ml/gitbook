@@ -68,7 +68,7 @@ $$
 ### Overview
 
 * Convolution 미사용 \(단, 실제 구현에서는 계산 효율성을 위해 Conv 사용\)
-* Transformer Encoder \(BERT\) 구조와 대부분 유사하며, sequence 토큰을 입력 데이터의 patch로 대
+* Transformer Encoder \(BERT\) 구조와 대부분 유사하며, sequence 토큰을 입력 데이터의 patch로 대체
 * Big Transfer\(BiT\)에 비해 계산 비용은 1/15이면서, SOTA 달성
 
 ![](../../.gitbook/assets/vit-overview.png)
@@ -93,7 +93,7 @@ $$
 
 * Transformer 인코더
   * LayerNorm\(LN\) - Multi-head Self-Attention\(MSA\)을 인코더의 각 블록에 적용하고 residual connection을 합산
-  * LN - MLP와 residual connection 적용. MLP는 FCN-GELU-FCN으로 구성되어 있.
+  * LN - MLP와 residual connection 적용. MLP는 FCN-GELU-FCN으로 구성되어 있음.
 
 ### Pre-training
 

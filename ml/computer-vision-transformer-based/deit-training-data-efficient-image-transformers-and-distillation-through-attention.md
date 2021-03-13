@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-* Knowledge Distillation 기법을 적용하여 초용량 데이터셋으로 pre-training하는 과정 없이 높은 성능 달성
+* Knowledge Distillation 기법을 적용하여 대용량 데이터셋으로 pre-training하는 과정 없이 높은 성능 달성
 * 대부분의 구조는 ViT와 동일하며, data augmentation, regularization 등 다양한 기법들을 적용하고 기존의 class token에 distillation token을 추가하여 학습
 
 ## 2. Knowledge Distillation
@@ -46,7 +46,7 @@ $$
 
 ## 3.  Model Architecture
 
-* 기본적인 형태는 ViT와 동일하며, KD를 위한 distillation token을 추
+* 기본적인 형태는 ViT와 동일하며, KD를 위한 distillation token을 추출
 * class token과 distillation token의 코사인 유사도는 0.06이나 embedding을 수행 후 class embedding과  distillation embedding의 코사인 유사도를 계산하면 0.93
 * class embedding과 distillation embedding을 concatenate하거나 합산하는 방법\(late fusion\)이 가능
 
@@ -61,16 +61,16 @@ $$
 * DeiT-B: baseline model; D = 768, h = 12, d = D/h = 64
 * BeiT-B 384: 384x384 해상도로 파인튜닝 수행
 * DeiT\(증류수 모양\): DeiT w/ distillation
-* DeiT-S\(Small\), DeiT-Ti\(Tiny\): DeiT의 경량화 버
+* DeiT-S\(Small\), DeiT-Ti\(Tiny\): DeiT의 경량화 버전
 
 ![](../../.gitbook/assets/deit-experiment1.png)
 
 #### Settings
 
 * Transformer 기반 모델은 하이퍼파라메터 설정에 민감하므로 여러 가지 설정들을 조합하여 실험
-* Stochastic depth, Mixup, Cutmix, Repeated Augmentation, Random Augmentation 등 적
+* Stochastic depth, Mixup, Cutmix, Repeated Augmentation, Random Augmentation 등 적용
 * Repeated Augmentation\(RA\)
-  * 이미지 배치 $$B$$에서 $$\lceil |B|/m\rceil$$의 이미지들을 샘플링 후, 데이터를 $$m$$회 변환하여 늘
+  * 이미지 배치 $$B$$에서 $$\lceil |B|/m\rceil$$의 이미지들을 샘플링 후, 데이터를 $$m$$회 변환하여 늘림
   * 동일한 성격의 이미지들이 섞이므로, i.i.d scheme에 벗어나기에 Small Batch에서는 퍼포먼스가 저하되지만, Large Batch에서는 성능이 향상됨
 
 ![](../../.gitbook/assets/deit-hp%20%281%29.png)
