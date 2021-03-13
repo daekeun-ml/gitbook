@@ -39,22 +39,16 @@ $$
 
 * 더 많은 knowledge를 전달하기 위한 방법으로 Temperature\(T\)가 높을 수록 더 soft한 확률분포를 얻을 수 있음  \(T = 1일 때, Softmax와 동일\); $$\begin{align} p_i = \frac {\exp(\frac{z_i}{T})} {\sum_{j} \exp(\frac{z_j}{T})} \end{align}$$ 
 
-
-
 | T | Logits | Softmax Probs |
 | :--- | :--- | :--- |
 | 1 | \[30, 5, 2, 2\] | \[1.0000e+00, 1.3888e-11, 6.9144e-13, 6.9144e-13\] |
 | 10 | \[3, 0.5, 0.2, 0.2\] | \[0.8308, 0.0682, 0.0505, 0.0505\] |
-
-
 
 ## 3.  Model Architecture
 
 * 기본적인 형태는 ViT와 동일하며, KD를 위한 distillation token을 추
 * class token과 distillation token의 코사인 유사도는 0.06이나 embedding을 수행 후 class embedding과  distillation embedding의 코사인 유사도를 계산하면 0.93
 * class embedding과 distillation embedding을 concatenate하거나 합산하는 방법\(late fusion\)이 가능
-
-
 
 ![](../../.gitbook/assets/deit-model.png)
 
@@ -111,3 +105,4 @@ Distillation 모델이 CNN 모델보다 좀 더 연관성이 높음 &gt; Convnet
   * PR-297: [https://www.youtube.com/watch?v=DjEvzeiWBTo](https://www.youtube.com/watch?v=DjEvzeiWBTo)
 * Implementation
   * [https://github.com/facebookresearch/deit](https://github.com/facebookresearch/deit)
+

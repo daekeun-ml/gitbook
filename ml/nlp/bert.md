@@ -36,19 +36,19 @@ description: 'Background과 개념 위주로 간단히 요약, 자세한 내용�
 
 ### Example
 
-![](../../.gitbook/assets/untitled%20%283%29%20%281%29.png)
+![](../../.gitbook/assets/untitled%20%283%29%20%281%29%20%281%29.png)
 
 ### **Iter 0**
 
-* ![](../../.gitbook/assets/untitled-1%20%2811%29%20%281%29.png) ![](../../.gitbook/assets/untitled-2%20%288%29%20%282%29.png) ![](../../.gitbook/assets/untitled-3%20%289%29%20%281%29.png) ![](../../.gitbook/assets/untitled-4%20%285%29%20%282%29.png) 
+* ![](../../.gitbook/assets/untitled-1%20%2811%29%20%282%29%20%281%29.png) ![](../../.gitbook/assets/untitled-2%20%288%29%20%282%29%20%282%29.png) ![](../../.gitbook/assets/untitled-3%20%289%29%20%282%29%20%281%29.png) ![](../../.gitbook/assets/untitled-4%20%285%29%20%282%29%20%282%29.png) 
 
 ### **Iter 1**
 
-* ![](../../.gitbook/assets/iter1-1%20%282%29.png) ![](../../.gitbook/assets/untitled-6%20%284%29%20%281%29.png)![](../../.gitbook/assets/untitled-7%20%283%29%20%281%29.png) 
+* ![](../../.gitbook/assets/iter1-1%20%282%29%20%282%29.png) ![](../../.gitbook/assets/untitled-6%20%284%29%20%281%29.png)![](../../.gitbook/assets/untitled-7%20%283%29%20%281%29.png) 
 
 ### Iter 2
 
-* ![](../../.gitbook/assets/iter2-1.png) ![](../../.gitbook/assets/iter2-2.png) ![](../../.gitbook/assets/iter2-3%20%282%29.png) 
+* ![](../../.gitbook/assets/iter2-1%20%282%29.png) ![](../../.gitbook/assets/iter2-2%20%282%29.png) ![](../../.gitbook/assets/iter2-3%20%282%29%20%282%29.png) 
 
 ## 3. Training Task
 
@@ -140,7 +140,7 @@ Pre-training 시에는 Masked Language Model\(MLM\)의 loss와 Next Sentence Pre
 * 1 batch는 Token A, Token B로 이루어져 있어야 함
 * max sequence length=16이라고 가정할 때, target sequence length = \(16-3\) = 13 \(`[CLS]` , `[SEP]`, `[SEP]` 토큰이 필요하므로\)
 
-![](../../.gitbook/assets/untitled-14%20%281%29.png)
+![](../../.gitbook/assets/untitled-14%20%281%29%20%281%29.png)
 
 * 실제 문장 순서대로 정의 시 Token A와 Token B에 들어갈 문장은 random하게 선택 \(예; Sent1만 Token A에 들어갈 수 있거나, Sent1 & Sent2가 Token A, Sent3이 Token B에 들어갈 수 있음\)
 
