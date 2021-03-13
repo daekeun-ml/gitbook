@@ -30,16 +30,13 @@ description: End-to-End Object Detection with Transformers
   * N개의 고정된 크기의 object를 예측하기 위판 파라메터로 N은 이미지에 나오는 일반적인 object 수보다 충분히 크게 설정하며, 보통 100을 설정
 * FFN\(Shared Feed Forward Network\)을 통과시킨 예측값과 정답값 사이의 이분 매칭으로 적절한 매칭 set을 찾고, 객체별로 bounding box를 최적화하는 loss function 계산
   * N개의 예측 중 n &lt;= N개는 object에 대한 예측이고 N-n개의 예측은 no object에 대한 예측
-  * 각 예측은 클래스와 bounding box를 포함하는 tuple이며, 이분 매칭을 통해 인스턴스가 중복되지 않
+  * 각 예측은 클래스와 bounding box를 포함하는 tuple이며, 이분 매칭을 통해 인스턴스가 중복되지 않음
 
 ![](../../.gitbook/assets/detr-overview.png)
 
-* 이분 매칭을 통해 가장 매칭이 잘 되는 pair들을 찾고, 동일하거나 유사한 클래스에 대해서 bounding box 차이에 따른 loss를 줄이도록 학
+* 이분 매칭을 통해 가장 매칭이 잘 되는 pair들을 찾고, 동일하거나 유사한 클래스에 대해서 bounding box 차이에 따른 loss를 줄이도록 학습
 
 ![&#xCD9C;&#xCC98;: https://www.youtube.com/watch?v=hCWUTvVrG7E](../../.gitbook/assets/detr-matching%20%282%29.png)
-
-
-
 
 
 ![](../../.gitbook/assets/detr-model.png)
@@ -52,7 +49,7 @@ description: End-to-End Object Detection with Transformers
 
 #### Bipartite Matching Cost
 
-* Matching Cost를 최소화하는 bounding box들의 순서를 찾는 문제 \(Search for a permutation of N elements $${\sigma \in \beta_N}$$ w/ the lowest cost\)로 이분 매칭 탐
+* Matching Cost를 최소화하는 bounding box들의 순서를 찾는 문제 \(Search for a permutation of N elements $${\sigma \in \beta_N}$$ w/ the lowest cost\)로 이분 매칭 탐색
 
 $$
 \begin{equation}
@@ -71,7 +68,7 @@ $$
 
 * 상기 과정에서 매칭된 $$\sigma$$에 대 Hungarian loss로 모든 pair를 매칭
 * A linear combination of a negative log-likelihood for class prediction and a box loss:
-  * Log prob. term은 imbalanced class 분포를 고려하여 weighted cross entropy 적
+  * Log prob. term은 imbalanced class 분포를 고려하여 weighted cross entropy 적용
   * 또, 대부분의 클래스가 no object\($$\emptyset$$\)이기 때문에 발생하는 class imbalance 문제를 완화하기 위해 log probability term을 1/10로 감소
 * $$L_{box}$$는 L1 loss와 generalized IoU loss의 linear combination으로 small object와 large object의 오차가 비슷함에도 다른 scale을 가지게 되는 문제를 완화
 
@@ -95,7 +92,6 @@ $$
 
 ### Decoder
 
-* Decoder 또한 permutation-invariant이므로, 
 * N개의 object queries\(positional encoding과 동일한 의미이며, 처음에는 0으로 설정\) 초기 입력으로 받아 output embedding 생성
   * Decoder 또한 permutation-invariant이므로, object query 또 고유한 값이 들어가야 하고 이는 이미지 내 서로 다른 고유한 인스턴스를 생성하게 됨
 * 순차적으로 계산하는 것이 아니라 병렬적으로 N개의 결괏값을 병렬적으로 계산 후 이분 매칭 수행
@@ -113,10 +109,10 @@ $$
   * Scale augmentation으로 이미지 사이즈를 shortest side 기준으로 480~800px까지, longest side 기준으로 1333까지 리사이징
   * Random Crop augmentation 적용: AP 약 1 상승
   * Dropout 0.1 for Transformers
-* 16의 V100 GPU로 COCO dataset 300 epoch 학습 \(약 3일 소요\). minibatch 사이즈는 GPU 당 4장
+* 16의 V100 GPU로 COCO dataset 300 epoch 학습 \(약 3일 소요\). minibatch 사이즈는 GPU 당 4장 (minibatch = 64)
   * 이미지 당 평균 7개의 인스턴스이며, 최대 63개의 인스턴스. 저자는 인스턴스 개수 N = 100으로 설정 
 * 비교 대상은 500 epoch로 학습한\(400 epoch 후에 learning rate drop\) Faster RCNN
-  * +표시가 붙은 네트워크는 3배의 시간을 더 학
+  * +표시가 붙은 네트워크는 3배의 시간을 더 학습
 
 ### AP\(Average Precision\)
 
@@ -152,13 +148,11 @@ $$
 {% endtab %}
 {% endtabs %}
 
-
-
 ### DETR for Panoptic Segmentation
 
 * Panoptic Segmentation = Semantic Segmentation + Instance Segmentation
 * DETR의 output으로 출력된 인스턴스를 multi-head attention layer로 임베딩하여 attention map 산출. 이 때, DETR의 CNN backbone의 중간 feature들 FPN에서 사용하기 위해 별도로 저장
-*  Attention map과 CNN feature들 FPN\(Feature Pyramid Network\)-style CNN으로 들어가고, pixel-wise argmax로 segmentation map 산
+*  Attention map과 CNN feature들 FPN\(Feature Pyramid Network\)-style CNN으로 들어가고, pixel-wise argmax로 segmentation map 산출
 * Weight을 고정시키고, mask head를 25 epoch 학습
   * DICE/F-1 loss와 focal loss 사용
 * 2020년 5월 기준 SOTA인 UPSNet과 Panoptic FPN과 비교
@@ -167,7 +161,7 @@ $$
 
 ![](../../.gitbook/assets/detr-panoptic2.png)
 
-##  References
+## References
 
 * Paper
   * [https://arxiv.org/pdf/2005.12872.pdf](https://arxiv.org/pdf/2005.12872.pdf)
@@ -177,6 +171,3 @@ $$
 * Implementation
   * Official GitHub: [https://github.com/facebookresearch/detr](https://github.com/facebookresearch/detr)
   * [https://www.kaggle.com/tanulsingh077/end-to-end-object-detection-with-transformers-detr](https://www.kaggle.com/tanulsingh077/end-to-end-object-detection-with-transformers-detr)
-
-
-
