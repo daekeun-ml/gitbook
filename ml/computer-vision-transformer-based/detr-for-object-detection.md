@@ -38,7 +38,6 @@ description: End-to-End Object Detection with Transformers
 
 ![&#xCD9C;&#xCC98;: https://www.youtube.com/watch?v=hCWUTvVrG7E](../../.gitbook/assets/detr-matching%20%282%29.png)
 
-
 ![](../../.gitbook/assets/detr-model.png)
 
 * 주의: Spatial positional encoding 및 Object queries 매 layer마다 계속 사용 
@@ -109,7 +108,7 @@ $$
   * Scale augmentation으로 이미지 사이즈를 shortest side 기준으로 480~800px까지, longest side 기준으로 1333까지 리사이징
   * Random Crop augmentation 적용: AP 약 1 상승
   * Dropout 0.1 for Transformers
-* 16의 V100 GPU로 COCO dataset 300 epoch 학습 \(약 3일 소요\). minibatch 사이즈는 GPU 당 4장 (minibatch = 64)
+* 16의 V100 GPU로 COCO dataset 300 epoch 학습 \(약 3일 소요\). minibatch 사이즈는 GPU 당 4장 \(minibatch = 64\)
   * 이미지 당 평균 7개의 인스턴스이며, 최대 63개의 인스턴스. 저자는 인스턴스 개수 N = 100으로 설정 
 * 비교 대상은 500 epoch로 학습한\(400 epoch 후에 learning rate drop\) Faster RCNN
   * +표시가 붙은 네트워크는 3배의 시간을 더 학습
@@ -140,7 +139,7 @@ $$
 
 {% tabs %}
 {% tab title="기린 검출 결과" %}
-![](../../.gitbook/assets/detr-instance1%20%281%29.png)
+![](../../.gitbook/assets/detr-instance1%20%282%29.png)
 {% endtab %}
 
 {% tab title="인스턴스 개수에 따른 미검출 인스턴스" %}
@@ -152,7 +151,7 @@ $$
 
 * Panoptic Segmentation = Semantic Segmentation + Instance Segmentation
 * DETR의 output으로 출력된 인스턴스를 multi-head attention layer로 임베딩하여 attention map 산출. 이 때, DETR의 CNN backbone의 중간 feature들 FPN에서 사용하기 위해 별도로 저장
-*  Attention map과 CNN feature들 FPN\(Feature Pyramid Network\)-style CNN으로 들어가고, pixel-wise argmax로 segmentation map 산출
+* Attention map과 CNN feature들 FPN\(Feature Pyramid Network\)-style CNN으로 들어가고, pixel-wise argmax로 segmentation map 산출
 * Weight을 고정시키고, mask head를 25 epoch 학습
   * DICE/F-1 loss와 focal loss 사용
 * 2020년 5월 기준 SOTA인 UPSNet과 Panoptic FPN과 비교
@@ -171,3 +170,4 @@ $$
 * Implementation
   * Official GitHub: [https://github.com/facebookresearch/detr](https://github.com/facebookresearch/detr)
   * [https://www.kaggle.com/tanulsingh077/end-to-end-object-detection-with-transformers-detr](https://www.kaggle.com/tanulsingh077/end-to-end-object-detection-with-transformers-detr)
+
