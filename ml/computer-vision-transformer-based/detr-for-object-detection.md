@@ -25,7 +25,7 @@ description: End-to-End Object Detection with Transformers
 ### Architecture
 
 * CNN \(ResNet\) backbone을 통해 \(13, 13, 2048\) dimension feature map 생성 후, 1x1 convolution & flatten으로 \(13, 13, 256\) -&gt; \(169, 256\) 으로 reshaping
-* Flatten된 feature에 2D 벡터에도 적용 가능한 spatial positional encoding 정보를 가산하여 Transformer Encoder에 피
+* Flatten된 feature에 2D 벡터에도 적용 가능한 spatial positional encoding 정보를 가산하여 Transformer Encoder에 feeding
 * Transformer Decoder는 N개의 object queries과 encoder output을 input으로 받아 디코딩. 
   * N개의 고정된 크기의 object를 예측하기 위판 파라메터로 N은 이미지에 나오는 일반적인 object 수보다 충분히 크게 설정하며, 보통 100을 설정
 * FFN\(Shared Feed Forward Network\)을 통과시킨 예측값과 정답값 사이의 이분 매칭으로 적절한 매칭 set을 찾고, 객체별로 bounding box를 최적화하는 loss function 계산
@@ -93,7 +93,7 @@ $$
 
 * N개의 object queries\(positional encoding과 동일한 의미이며, 처음에는 0으로 설정\) 초기 입력으로 받아 output embedding 생성
   * Decoder 또한 permutation-invariant이므로, object query 또 고유한 값이 들어가야 하고 이는 이미지 내 서로 다른 고유한 인스턴스를 생성하게 됨
-* 순차적으로 계산하는 것이 아니라 병렬적으로 N개의 결괏값을 병렬적으로 계산 후 이분 매칭 수행
+* 순차적으로 계산하는 것이 아니라 N개의 결괏값을 병렬적으로 계산 후 이분 매칭 수행
   * object의 순서는 상관이 없으며 matching loss function이 ground truth와 예측값의 1:1 매칭을 수행하므로 Original Transformer와 달리 병렬적으로 계산
 * Attention map을 시각화해보면 각 인스턴스의 edge 부분의 attention score값이 높게 형성됨. --&gt; 겹치는 object들에 대해서 기존 방법들에 비해 상대적으로 강건
 
@@ -108,7 +108,7 @@ $$
   * Scale augmentation으로 이미지 사이즈를 shortest side 기준으로 480~800px까지, longest side 기준으로 1333까지 리사이징
   * Random Crop augmentation 적용: AP 약 1 상승
   * Dropout 0.1 for Transformers
-* 16의 V100 GPU로 COCO dataset 300 epoch 학습 \(약 3일 소요\). minibatch 사이즈는 GPU 당 4장 \(minibatch = 64\)
+* 16개의 V100 GPU로 COCO dataset 300 epoch 학습 \(약 3일 소요\). minibatch 사이즈는 GPU 당 4장 \(minibatch = 64\)
   * 이미지 당 평균 7개의 인스턴스이며, 최대 63개의 인스턴스. 저자는 인스턴스 개수 N = 100으로 설정 
 * 비교 대상은 500 epoch로 학습한\(400 epoch 후에 learning rate drop\) Faster RCNN
   * +표시가 붙은 네트워크는 3배의 시간을 더 학습
