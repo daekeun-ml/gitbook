@@ -80,7 +80,7 @@ $$
   * 이미지 배치 $$B$$에서 $$\lceil |B|/m\rceil$$의 이미지들을 샘플링 후, 데이터를 $$m$$회 변환하여 늘림
   * 동일한 성격의 이미지들이 섞이므로, i.i.d scheme에 벗어나기에 Small Batch에서는 퍼포먼스가 저하되지만, Large Batch에서는 성능이 향상됨
 
-![](../../.gitbook/assets/deit-hp%20%281%29.png)
+![](../../.gitbook/assets/deit-hp%20%282%29%20%281%29%20%282%29.png)
 
 ### Performance
 

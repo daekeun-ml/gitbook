@@ -13,7 +13,7 @@
 * Flask 대비 다양한 버전의 모델을 관리하는 측면 및 logging & 지표 확인 측면의 ML 편의성이 좋음.
   * Logging: [https://github.com/awslabs/multi-model-server/blob/master/docs/logging.md](https://github.com/awslabs/multi-model-server/blob/master/docs/logging.md)
   * Metric: [https://github.com/awslabs/multi-model-server/blob/master/docs/metrics.md](https://github.com/awslabs/multi-model-server/blob/master/docs/metrics.md)
-* 추론용 서버의 CPU가 메모리가 충분할 때 다양한 모델을 하나의 엔드포인트에 배포할 수 있는 기능 내장; Multi-Model Endpoint 사용 가능
+* 추론용 서버의 CPU가 메모리가 충분할 때 다양한 모델을 하나의 엔드포인트에 배포할 수 있는 기능 내장; **Multi-Model Endpoint 사용 가능**
 
 ![](../../.gitbook/assets/_2020-08-13__7.04.06.png)
 
@@ -216,7 +216,7 @@
 
 #### Horizontal scaling
 
-* AutoScaling 기능을 사용하여 사전 정의된 Cloudwatch 지표 중 InvocationsPerInstance 지표를 기반으로 scale-out/in을 수행할 수 있음.
+* AutoScaling 기능을 사용하여 사전 정의된 CloudWatch 지표 중 InvocationsPerInstance 지표를 기반으로 scale-out/in을 수행할 수 있음.
 
 #### Vertical scaling
 
@@ -404,7 +404,7 @@ class HandlerService(DefaultHandlerService):
         super().initialize(context)
 ```
 
-#### Method 2. MMS 템플릿의 Custom Service 파일 구현
+#### Method 2. MMS 템플릿의 Custom Service 파일 구
 
 * [https://github.com/awslabs/multi-model-server/blob/master/docs/custom\_service.md](https://github.com/awslabs/multi-model-server/blob/master/docs/custom_service.md) 참조
 * SageMaker inference toolkit 클래스를 상속받지 않고 자체 커스텀 서비스 구현
@@ -416,6 +416,8 @@ class HandlerService(DefaultHandlerService):
   * 따라서, 만약 multi-GPU를 최대한 활용하고 싶으면 Custom Transformer class를 생성 후, context를 `model_fn()` 모듈에 전달할 수 있게 수정해야 함 \(예: model\_server\_workers = 4일 때, 각 worker마다 각자 다른 GPU로 처리\)
 
 ```python
+# model_handler.py
+
 import logging
 
 class ModelHandler(object):
@@ -437,6 +439,8 @@ class ModelHandler(object):
         self._context = context
         self._batch_size = context.system_properties["batch_size"]
         self.initialized = True
+        
+        ### TODO: LOAD YOUR MODEL 
 
     def preprocess(self, batch):
         """
@@ -486,6 +490,40 @@ def handle(data, context):
         return None
 
     return _service.handle(data, context)
+```
+
+#### Docker Entrypoint 정의 예
+
+```python
+# dockerd-entrypoint.py 예
+
+import subprocess
+import sys
+import shlex
+import os
+from retrying import retry
+from subprocess import CalledProcessError
+from sagemaker_inference import model_server
+
+def _retry_if_error(exception):
+    return isinstance(exception, CalledProcessError or OSError)
+
+@retry(stop_max_delay=1000 * 50,
+       retry_on_exception=_retry_if_error)
+
+def _start_mms():
+    model_server.start_model_server(handler_service='/home/model-server/model_handler.py:handle')
+
+def main():
+    if sys.argv[1] == 'serve':
+        _start_mms()
+    else:
+        subprocess.check_call(shlex.split(' '.join(sys.argv[1:])))
+
+    # prevent docker exit
+    subprocess.call(['tail', '-f', '/dev/null'])
+    
+main()
 ```
 
 ## References

@@ -102,7 +102,7 @@ optimized_ic = ic.compile_model(target_instance_family='jetson_nano',
 
 * Option 2: SageMaker UI에서 직접 컴파일
 
-![](../../.gitbook/assets/_2020-04-14__4.10.35_-1-%20%281%29%20%281%29.png)
+![](../../.gitbook/assets/_2020-04-14__4.10.35_-1-%20%281%29%20%281%29%20%281%29.png)
 
 s3에 저장된 모델 아티팩트\(예: model-jetson\_nano.tar.gz\)를 jetson\_nano로 복사
 
@@ -159,7 +159,7 @@ pred_class = probs[0].argmax()
 print(pred_class)
 ```
 
-![](../../.gitbook/assets/screenshot_from_2020-04-14_14-17-27_-1-%20%282%29%20%282%29%20%282%29.png)
+![](../../.gitbook/assets/screenshot_from_2020-04-14_14-17-27_-1-%20%282%29%20%282%29%20%282%29%20%282%29.png)
 
 ![](../../.gitbook/assets/2_-1-%20%281%29%20%281%29%20%281%29.png)
 
