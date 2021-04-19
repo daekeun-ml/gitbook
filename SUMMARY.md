@@ -62,3 +62,8 @@
   * [TensorRT Overview](ml/deployment/tensorrt.md)
   * [Multi Model Server and SageMaker Multi-Model Endpoint Overview](ml/deployment/mms.md)
 
+## AWS AIML <a id="aws"></a>
+
+* [Amazon Personalize](aws/amazon-personalize/README.md)
+  * [신규 기능 Update 및 FAQ](aws/amazon-personalize/updates.md)
+
