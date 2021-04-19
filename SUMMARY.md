@@ -65,5 +65,6 @@
 ## AWS AIML <a id="aws"></a>
 
 * [Amazon Personalize](aws/amazon-personalize/README.md)
-  * [신규 기능 Update 및 FAQ](aws/amazon-personalize/updates.md)
+  * [Amazon Personalize - User Personalization Algorithm Deep Dive](aws/amazon-personalize/amazon-personalize-deep-dive.md)
+  * [Amazon Personalize Updates\(~2021.04\) 및 FAQ](aws/amazon-personalize/updates.md)
 

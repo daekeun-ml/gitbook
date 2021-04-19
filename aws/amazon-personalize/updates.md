@@ -1,4 +1,4 @@
-# 신규 기능 Update 및 FAQ
+# Amazon Personalize Updates\(~2021.04\) 및 FAQ
 
 ## 1. Personalize 기능 주요 업데이트 링크
 
