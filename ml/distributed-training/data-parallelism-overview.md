@@ -115,10 +115,6 @@ def data_parallel(module, input, device_ids, output_device):
 * 각 label도 scatter하여 loss function을 parallel하게 연산
 * 각 GPU에서 계산한 loss에 대한 backward propagation 수행
 
-![&#xCD9C;&#xCC98;: https://medium.com/huggingface/training-larger-batches-practical-tips-on-1-gpu-multi-gpu-distributed-setups-ec88c3e51255](../../.gitbook/assets/ddp-2%20%281%29.png)
-
-출처: [https://medium.com/huggingface/training-larger-batches-practical-tips-on-1-gpu-multi-gpu-distributed-setups-ec88c3e51255](https://medium.com/huggingface/training-larger-batches-practical-tips-on-1-gpu-multi-gpu-distributed-setups-ec88c3e51255)
-
 ```python
 from torch.nn.parallel.data_parallel import DataParallel
 
@@ -327,13 +323,13 @@ for data, label in data_iter:
 ### All-Reduce \(Naive Parameter Server\)
 
 * 모든 프로세스가 가지고 있는 배열 데이터를 집계 후\(Reduce\) 집계 결과를 모든 프로세스로 반환
-* 총 프로세스 수를 P, p 번째\(1≤p≤P\) 프로세스에 길이\(i.e., 파라메터 개수\) N의 배열 A_p가 있다고 할 때, i번째 element는 A_{p,i}이고 이 때 집계 결과 배열의 B의 i번째 element는 아래와 같이 정의 가능
+* 총 프로세스 수를 $$P$$, $$p$$번째 $$(1≤p≤P)$$ 프로세스에 길이\(i.e., 파라메터 개수\) N의 배열 $$A_p$$가 있다고 할 때, i번째 element는 $$A_{p,i}$$이고 이 때 집계 결과 배열의 B의 $$i$$번째 element는 아래와 같이 정의 가능
 
 $$
 B_{i}~~=~~A_{1,i}~~Op~~A_{2,i}~~Op~~…~~Op~~A_{P,i}
 $$
 
-* Op는 이진 연산자로 SUM, MAX, MIN이 자주 사용됨
+* Op는 이진 연산자로 `SUM, MAX, MIN`이 자주 사용됨
 
 ![](../../.gitbook/assets/allreduce1.png)
 
@@ -348,24 +344,23 @@ P=4, N=4일 때의 All-Reduce 모식도 \(출처: [https://tech.preferred.jp/ja/
 * Baidu에서 개발하고 Uber의 Horovod, NCCL에서 활용되고 있는 기법
 * 아래 그림 참조 \(출처: [https://tech.preferred.jp/ja/blog/prototype-allreduce-library/](https://tech.preferred.jp/ja/blog/prototype-allreduce-library/)\)
 * Baidu에서 개발하고 Uber의 Horovod에서 적극 활용하고 있는 기법
-* 프로세스 p는 자신의 배열을 P개로 분할\(chunk\[p\]로 표\) 후 다음 프로세스 p+1로 전송함. 이 때 프로세스 p-1은 p로 chunk\[p-1\]을 전송하고 있기 때문에 동시에 수신 가능
 
 ![](../../.gitbook/assets/ring-allreduce1.png)
 
-* 프로세스 p는 자신의 배열을 P개로 분할\(chunk\[p\]로 표\) 후 다음 프로세스 p+1로 전송함. 이 때 프로세스 p-1은 p로 chunk\[p-1\]을 전송하고 있기 때문에 동시에 수신 가능
+* 프로세스 $$p$$는 자신의 배열을 $$P$$개로 분할\($$\text{chunk}[p]$$\) 후 다음 프로세스 $$p+1$$로 전송함. 이 때 프로세스 $$p-1$$은 $$p$$로 $$\text{chunk}[p-1]$$을 전송하고 있기 때문에 동시에 수신 가능
 
 ![Fig. &#xAC01; &#xD504;&#xB85C;&#xC138;&#xC2A4; p&#xAC00; chunk\[p\]&#xB97C; p+1 &#xD504;&#xB85C;&#xC138;&#xC2A4;&#xB85C; &#xC804;&#xC1A1;](../../.gitbook/assets/ring-allreduce2.png)
 
-* 각 프로세스 p는 이전 단계에서 수신받은 chunk와 chunk\[p-1\]의 Reduce 연산을 수행 후 p+1 프로세스로 전송
+* 각 프로세스 $$p$$는 이전 단계에서 수신받은 chunk와 $$\text{chunk}[p-1]$$의 Reduce 연산을 수행 후 $$p+1$$ 프로세스로 전송
   * 이 때, Reduce 연산자는 associative, commutative 조건을 만족해야 함
 
 ![Fig. &#xAC01; &#xD504;&#xB85C;&#xC138;&#xC2A4;&#xAC00; Reduce &#xD6C4; chunk\[p-1\] &#xC804;&#xC1A1;](../../.gitbook/assets/ring-allreduce3%20%281%29.png)
 
-* P-1 횟수를 반복하여 각 프로세스마다 Reduce chunk를 얻음
+* $$P-1$$ 횟수를 반복하여 각 프로세스마다 Reduce chunk를 얻음
 
 ![Fig. P-1 &#xD68C; &#xBC18;&#xBCF5; &#xD6C4; &#xD504;&#xB85C;&#xC138;&#xC2A4;&#xB9C8;&#xB2E4; Reduce&#xB41C; chunk&#xB97C; &#xC5BB;&#xC74C;](../../.gitbook/assets/ring-allreduce4.png)
 
-* 다시 P-1회를 반복하여 각 프로세스의 Reduce 결과를 공유
+* 다시 $$P-1$$회를 반복하여 각 프로세스의 Reduce 결과를 공유
 * Communication cost는 $$2(N  (P - 1))$$ —&gt; 프로세스 당 communication cost는 $$2(N  (P - 1) / P)$$로 프로세스마다 부하가 잘 분산됨
   * Recall: All-Reduce의 경우 특정 프로세스의 최대 communication cost는 $$N(P - 1)$$
 
