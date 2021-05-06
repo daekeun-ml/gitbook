@@ -55,6 +55,7 @@
   * [MXNet Installation on NVIDIA Jetson Nano](ml/iot/mxnet-installation-jetson-nano.md)
   * [Neo-DLR on NVIDIA Jetson Nano](ml/iot/neo-dlr-on-nvidia-jetson-nano.md)
 * [Distributed Training](ml/distributed-training/README.md)
+  * [Data Parallelism Overview](ml/distributed-training/data-parallelism-overview.md)
   * [SageMaker's Data Parallelism Library](ml/distributed-training/sagemakers-data-parallelism-library.md)
   * [SageMaker's Model Parallelism Library](ml/distributed-training/sagemakers-model-parallelism-library.md)
 * [Deployment](ml/deployment/README.md)
