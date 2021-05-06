@@ -336,7 +336,8 @@ $$
 P=4, N=4일 때의 All-Reduce 모식도 \(출처: [https://tech.preferred.jp/ja/blog/prototype-allreduce-library/](https://tech.preferred.jp/ja/blog/prototype-allreduce-library/)\)
 
 * Naive하게 하나의 프로세스를 마스터로 선택 후 이 프로세스에서 Reduce 연산을 수행하고 전체 프로세스에 배포할 수 있는데, 이 경우 프로세스 간의 처리량에 불균형이 발생
-* 총 프로세스 수를 P,  파라메터 개수가 N일 때 각 프로세스의 최대 Communication Cost = $$N(P - 1)$$
+* 총 프로세스 수를 P,  파라메터 개수가 N일 때 각 프로세스의 Communication Cost = $$N(P - 1)$$
+* Total Communication cost = $$P$$ senders x $$(P-1)$$ receivers x $$O(N)$$ tensor = $$O(NP^2)$$
 * 이를 개선하기 위한 여러 기법들이 제안되어 있음 \(Ring All-Reduce, Rabenseifner 알고리즘, SageMaker Data Parallelism 등\)
 
 ### Ring All-Reduce
@@ -361,17 +362,18 @@ P=4, N=4일 때의 All-Reduce 모식도 \(출처: [https://tech.preferred.jp/ja/
 ![Fig. P-1 &#xD68C; &#xBC18;&#xBCF5; &#xD6C4; &#xD504;&#xB85C;&#xC138;&#xC2A4;&#xB9C8;&#xB2E4; Reduce&#xB41C; chunk&#xB97C; &#xC5BB;&#xC74C;](../../.gitbook/assets/ring-allreduce4.png)
 
 * 다시 $$P-1$$회를 반복하여 각 프로세스의 Reduce 결과를 공유
-* Communication cost는 $$2(N  (P - 1))$$ —&gt; 프로세스 당 communication cost는 $$2(N  (P - 1) / P)$$로 프로세스마다 부하가 잘 분산됨
-  * Recall: All-Reduce의 경우 특정 프로세스의 최대 communication cost는 $$N(P - 1)$$
+* Communication cost는 $$2(N  (P - 1))$$--&gt; 프로세스 당 communication cost는 $$2(N  (P - 1) / P)$$로 프로세스마다 부하가 잘 분산됨
+  * Recall: All-Reduce의 경우 각 프로세스의 communication cost는 $$N(P - 1)$$
+* Total Communication cost = $$O(NP)$$
 
 ## Hardware Communication
 
 ### AWS GPU instances
 
-* g4 인스턴스 타입은 T4 GPU로 NVLink 미지원 \(PCIe Gen3 지원\)
-* p3 인스턴스 타입은 V100\(Volta\) GPU로 NVLink 지원 \(EFA 적용 시 100Gbps까지 가능\)
+* g4 인스턴스 타입은 T4\(Turing 아키텍처\) GPU로 NVLink 미지원 \(PCIe Gen3 지원\)
+* p3 인스턴스 타입은 V100\(Volta 아키텍\) GPU로 NVLink 지원 \(EFA 적용 시 100Gbps까지 가능\)
   * GPU간 통신 성능: 양방향 25GB/s 대역폭으로 6개의 link를 사용하므로, 25\*6 = 150GB/s의 대역폭을 지님
-* p4 인스턴스 타입은 A100\(Ampere\) GPU로 NVSwitch, EFA 및 GPUDirect RDMA를 지원\(400Gbps\)하므로, CPU를 우회하여 노드 간 GPU-GPU 통신으로 latency 개선 가능
+* p4 인스턴스 타입은 A100\(Ampere 아키텍\) GPU로 NVSwitch, EFA 및 GPUDirect RDMA를 지원\(400Gbps\)하므로, CPU를 우회하여 노드 간 GPU-GPU 통신으로 latency 개선 가능
   * A100은 PCIe gen4 x 16를 지원하지만, P4d 인스턴스는 PCIe gen3 x 16으로 제한되어 있음
   * GPU간 통신 성능: 양방향 50GB/s 대역폭으로 12개의 link를 사용하므로 50\*12 = 600GB/s의 대역폭을 지님
 
