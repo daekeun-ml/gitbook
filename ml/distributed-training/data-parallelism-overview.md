@@ -39,6 +39,8 @@ for i, (inputs, labels) in enumerate(training_set):
 
 ![](../../.gitbook/assets/gradient-checkpoint2.png)
 
+![&#xCD9C;&#xCC98;: https://medium.com/tensorflow/fitting-larger-networks-into-memory-583e3c758ff9](../../.gitbook/assets/gradient-checkpoint3%20%283%29.gif)
+
 * 기본 아이디어
   * 필요한 노드에만 조약돌\(pebbles, 메모리\)을 놓고 중간 결과 계산
   * 값이 더 필요하지 않으면 노드에서 조약돌을 제거하고 향후 계산에 사용
