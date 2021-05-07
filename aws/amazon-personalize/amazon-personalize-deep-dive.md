@@ -29,7 +29,7 @@ KDD 2020 컨퍼런스에 AWS AI Labs에서 발표한 "Temporal Contextual Recomm
 
 ### Formulation
 
-어떤 특정 User history를 $$x_{1:k} = [x_1, x_2, ..., x_k]$$\($$x_k =$$ \(item\_id, value, time\) $$= (a_k, v_k, t_k)$$의 튜플로 정의하고, $$a_k$$ 는 item\_id 원-핫 인코딩 벡터; $$a_k = (0, ... 0, 1, 0, ... ,0)^T$$\)로 표현했을 때 바로 다음 시점\($$t_{k+1}$$\)의 추천 item은 아래와 같이 정의할 수 있습니다.
+어떤 특정 User history를 $$x_{1:k} = [x_1, x_2, ..., x_k]$$\($$x_k =$$ \(item\_id, value, time\) $$= (a_k, v_k, t_k)$$의 튜플로 정의하고, $$a_k$$ 는 item\_id 원-핫 인코딩 벡터; $$a_k = (0, ... 0, 1, 0, ... ,0)^T$$\)로 표현했을 때 바로 다음 시점\($$t_{k+1}$$\)의 추천 item에 대한 random variable $$A_{k+1}$$은 아래와 같이 정의할 수 있습니다.
 
 > 좀 더 정확하게는 user $$i$$에 대한 $$k$$ 시점의 user history를 $$x_{ik} = (a_{ik}, v_{ik}, t_{ik})$$로 정의하지만, 논문에서는 편의상 $$i$$ 인덱스를 제외하고 $$x_k = (a_k, v_k, t_k)$$로 정의하고 있습니다.
 
