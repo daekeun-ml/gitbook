@@ -307,10 +307,11 @@ personalize_events.put_events(
 ### 추천 결과가 너무 최근성만 반영되는데 어떻게 조절할까요?
 
 * User-personalization 레시피를 사용하고 hyperparameter의 `recency_mask = False(Default=True)`로 부여해 주세요. 그리고 필요에 따라 `exploration_weight, exploration_item_age_cut_off` 두 개의 파라메터도 조절합니다.
+  * `recency_mask`: 모델이 interaction 데이터셋의 최신 인기 트렌드를 고려할 지의 여부를 결정합니다. 만약 과거 모든 interaction에 동일한 가중치를 부여하고 싶다면 recency\_mask를 false로 설정합니다.
   * `exploration_weight = 0.3 (Default)` 이 경우 70%는 interaction dataset에서, 30%는 item dataset에서 추천. 단, exploration\_weight = 1이라고 100% item dataset에서 추천하는 것은 아니고 극히 적은 확률로 interaction dataset을 참조합니다.
   * `exploration_item_age_cut_off = 30 (Default)`. interaction dataset의 가장 마지막 interaction 날짜\(timestamp\)를 기준으로 과거 30일 동안의 item을 item metaset에서 탐색합니다.
   * 또한, item dataset의 데이터셋 필드에서 각 아이템에 대한 `CREATION_TIMESTAMP`를 입력하면 더욱 정확한 cold item의 추천이 가능합니다.
-    * 예: A상품의 CREATION\_TIMESTAMP: 2021/04/01, B상품의  CREATION\_TIMESTAMP: 2021/03/01일 때 만약 exploration\_item\_age\_cut\_off = 20이고 전체 interaction dataset의 가장 마지막 timestamp가 2021/04/16이면,  3/28 이후에 있는 상품만 추천하게 되기에 A 상품은 추천이 되지 않습니다.
+    * 예: A상품의 CREATION\_TIMESTAMP: 2021/04/01, B상품의  CREATION\_TIMESTAMP: 2021/03/01일 때 만약 exploration\_item\_age\_cut\_off = 20이고 전체 interaction dataset의 가장 마지막 timestamp가 2021/04/16이면,  3/28 이후에 있는 상품만 추천하게 되기에 B 상품은 추천이 되지 않습니다.
   * 즉, exploration\_weight, exploration\_item\_age\_cut\_off 두 파라메터의 값을 올리면 조금더 old 아이템이 추천이 되는 효과를 가질 수 있습니다.
   * 또한, exploration\_weight, exploration\_item\_age\_cut\_off는 학습과는 상관이 없기에 재학습 필요 없이 캠페인을 여러 개 생성해서 테스트할 수 있습니다.
 
