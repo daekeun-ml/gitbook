@@ -168,6 +168,40 @@ personalize_events.put_items(
 )
 ```
 
+{% hint style="info" %}
+신규 아이템 추가뿐만 아니라 기존 아이템의 수정도 가능합니다. \(사용 예시: 아이템의 속성이 변경되었을 때나, old 아이템을 더 이상 추천하고 싶지 않을 때 old item여부에 대한 property를 추가\)
+{% endhint %}
+
+```python
+USER_ID = 81
+
+# 신규 아이템 추가
+personalize_events.put_items(
+    datasetArn = item_dataset_arn,
+    items = [{
+        'itemId': str(ITEM_ID_LAST+1),
+        'properties': "{\"genre\": \"Animation|Fantasy\", \"year\": 2021}"   
+        },
+        {
+        'itemId': str(ITEM_ID_LAST+2),
+        'properties': "{\"genre\": \"Horror|Crime\", \"year\": 2021}"   
+        }]
+)
+
+# 아이템 수정
+personalize_events.put_items(
+    datasetArn = item_dataset_arn,
+    items = [{
+        'itemId': str(ITEM_ID_LAST+1),
+        'properties': "{\"genre\": \"IMAX|Animation|Fantasy\", \"year\": 2021}"   
+        },
+        {
+        'itemId': str(ITEM_ID_LAST+2),
+        'properties': "{\"genre\": \"Western|Horror|Crime\", \"year\": 2021}"   
+        }]
+)
+```
+
 * 신규 유저 \(PutUsers\)
   * 신규 유저 \(userId가 없는 유저\)의 경우 인기 아이템만 추천됩니다. PutEvents 작업에서 전달한 sessionId를 사용하여 이벤트가 유저와 연결되며, 이벤트 기록들이 계속 누적됩니다.
   * 필터링의 경우 20분 내에 반영됩니다.
@@ -195,9 +229,9 @@ User-personalization 레시피 사용시 솔루션\(모델\) 재학습 필요 �
 
 자동 업데이트에 대한 추가 과금은 없으며, 자동 업데이트 조건은 아래와 같습니다.
 
-* latest solution version의 trainingMode == FULL 이고, 신규 item 또는 신규 interactions data가 마지막으로 자동으로 업데이트한 이후에 있을 경우에만 업데이트됩니다. 업데이트 시점은 콘솔 화면의 campaign detail에서 확인 가능합니다.
-* 다만, 생성한 솔루션\(모델\)이 2020년 11월 17일 이전이라면 새로 솔루션을 생성해야 하고, trainingMode = FULL로 세팅해야 합니다.
-* 만약, 2시간 자동 업데이트 빈도가 적합하지 않은 경우에는\(예: 30분 단위로 업데이트\) trainingMode = UPDATE를 사용하여 신규 솔루션 버전을 생성하고 수동으로 업데이트할 수 있습니다. 단, 수동 업데이트 시에는 추가 비용이 발생합니다.
+* latest solution version의 `trainingMode == FULL` 이고, 신규 item 또는 신규 interactions data가 마지막으로 자동으로 업데이트한 이후에 있을 경우에만 업데이트됩니다. 업데이트 시점은 콘솔 화면의 campaign detail에서 확인 가능합니다.
+* 다만, 생성한 솔루션\(모델\)이 2020년 11월 17일 이전이라면 새로 솔루션을 생성해야 하고, `trainingMode = FULL`로 세팅해야 합니다.
+* 만약, 2시간 자동 업데이트 빈도가 적합하지 않은 경우에는\(예: 30분 단위로 업데이트\) `trainingMode = UPDATE`를 사용하여 신규 솔루션 버전을 생성하고 수동으로 업데이트할 수 있습니다. 단, 수동 업데이트 시에는 추가 비용이 발생합니다.
 * [https://docs.aws.amazon.com/personalize/latest/dg/native-recipe-new-item-USER\_PERSONALIZATION.html\#automatic-updates](https://docs.aws.amazon.com/personalize/latest/dg/native-recipe-new-item-USER_PERSONALIZATION.html#automatic-updates)
 * Event Tracker 생성
 
