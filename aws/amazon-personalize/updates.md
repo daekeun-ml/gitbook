@@ -65,15 +65,32 @@ $$
 
 수식에 의하면 item 셋의 모든 item을 대상으로 계산하기 때문에 점수를 상대적으로 해석해야 합니다. 예를 들어, item이 3개일 경우 score는 0.6, 0.3, 0.1이 될 수 있지만, 1만개일 경우 평균 점수는 1/10,000 이기에, 최고 score를 받은 item도 score가 작을 수 있습니다.
 
+{% hint style="info" %}
+SIM와 Popularity-Count 모델은 이 기능을 지원하지 않습니다.
+{% endhint %}
+
+```python
+get_recommendations_response = personalize_runtime.get_recommendations(
+    campaignArn = '[YOUR ARN]',
+    userId = str(user_id),
+)
+item_list = get_recommendations_response['itemList']
+item_list[0:2]
+
+-> 
+[{'itemId': '5989', 'score': 0.0095232},
+ {'itemId': '7147', 'score': 0.0056224}]
+```
+
 ### Recommendation Filters
 
 * interaction 정보에 대한 필터링과 metadata 정보에 대한 필터링이 모두 가능합니다.
 * interaction: [https://aws.amazon.com/ko/blogs/machine-learning/introducing-recommendation-filters-in-amazon-personalize/](https://aws.amazon.com/ko/blogs/machine-learning/introducing-recommendation-filters-in-amazon-personalize/)
   * 한 번 추천을 받고 유저가 선택\(예: 클릭, 다운로드\)한 것에 대해서, 다시 추천을 원하지 않을 경우 유용합니다.
-  * EXCLUDE itemId WHERE INTERACTIONS.event\_type in \("Click","Download"\)
+  * `EXCLUDE itemId WHERE INTERACTIONS.event_type in ("Click","Download")`
   * interaction 필터링의 경우, 최근 100개의 실시간 interaction과 최근 200개의 historical interaction만 고려합니다.
 * metadata: [https://aws.amazon.com/ko/blogs/machine-learning/enhancing-recommendation-filters-by-filtering-on-item-metadata-with-amazon-personalize/](https://aws.amazon.com/ko/blogs/machine-learning/enhancing-recommendation-filters-by-filtering-on-item-metadata-with-amazon-personalize/)
-  * EXCLUDE ItemId WHERE item.genre in \("Comedy"\)
+  * `EXCLUDE ItemId WHERE item.genre in ("Comedy")`
 
 ### Null type
 
@@ -85,7 +102,7 @@ $$
 
 * `IN, =` operator에 dynamic filtering 적용이 가능합니다. 단, `NOT IN, <, >, <=, >=` operator는 여전히 static filter를 사용해야 합니다.
 * dollar sign\($\)을 사용하여 placehold 파라메터를 추가하고 상황에 따라 값을 설정해 줍니다.
-* 예시: INCLUDE Item.ID WHERE items.GENRE IN \($GENRE\) \| EXCLUDE ItemID WHERE item.DESCRIPTION IN \("$DESC”\)
+* 예시: `INCLUDE Item.ID WHERE items.GENRE IN ($GENRE) | EXCLUDE ItemID WHERE item.DESCRIPTION IN ("$DESC”)`
 * 참조: [https://docs.aws.amazon.com/personalize/latest/dg/filter-expressions.html](https://docs.aws.amazon.com/personalize/latest/dg/filter-expressions.html)
 
 ## 3. Recipes
@@ -272,12 +289,12 @@ personalize_events.put_events(
 
 * item, interaction 컬럼만 필터링 가능하며, user의 경우는 CURRENTUSER만 가능합니다. \(user 컬럼 불가능\)
 * 성공 예시
-  * INCLUDE ItemID WHERE Items.GENRE IN \("Comedy"\) IF CURRENTUSER.AGE &gt; 20
-  * INCLUDE ItemID WHERE Items.GENRE IN \("Comedy"\) IF CURRENTUSER.GENDER = "F"
+  * `INCLUDE ItemID WHERE Items.GENRE IN ("Comedy") IF CURRENTUSER.AGE > 20`
+  * `INCLUDE ItemID WHERE Items.GENRE IN ("Comedy") IF CURRENTUSER.GENDER = "F"`
 * 실패 예시
-  * EXCLUDE ItemID WHERE Items.GENRE IN \(“Comedy”\) IF users.AGE &gt; 20 \# CURRENTUSER만 가능하며, user 컬럼으로 필터링 불가능
-  * INCLUDE ItemID WHERE Items.GENRE IN \("Comedy"\) IF CURRENTUSER.DIV &gt; 20 \# User Meta에 정의되지 않는 경우
-  * INCLUDE ItemID WHERE Items.GENRE IN \("Comedy"\) IF CURRENTUSER.GENDER &gt; 20 \# 잘못된 조건을 입력하는 경우
+  * `EXCLUDE ItemID WHERE Items.GENRE IN (“Comedy”) IF users.AGE > 20` \# CURRENTUSER만 가능하며, user 컬럼으로 필터링 불가능
+  * `INCLUDE ItemID WHERE Items.GENRE IN ("Comedy") IF CURRENTUSER.DIV > 20` \# User Meta에 정의되지 않는 경우
+  * `INCLUDE ItemID WHERE Items.GENRE IN ("Comedy") IF CURRENTUSER.GENDER > 20` \# 잘못된 조건을 입력하는 경우
 
 ### 프로덕션 반영 전 성능 테스트의 모범 사례를 알려 주세요.
 
