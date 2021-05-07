@@ -106,7 +106,7 @@ FM은 위의 수식에서 알 수 있듯이 closed form이며 시간 복잡도�
 | Train | YES | NBC | ADIDAS | MALE | $$w_{NBC, ADIDAS}$$ | $$\textbf{v}_{NBC} \cdot \textbf{v}_{ADIDAS}$$ |
 | Test | YES | ESPN | ADIDAS | MALE | $$w_{ESPN, ADIDAS}$$ | $$\textbf{v}_{ESPN} \cdot \textbf{v}_{ADIDAS}$$ |
 
-\(ESPN, ADIDAS\)는 학 데이터셋에 존재하지 많으므로 Poly2로는 $$w_{ESPN, ADIDAS}$$를 학할 수 없습니다. 하지만 FM은 \(ESPN, NIKE\)로부터 $$\textbf{v}_{ESPN} $$을 학할 수 있고 \(NBC, ADIDAS\)로부터 $$\textbf{v}_{ADIDAS}$$를 학할 수 있으므로,  $$\textbf{v}_{ESPN} \cdot \textbf{v}_{ADIDAS}$$  산출이 가능합니다. 아래 그림은 latent feature k dimension이 3일 경우입니다.
+\(ESPN, ADIDAS\)는 학습 데이터셋에 존재하지 많으므로 Poly2로는 $$w_{ESPN, ADIDAS}$$를 학습할 수 없습니다. 하지만 FM은 \(ESPN, NIKE\)로부터 $$\textbf{v}_{ESPN} $$을 학습할 수 있고 \(NBC, ADIDAS\)로부터 $$\textbf{v}_{ADIDAS}$$를 학할 수 있으므로,  $$\textbf{v}_{ESPN} \cdot \textbf{v}_{ADIDAS}$$  산출이 가능합니다. 아래 그림은 latent feature k dimension이 3일 경우입니다.
 
 $$
 \begin{align}
