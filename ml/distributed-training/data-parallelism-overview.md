@@ -44,9 +44,9 @@ for i, (inputs, labels) in enumerate(training_set):
 * 기본 아이디어
   * 필요한 노드에만 조약돌\(pebbles, 메모리\)을 놓고 중간 결과 계산
   * 값이 더 필요하지 않으면 노드에서 조약돌을 제거하고 향후 계산에 사용
-* Memory Requirement: O\(sqrt\(n\)\)
-  * O\(1\) 메모리 전략을 사용할 수도 있지만, 계산 복잡도가 O\(n^2\)로 증가하므로 권장하지 않음
-  * O\(sqrt\(n\)\) 전략으로 중간 결과를 체크포인트로 지정하여 저장하면 계산 복잡도가 O\(n\)이기에 권장 전략으로 사용
+* Memory Requirement: $$O(\sqrt{n})$$
+  * $$O(1)$$ 메모리 전략을 사용할 수도 있지만, 계산 복잡도가 $$O(n^2)$$로 증가하므로 권장하지 않음
+  * $$O(\sqrt{n})$$ 전략으로 중간 결과를 체크포인트로 지정하여 저장하면 계산 복잡도가 $$O(n)$$이기에 권장 전략으로 사용
   * 속도는 약 10~20% 정도 느려지지만, Transformer 같은 대용량 모델 학습에 필요한 메모리를 크게 줄일 수 있으며, 긴 sequence의 RNN에 대해서도 효과적
 * 계산 그래프 적용을 위해 Dynamic programming 및 트리 분해 기법 적용
 * 참조
@@ -153,7 +153,7 @@ def main_worker(gpu, ngpus_per_node, args):
     print("Use GPU: {} for training".format(args.gpu))
     args.rank = args.rank * ngpus_per_node + gpu
 
-      # 각 GPU마다 분산 학습을 위한 초기화 수행
+    # 각 GPU마다 분산 학습을 위한 초기화 수행
     # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
     dist.init_process_group(backend='nccl', 
                             init_method='tcp://127.0.0.1:FREEPORT',
@@ -162,9 +162,9 @@ def main_worker(gpu, ngpus_per_node, args):
 
     model = '[YOUR MODEL]'
 
-        # Encapsulate the model on the GPU assigned to the current process
-        device = torch.device('cuda', arg.local_rank)
-        model = model.to(device)
+    # Encapsulate the model on the GPU assigned to the current process
+    device = torch.device('cuda', arg.local_rank)
+    model = model.to(device)
     model = DDP(model, device_ids=[args.gpu])
 
         trn_dataset = '[YOUR DATASET]'
@@ -246,7 +246,7 @@ class DistributedSampler(Sampler):
 ![&#xCD9C;&#xCC98;: https://arxiv.org/pdf/1710.03740.pdf](../../.gitbook/assets/fp16-underflow%20%281%29.png)
 
 * loss에 scale factor를 곱하여 scaling된 손실에 backward pass를 호출하면 gradient 크기가 더 커지므로 FP16이 표현할 수 있는 범위에 들어옴
-  * scaled\_loss = loss \* scale\_factor
+  * `scaled_loss = loss * scale_factor`
 * 보통의 학습 코드
 
 ```python
@@ -297,10 +297,10 @@ for data, label in data_iter:
 | loss\_scale | 1.0 | dynamic | dynamic | 1.0 |
 
 * **opt\_level**
-  * O0: FP32 training
-  * O1: \[Default\] TensorCore을 이용한 FP32 / FP16 혼합 연산으로 TensorCore에 적합한 연산\(ops\)들은 FP16으로 캐스팅하고 정확한 계산이 필요한 연산들은 FP32를 유지
-  * O2: Almost FP16 \(BatchNorm weight를 제외한 Model weight가 FP16으로 캐스팅\)
-  * O3: FP16 training
+  * **O0**: FP32 training
+  * **O1**: \[Default\] TensorCore을 이용한 FP32 / FP16 혼합 연산으로 TensorCore에 적합한 연산\(ops\)들은 FP16으로 캐스팅하고 정확한 계산이 필요한 연산들은 FP32를 유지
+  * **O2**: Almost FP16 \(BatchNorm weight를 제외한 Model weight가 FP16으로 캐스팅\)
+  * **O3**: FP16 training
 * **cast\_model\_type**: 모델 파라메터를 어떤 타입으로 변환할 것인지 여부
 * **patch\_torch\_functions**: 함수를 TensorCore용으로 변환할지 여부
 * **keep\_batchnorm\_fp32**: BatchNorm 연산을 FP32로 유지할지 여부
