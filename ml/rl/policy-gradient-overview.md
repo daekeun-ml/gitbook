@@ -4,7 +4,7 @@
 
 ### Basic Concept
 
-직관적으로 정책\(policy\)의 성능을 증가시키는 방향의 gradient를 구해\(즉, gradient ascent\) 정책을 업데이트할 수 있다. \(alpha: learning rate\)
+직관적으로 정책\(policy\)의 성능을 증가시키는 방향의 gradient를 구해\(즉, gradient ascent\) 정책을 업데이트할 수 있다. \($$\alpha$$: learning rate\)
 
 $$
 \theta_{t+1} = \theta_t + \alpha \nabla_\theta J(\theta)
@@ -22,16 +22,16 @@ $$
 
 ### Theorem
 
-목표 함수 _J_의 정의를 \(1\)이라 할 때,
+목표 함수 $$J$$의 정의를 \(1\)이라 할 때,
 
 $$
 J(\theta) = \sum_{s \in S} d^{\pi}(s)V^{\pi}(s) = \sum_{s \in S}d^{\pi}(s) \sum_{a \in A} \pi_{\theta}(a|s)Q^{\pi}(s, a) \tag {1}
 $$
 
-* _d_: s라는 상태에 에이전트가 있을 확률 \(i.e., state distribution\)
-* 좀 더 직관적으로 각 상태에서 정책 π에 따라 특정 행동을 취했을 때 받는 Q함수의 합
+* $$d$$: $$s$$라는 상태에 에이전트가 있을 확률 \(i.e., state distribution\)
+* 좀 더 직관적으로 각 상태에서 정책 $$\pi$$에 따라 특정 행동을 취했을 때 받는 Q 함수의 합
 
-_임의의 미분 가능한 policy πθ\(s,a\)의 J\(θ\)의 미분을 아래와 같이 나타낼 수 있으며, 이는 \(행동\) 가치 함수인 Q함수와 πθ의 gradient를 곱한 기댓값\(expected value\)으로 analytical하게 계산할 수 있다는 것이다._
+임의의 미분 가능한 policy $$\pi_\theta(s,a)$$의 $$J(\theta)$$의 미분을 아래와 같이 나타낼 수 있으며, 이는 \(행동\) 가치 함수인 Q함수와 $$\pi_\theta$$의 gradient를 곱한 기댓값\(expected value\)으로 analytical하게 계산할 수 있다는 것이다_._
 
 $$
 \nabla_\theta J(\theta) = \mathbb{E}_\pi [Q^\pi(s, a) \nabla_\theta \log \pi_\theta(a \vert s)] \tag {2}
@@ -39,13 +39,13 @@ $$
 
 ### Why?
 
-Likelihood ratio trick에 의해 π\_θ의 미분은 \(3\)과 같이 표현 가능하다. \(log\(x\)의 미분은 1/x인 걸 생각하면 간단하다.\)
+Likelihood ratio trick에 의해 $$\pi_\theta$$의 미분은 \(3\)과 같이 표현 가능하다. \($$\log(x)$$의 미분은 $$1/x$$인 걸 생각하면 간단하다.\)
 
 $$
 \begin{aligned} \nabla_\theta \pi_\theta(a \vert s) &= \pi_\theta(a \vert s) \dfrac{\nabla_\theta \pi_\theta(a \vert s)}{\pi_\theta(a \vert s)} \\ &= \pi_\theta(a \vert s)\nabla_\theta \log \pi_\theta(a \vert s) \tag{3} \end{aligned}
 $$
 
-따라서, \(1\)의 미분은 아래와 같이 전개 가능하며, 두 sigma term이 의미하는 것은 바로 에이전트가 어떤 상태 s에서 행동 a를 선택할 확률의 합산을 의미하기 때문에 기댓값으로 풀어쓸 수 있다.
+따라서, \(1\)의 미분은 아래와 같이 전개 가능하며, 두 sigma term이 의미하는 것은 바로 에이전트가 어떤 상태 $$s$$에서 행동 $$a$$를 선택할 확률의 합산을 의미하기 때문에 기댓값으로 풀어쓸 수 있다.
 
 $$
 \begin{aligned}  \nabla_\theta J(\theta) &= \sum_{s \in S}d^{\pi}(s) \sum_{a \in A} \nabla_\theta\pi_{\theta}(a|s)Q^{\pi}(s, a) \\ &= \sum_{s \in S}d^{\pi}(s) \sum_{a \in A} \pi_\theta(a \vert s) \nabla_\theta \log \pi_\theta(a \vert s) Q^{\pi}(s, a) \\ &= \mathbb{E}_\pi [Q^\pi(s, a) \nabla_\theta \log \pi_\theta(a \vert s)] & \scriptstyle{\text{; Because } \mathbb{E}_\pi \text{ refers } \mathbb{E}_{s \sim d_\pi, a \sim \pi_\theta}} \tag{4} \end{aligned}
@@ -55,7 +55,7 @@ $$
 
 ### REINFORCE\(Monte-Carlo policy gradient\)
 
-\(4\)에서 우리는 ground-truth Q함수를 모르지만, return G\_t를 무수히 많이 샘플링하여 Q함수를 근사할 수 있다는 사실을 알고 있다 \(즉, return G\_t가 Q의 unbiased estimate\).
+\(4\)에서 우리는 ground-truth Q함수를 모르지만, return $$G_t$$를 무수히 많이 샘플링하여 Q함수를 근사할 수 있다는 사실을 알고 있다 \(즉, return $$G_t$$가 Q의 unbiased estimate\).
 
 이를 활용해서 episode 샘플 내에서 몬테카를로 기법을 통해 산출한 return G\_t로 policy parameter θ를 업데이트하는 기법이다. 참고로, 수식 맨 아랫줄의 의미는 기댓값을 sampling으로 대체하겠다는 것이다.
 
@@ -67,9 +67,9 @@ $$
 
 ![](../../.gitbook/assets/_2020-05-06__9.28.56.png)
 
-* policy parameter θ를 랜덤하게 초기화
+* policy parameter $$\theta$$를 랜덤하게 초기화
 * policy에 따른 episode 샘플 생성. \(episode = trajectory = step\)
-* 각 episode마다 policy parameter θ를 gradient ascent로 업데이트 \(action에 따른 return이 클수록 좋은 action이기 때문에 gradient를 증가시킴\)
+* 각 episode마다 policy parameter $$\theta$$를 gradient ascent로 업데이트 \(action에 따른 return이 클수록 좋은 action이기 때문에 gradient를 증가시킴\)
 
 REINFORCE는 policy gradient 기반 알고리즘의 baseline이지만, 아래와 같은 고질적인 단점들이 있기에 이후 알고리즘들에서 이를 개선하고 있다.
 
@@ -160,10 +160,10 @@ if __name__ == '__main__':
 REINFORCE + DQN \(비유: 운동선수가 혼자 학습하는 대신, 코치의 도움을 받아 학습하는 것\)
 {% endhint %}
 
-만약 Return G\_t 대신 Q함수를 파라메터 w로 근사한 Q\_w로 대체한다면? 기존에 정책 파라메터 θ에 추가로 가치 함수 파라메터 w를 학습해야 하므로 2개의 뉴럴 네트워크를 사용해야 한다.
+만약 Return $$G_t$$ 대신 Q함수를 파라메터 $$w$$로 근사한 $$Q_w$$로 대체한다면? 기존에 정책 파라메터 $$\theta$$에 추가로 가치 함수 파라메터 $$w$$를 학습해야 하므로 2개의 뉴럴 네트워크를 사용해야 한다.
 
-* Actor: 정책 신경망으로 critic에서 정한 방향대로 policy parameter θ를 업데이트
-* Critic: 가치 신경망으로 action-value parameter w를 업데이트 \(가장 기본적인 방법은 TD\(0\) 방법으로 업데이트\)
+* Actor: 정책 신경망으로 critic에서 정한 방향대로 policy parameter $$\theta$$를 업데이트
+* Critic: 가치 신경망으로 action-value parameter $$w$$를 업데이트 \(가장 기본적인 방법은 TD\(0\) 방법으로 업데이트\)
 
 $$
 \begin{aligned} \nabla_\theta J(\theta) &= \mathbb{E}_\pi [{\color{red}Q_w(s,a)} \nabla_\theta \log \pi_\theta(A_t \vert S_t)] \tag{6} \end{aligned}
@@ -173,8 +173,8 @@ $$
 
 ![](../../.gitbook/assets/_2020-05-06__9.52.35.png)
 
-* 파라메터 초기화 후 policy π에 기반해 action을 샘플링
-* 각 tracjectory에 대해서 policy parameter θ 업데이트 → TD error delta 업데이트 → action-value parameter w 업데이트 반복
+* 파라메터 초기화 후 policy $$\pi$$에 기반해 action을 샘플링
+* 각 tracjectory에 대해서 policy parameter $$\theta$$ 업데이트 → TD error delta 업데이트 → action-value parameter $$w$$ 업데이트 반복
 
 $$
 \delta_t = r_t + \gamma Q_w(s', a') - Q_w(s, a) \tag{7}
@@ -187,12 +187,12 @@ Loss Function
 
 ### A2C\(Advantage Actor-Critic\)
 
-여전히 gradient에 대한 variance가 더 크기 때문에 state에 대한 임의의 함수인 baseline 함수 B\(s\)를 Q함수에서 빼는 방법이다.
+여전히 gradient에 대한 variance가 더 크기 때문에 state에 대한 임의의 함수인 baseline 함수 $$B(s)$$를 Q함수에서 빼는 방법이다.
 
 * 직관적 예시
   * 어떤 Q함수가 100만이고 또다른 Q함수가 99,9900일 때 절대적인 차이보다는 상대적인 차이인 100이 더 빠르게 수렴할 수 있음
 
-아래 장표 수식에서 B\(s\)는 action a와 관계가 없기 때문에 action에 대한 sigma term의 밖으로 뺄 수 있다. 모든 action에 대한 policy의 합은 1이므로, 이를 θ에 대해 미분하면 θ와는 관계가 없기 때문에 0이다.
+아래 장표 수식에서 B\(s\)는 action a와 관계가 없기 때문에 action에 대한 sigma term의 밖으로 뺄 수 있다. 모든 action에 대한 policy의 합은 1이므로, 이를 $$\theta$$에 대해 미분하면 $$\theta$$와는 관계가 없기 때문에 0이다.
 
 ![](../../.gitbook/assets/_2020-05-06__11.25.21.png)
 
@@ -202,7 +202,7 @@ $$
 A^\pi(s, a) = Q^\pi(s, a) - V^\pi(s) \tag{8}
 $$
 
-B\(s\), 즉 V에 대한 기댓값이 0이므로 Q - V로 대체해도 gradient 값은 변동하지 않는다. 따라서 \(6\)의 gradient 업데이트 수식을 아래와 같이 대체할 수 있다.
+$$B(s)$$, 즉 V에 대한 기댓값이 0이므로 Q - V로 대체해도 gradient 값은 변동하지 않는다. 따라서 \(6\)의 gradient 업데이트 수식을 아래와 같이 대체할 수 있다.
 
 $$
 \begin{aligned} \nabla_\theta J(\theta) &= \mathbb{E}_\pi [{\color{red}A_w(s, a)} \nabla_\theta \log \pi_\theta(A_t \vert S_t)] \tag{9} \end{aligned}
@@ -210,7 +210,7 @@ $$
 
 ### TD Actor-Critic
 
-Advantage Actor Critic은 v에 대한 파라메터까지 업데이트해야 하기 때문에, 세 쌍의 파라메터가 필요한 상황이다. 하지만, TD error \(10\)가 \(11\)에 따라 Advantage 함수의 unbiased estimator이므로, A대신 TD error로 대체 가능하다.
+Advantage Actor Critic은 $$v$$에 대한 파라메터까지 업데이트해야 하기 때문에, 세 쌍의 파라메터가 필요한 상황이다. 하지만, TD error \(10\)가 \(11\)에 따라 Advantage 함수의 unbiased estimator이므로, A대신 TD error로 대체 가능하다.
 
 unbiased estimator: 표본\(sample\)에서 산출한 예측값의 기댓값이 모집단의 모수와 동일한 것
 
@@ -228,7 +228,7 @@ $$
 \begin{aligned} \nabla_\theta J(\theta) &= \mathbb{E}_\pi [{\color{red}\delta} \nabla_\theta \log \pi_\theta(A_t \vert S_t)] \tag{12} \end{aligned}
 $$
 
-지금까지 소개한 알고리즘들의 θ에 대한 목표함수 J의 미분은 다음과 같다.
+지금까지 소개한 알고리즘들의 $$\theta$$에 대한 목표함수 $$J$$의 미분은 다음과 같다.
 
 $$
 \begin{aligned} \nabla_\theta J(\theta)  &= \mathbb{E}_\pi [{\color{red}G_t }\nabla_\theta \log \pi_\theta(A_t \vert S_t)] & \scriptstyle{\text{; REINFORCE }} & \\  &= \mathbb{E}_\pi [{\color{red}Q_w(s,a) }\nabla_\theta \log \pi_\theta(A_t \vert S_t)] & \scriptstyle{\text{; Q Actor-Critic }}  & \\  &= \mathbb{E}_\pi [{\color{red}A_w(s,a) }\nabla_\theta \log \pi_\theta(A_t \vert S_t)] & \scriptstyle{\text{; Advantage Actor-Critic }}  & \\  &= \mathbb{E}_\pi [{\color{red}\delta }\nabla_\theta \log \pi_\theta(A_t \vert S_t)] & \scriptstyle{\text{; TD Actor-Critic }} \tag{13}  \end{aligned}
@@ -244,7 +244,7 @@ Policy Gradient 기반 방법들은 expoding gradient를 피하기 위해 대체
 
 알고리즘은 다음과 같다.
 
-* 동기화를 위한 global 파라메터\(θ, w\)의 생성과 thread용 파라메터를 학습하기 위한 여러 개의 환경+actor learner 생성
+* 동기화를 위한 global 파라메터$$(θ, w)$$의 생성과 thread용 파라메터를 학습하기 위한 여러 개의 환경+actor learner 생성
 * 각 actor learner는 일정 timestep 동안 샘플 수집 \(i: timestep index\)
 
 $$R \leftarrow r_{i} + \gamma R \\d\theta \leftarrow d\theta + \nabla_{\theta'} \log \pi_{\theta'} (a_{i} | s_{i}) (R - V_{w'}(s_{i})) \\dw \leftarrow dw + 2(R - V_{w'}(s_{i})) \nabla_{w'}(R - V_{w'}(s_{i}))$$
@@ -259,7 +259,7 @@ $$
 \begin{aligned} J(\theta) &= \sum_{s \in S} \rho^{\pi_{\theta_{\text{old}}}} \sum_{a \in A} \big( \pi_{\theta} (a|s) \hat{A}_{\theta_{\text{old}}}(s, a) \big) \\  &= \sum_{s \in S} \rho^{\pi_{\theta_{\text{old}}}} \sum_{a \in A} \big( \color{red}{\beta(a|s)} \frac{\pi_{\theta}(a|s)}{ \color{red}{ \beta(a|s)}} \hat{A}_{\theta_{\text{old}}}(s, a) \big) & \scriptstyle{ \text{; Importance Sampling}} \\ &= \mathbb{E}_{s \sim \rho^{\pi_{\theta_{\text{old}}}}, \alpha \sim \beta} \big[ \frac{\pi_{\theta}(a|s)}{\beta(a|s)} \hat{A}_{\theta_{\text{old}}}(s, a) \big] \tag{14} \end{aligned}
 $$
 
-TRPO는 \(14\)의 수식에서 behavior 정책에 해당하는 beta를 이전 정책을 뜻하는 π\_old로 변경하고, policy 업데이트 크기를 제한하기 위해 기존 정책과 새로운 정책 사이의 KL Divergence를 δ 내로 제한하는 제약에 따라 목적 함수 J\(θ\)를 최대화한다.
+TRPO는 \(14\)의 수식에서 behavior 정책에 해당하는 beta를 이전 정책을 뜻하는 $$\pi_{\theta_\text{old}}$$로 변경하고, policy 업데이트 크기를 제한하기 위해 기존 정책과 새로운 정책 사이의 KL Divergence를 $$\delta$$ 내로 제한하는 제약에 따라 목적 함수 J\(θ\)를 최대화한다.
 
 $$
 J(\theta) = \mathbb{E}_{s \sim \rho^{\pi_{\theta_\text{old}}}, a \sim \pi_{\theta_\text{old}}} \big[ \frac{\pi_\theta(a \vert s)}{\pi_{\theta_\text{old}}(a \vert s)} \hat{A}_{\theta_\text{old}}(s, a) \big] \tag{15}
@@ -283,15 +283,15 @@ $$
 현업에서 가장 많이 쓰이는 SOTA 알고리즘
 {% endhint %}
 
-TRPO에서 제안한 Trust Region Constraint는 계산량이 매우 복잡하기 때문에\(second order\), 이를 근사해서 간단하게 풀 수 있다. TRPO의 목적 함수를 다시 살펴보면, Importance sampling을 통해 θ를 직접적으로 업데이트하지 않고, θ\_old와 θ의 비율을 통해 정책 업데이트 비율을 조정한다.
+TRPO에서 제안한 Trust Region Constraint는 계산량이 매우 복잡하기 때문에\(second order\), 이를 근사해서 간단하게 풀 수 있다. TRPO의 목적 함수를 다시 살펴보면, Importance sampling을 통해 $$\theta$$를 직접적으로 업데이트하지 않고, $$\theta_{old}$$와 $$\theta$$의 비율을 통해 정책 업데이트 비율을 조정한다.
 
 $$
 J^\text{TRPO} (\theta) = \mathbb{E_t} [ r_t(\theta) \hat{A}_{\theta_\text{old}}(s, a) ], \text{ where } r_t(\theta) = \frac{\pi_\theta(a \vert s)}{\pi_{\theta_\text{old}}(a \vert s)} \tag{18}
 $$
 
-TRPO는 수식처럼 θ\_old와 θ 사이의 거리에 대한 제한이 없다면 정책 업데이트 비율이 매우 커질 수 있기에\(즉, 불안정성을 초래할 수 있기 때문에\) KL Divergence로 제약 조건을 부여한다.
+TRPO는 수식처럼 $$\theta_{old}$$와 $$\theta$$사이의 거리에 대한 제한이 없다면 정책 업데이트 비율이 매우 커질 수 있기에\(즉, 불안정성을 초래할 수 있기 때문에\) KL Divergence로 제약 조건을 부여한다.
 
-PPO는 이를 간소화하여 1\) r\(θ\)를 1 주위의 작은 간격 \(\[1−ϵ, 1 + ϵ\]\)으로 유지하여 제약 조건을 부여하거나, 2\) KL Divergence를 간소화하여 first order로 전개한다.
+PPO는 이를 간소화하여 1\) $$r(\theta)$$를 1 주위의 작은 간격 \($$[1−\epsilon, 1 + \epsilon]$$\)으로 유지하여 제약 조건을 부여하거나, 2\) KL Divergence를 간소화하여 first order로 전개한다.
 
 #### Clipped Surrogate Objective
 
@@ -299,9 +299,9 @@ $$
 J^\text{CLIP} (\theta) = \mathbb{E_t} [ \min( r_t(\theta) \hat{A}_{\theta_\text{old}}(s, a), \text{clip}(r_t(\theta), 1 - \epsilon, 1 + \epsilon) \hat{A}_{\theta_\text{old}}(s, a))] \tag{19}
 $$
 
-r은 1-epsilon, 1+epsilon 사이로 clipping을 하고\(보통 0.1이나 0.2로 설정\) 목적 함수는 원래 값과 clipping된 값들 중 작은 값\(min\)을 취하기 때문에, policy update를 한꺼번에 많이 하지 않는다. \(아래 그림 참조\)
+$$r$$은 $$1-\epsilon, 1+\epsilon$$ 사이로 clipping을 하고\(보통 0.1이나 0.2로 설정\) 목적 함수는 원래 값과 clipping된 값들 중 작은 값\(min\)을 취하기 때문에, policy update를 한꺼번에 많이 하지 않는다. \(아래 그림 참조\)
 
-예를 들어 advantage가 양수라면, 행동을 더 자주한다는 뜻이고\(즉 π\(a\|s\)가 증가\) 이에 따라 목적 함수도 증가하지만, min 항으로 인해 목적 함수의 증가가 특정값으로 제한된다.
+예를 들어 advantage가 양수라면, 행동을 더 자주한다는 뜻이고\(즉 $$\pi(a|s)$$가 증가\) 이에 따라 목적 함수도 증가하지만, min 항으로 인해 목적 함수의 증가가 특정값으로 제한된다.
 
 ![](../../.gitbook/assets/untitled-1%20%281%29.png)
 

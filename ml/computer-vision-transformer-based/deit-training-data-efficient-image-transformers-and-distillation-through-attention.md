@@ -1,4 +1,4 @@
-# DeiT\(Training Data-efficient Image Transformers & Distillation through Attention\)
+# DeiT \(Training Data-efficient Image Transformers & Distillation through Attention\)
 
 ## 1. Overview
 
