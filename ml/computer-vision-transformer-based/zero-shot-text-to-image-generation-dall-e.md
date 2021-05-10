@@ -23,7 +23,7 @@ $$
 p(\mathbf{z}|\mathbf{x}) = \dfrac{p(\mathbf{x}|\mathbf{z})p(\mathbf{z})}{p(\mathbf{x})} \tag {1}
 $$
 
-하지만 $$p(\mathbf{x})$$는 계산하기 매우 어렵기 때문에\($$p(\mathbf{x}) = \int p(\mathbf{x}|\mathbf{z})p(\mathbf{z}) d\mathbf{z}$$ 로 무수히 많은 z에 대한 적분을 계샨해야 함\) 계산이 간단한 특정 확률분포\(예: Gaussian\) $$q(\mathbf{z})$$를 근사하는 방법\(i.e., Variational Inference; 변분 추\)를 적용할 수 있다.
+하지만 $$p(\mathbf{x})$$는 계산하기 매우 어렵기 때문에\($$p(\mathbf{x}) = \int p(\mathbf{x}|\mathbf{z})p(\mathbf{z}) d\mathbf{z}$$ 로 무수히 많은 z에 대한 적분을 계샨해야 함\) 계산이 간단한 특정 확률분포\(예: Gaussian\) $$q(\mathbf{z})$$를 근사하는 방법\(i.e., Variational Inference\) 적용할 수 있다.
 
 실제 사후 확률분포와 근사된 확률분포간의 KLD\(Kullback-Leibler divergence\)를 계산하면 아래와 같이 전개된다.
 
