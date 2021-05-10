@@ -49,7 +49,7 @@ $$
 q\left( \mathbf{z} \right) =\mathcal{N}\left( { \boldsymbol{\mu} }_{ q },{ \boldsymbol{\sigma} }_{ q }^{2} \right) \tag{5}
 $$
 
-하지만, 이 경우에는 모든 데이터에 대해 동일한 통계치를 가지므로, q의 파라메터를 x에 대한 함수로 정의하면 아래와 같다.
+하지만, 이 경우에는 모든 데이터에 대해 동일한 통계치를 가지므로, $$q$$의 파라메터를 $$\mathbf{x}$$에 대한 함수로 정의하면 아래와 같다.
 
 $$
 q\left( \mathbf{z}|\mathbf{x} \right) =\mathcal{N}\left( { \boldsymbol{\mu} }_{q}\left( \mathbf{x} \right) ,\boldsymbol{\Sigma}_{q} \left( \mathbf{x} \right) \right) \tag{6}
