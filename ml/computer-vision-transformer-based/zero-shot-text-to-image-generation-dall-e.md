@@ -129,7 +129,7 @@ $$
 * $$\text{VQ loss}$$\(aka. codebook loss\): Encoder output과 embedding space간의 L2 에러로 input에 대응하는 codebook만을 업데이트하기 위한 용도이기 때문에, encoder output에 대한 stop gradient operator가 필요하다.
 * $$\text{Commitment loss}$$: VQ loss와 유사하지만 encoder의 weight를 고정함으로써 codebook을 학습하는 과정에서 동일한 신호가 다른 codebook vector로 매핑되는 경우를 줄여주는 역할을 한다. 
 
-VQ-VAE는 별도의 prior 분포를 가정하지 않고 모든 latent code에 대해 uniform한 piror를 가정함으로써, posterior가 deterministic이기에 KLD regularizer의 영향을 받지 않는다. 이를 수식으로 표현하면 다음과 같다.
+VQ-VAE는 별도의 prior 분포를 가정하지 않고 모든 latent code에 대해 uniform한 prior를 가정함으로써, posterior가 deterministic이기에 KLD regularizer의 영향을 받지 않는다. 이를 수식으로 표현하면 다음과 같다.
 
 $$
 q(\mathbf{z} = \mathbf{e}_k|\mathbf{x}) =
