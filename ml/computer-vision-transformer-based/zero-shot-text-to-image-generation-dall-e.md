@@ -31,7 +31,7 @@ $$
 \begin{align*} { D }_{ KL }\left( q\left( \mathbf{z }\right) ||p\left( \mathbf{z}|\mathbf{x} \right) \right) =&\int { q\left( \mathbf{z} \right) \log { \frac { q\left( \mathbf{z} \right) }{ p\left( \mathbf{z}|\mathbf{x} \right) } } d\mathbf{z} } \\ =&\int { q\left( \mathbf{z} \right) \log { \frac { q\left( \mathbf{z} \right) p\left( \mathbf{x} \right) }{ p\left( \mathbf{x}|\mathbf{z} \right) p\left( \mathbf{z} \right) } } d\mathbf{z} } \\ =&\int { q\left( \mathbf{z} \right) \log { \frac { q\left( \mathbf{z} \right) }{ p\left( \mathbf{z} \right) } } d\mathbf{z} } +\int { q\left( \mathbf{z} \right) \log { p\left( \mathbf{x} \right) } d\mathbf{z} } -\int { q\left( \mathbf{z} \right) \log { p(\mathbf{x}||\mathbf{z}) } d\mathbf{z} } \\ = &{ D }_{ KL }\left( q\left(\mathbf{z} \right) ||p\left( \mathbf{z} \right) \right) +\log { p\left( \mathbf{x} \right) } - { E }_{ \mathbf{z}\sim q\left( \mathbf{z} \right) }\left[ \log { p({ D }_{ KL }\left( q\left( \mathbf{z} \right) ||p\left( \mathbf{z} \right) \right) } \right] \end{align*} \tag {2}
 $$
 
-위 식 $$\log(x)$$에 대해 정리하면 아래와 같은 식을 도출할 수 있다.
+위 식을 $$\log(x)$$에 대해 정리하면 아래와 같은 식을 도출할 수 있다.
 
 $$
 \log { p(\mathbf{x}) } ={ E }_{ \mathbf{z}\sim q\left( \mathbf{z} \right) }\left[ \log { p(\mathbf{x}|\mathbf{z}) } \right] -{ D }_{ KL }\left( q\left( \mathbf{z} \right) ||p\left( \mathbf{z} \right) \right) +{ D }_{ KL }\left( q\left( \mathbf{z} \right) ||p\left( \mathbf{z}|\mathbf{x} \right) \right) \tag{3}
