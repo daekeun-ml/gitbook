@@ -220,13 +220,62 @@ $$
 
 ![ &#xCD9C;&#xCC98;: https://ml.berkeley.edu/blog/posts/dalle2/](../../.gitbook/assets/dalle-2.png)
 
-## Training
+## 3. Training
 
 #### Data Collection
 
 * Conceptual captions \(3.3M text-image pairs\) 데이터셋으로 처음에는 1.2B 파라메터 모델로 학습
 * 12B 파라메터 모델 학습을 위해 YFCC100M 데이터셋의 filtered subset\(MS-COCO 검증 이미지 포함\)과 위키피디아의 text-image pairs 사용 
 * 필터링을 통해 학습에 도움이 되지 않는 일부 데이터를 제외 \(too short captions, non-English captions, boilerplate phrase로 주로 구성된 데이터, aspect ratio\[1/2, 2\] 범위를 벗어나는 경우\)
+
+#### Preprocessing
+
+* TensorFlow image preprocessing code for training dVAE \(`target_res = 256, channel_count = 3`\)
+
+```python
+def preprocess_image(img, target_res):
+	h, w = tf.shape(img)[0], tf.shape(img)[1]
+	s_min = tf.minimum(h, w)
+	img = tf.image.random_crop(img, 2 * [s_min] + [3])
+
+	t_min = tf.minimum(s_min, round(9 / 8 * target_res))
+	t_max = tf.minimum(s_min, round(12 / 8 * target_res))
+	t = tf.random.uniform([], t_min, t_max + 1, dtype=tf.int32)
+	img = tf.image.resize_images(img, [t, t], 
+		method=tf.image.ResizeMethod.AREA, 
+		align_corners=True
+	)
+	
+	img = tf.cast(tf.rint(tf.clip_by_value(img, 0, 255)), tf.uint8)
+	img = tf.image.random_crop(img, 2 * [target_res] + [channel_count])
+	return tf.image.random_flip_left_right(img)
+```
+
+* TensorFlow image preprocessing code for training the transformer \(`target_res = 256, channel_count = 3`\)
+
+```python
+def preprocess_image(img, target_res):
+	h, w = tf.shape(img)[0], tf.shape(img)[1]
+	s_min = tf.minimum(h, w)
+
+	off_h = tf.random.uniform([], 3 * (h - s_min) // 8,
+		tf.maximum(3 * (h - s_min) // 8 + 1, 5 * (h - s_min) // 8), 
+		dtype=tf.int32)
+	off_w = tf.random.uniform([], 3 * (w - s_min) // 8,
+		tf.maximum(3 * (w - s_min) // 8 + 1, 5 * (w - s_min) // 8),
+		dtype=tf.int32)
+	
+	# Random full square crop.
+	img = tf.image.crop_to_bounding_box(img, off_h, off_w, s_min, s_min)
+	t_max = tf.minimum(s_min, round(9 / 8 * target_res))
+	t = tf.random.uniform([], target_res, t_max + 1, dtype=tf.int32)
+	img = tf.image.resize_images(img, [t, t], method=tf.image.ResizeMethod.AREA,
+		align_corners=True)
+	img = tf.cast(tf.rint(tf.clip_by_value(img, 0, 255)), tf.uint8)
+
+	# We don’t use hflip aug since the image may contain text.
+	return tf.image.random_crop(img, 2 * [target_res] + [channel_count])
+```
 
 #### Mixed-Precision and Distributed Training
 
@@ -262,6 +311,23 @@ $$
 * Gram-Schmidt 대신 Householder orthogonalization을 사용함으로써 수치적인 안정성 개선
 * 16FP 적용 시 발생하는 underflow 방지
 * 보다 자세한 내용은 [https://arxiv.org/abs/1905.13727](https://arxiv.org/abs/1905.13727) 참조.
+
+#### dVAE Training
+
+* 64장의 16GB V100 GPU 사용 \(Batch size = 512, GPU당 batch size = 8, Total updates = 3백만\)
+* Cosine scheduling 사
+  * 첫 5000 updates까지 KL weight $$\beta$$를 0부터 6.6까지 증가
+  * relexation temperature $$\tau$$는 첫 150,000 updates까지 1에서 1/16으로 annealing
+  * step sizes는 120만 updates까지 $$1 \cdot 10^{-4}$$에서 $$1.25 \cdot 10^{-6}$$으로 annealing
+* AdamW w/ $$\beta_1 = 0.9, \beta_2 = 0.999, \epsilon = 10^{-8}$$, weight decay multiplier = $$10^{-4}$$
+
+#### Transformer Training
+
+* 1024장의 NVIDIA V100 GPU 사용 \(Batch size = 1024, GPU당 batch size = 1, Total updates = 43만\)
+* 10% BPE dropout 적용
+* 첫 5000 step까지 linear scheduling으로 step size를 $$4.5 \cdot 10^{-4}$$로 증가시키고 training loss가 감소하지 않을 때마다 step size를 절반으로 감소 \(총 5번 수행하기에 최종적으로는 peak보다 32배 작은 step size를 가짐\)
+* AdamW w/ $$\beta_1 = 0.9, \beta_2 = 0.96, \epsilon = 10^{-8}$$, weight decay multiplier = $$4.5 \cdot 10^{-2} $$
+* 606,000장의 검증셋 이미지로 검증
 
 ## References
 
