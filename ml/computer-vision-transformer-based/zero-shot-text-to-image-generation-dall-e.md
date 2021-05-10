@@ -3,7 +3,7 @@
 ## 1. Preliminaries
 
 {% hint style="info" %}
-VAE, VQ-VAE에 대한 사전 지식이 부족하거나 리마인드가 필요할 때에만 참고할 
+VAE, VQ-VAE에 대한 사전 지식이 부족하거나 리마인드가 필요할 때에만 참고 
 {% endhint %}
 
 ### Variational Autoencoders \(VAE\)
