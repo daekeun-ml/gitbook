@@ -315,7 +315,7 @@ def preprocess_image(img, target_res):
 #### dVAE Training
 
 * 64장의 16GB V100 GPU 사용 \(Batch size = 512, GPU당 batch size = 8, Total updates = 3백만\)
-* Cosine scheduling 사
+* Cosine scheduling 사용
   * 첫 5000 updates까지 KL weight $$\beta$$를 0부터 6.6까지 증가
   * relexation temperature $$\tau$$는 첫 150,000 updates까지 1에서 1/16으로 annealing
   * step sizes는 120만 updates까지 $$1 \cdot 10^{-4}$$에서 $$1.25 \cdot 10^{-6}$$으로 annealing
@@ -323,7 +323,7 @@ def preprocess_image(img, target_res):
 
 #### Transformer Training
 
-* 1024장의 NVIDIA V100 GPU 사용 \(Batch size = 1024, GPU당 batch size = 1, Total updates = 43만\)
+* 1024장의 16GB V100 GPU 사용 \(Batch size = 1024, GPU당 batch size = 1, Total updates = 43만\)
 * 10% BPE dropout 적용
 * 첫 5000 step까지 linear scheduling으로 step size를 $$4.5 \cdot 10^{-4}$$로 증가시키고 training loss가 감소하지 않을 때마다 step size를 절반으로 감소 \(총 5번 수행하기에 최종적으로는 peak보다 32배 작은 step size를 가짐\)
 * AdamW w/ $$\beta_1 = 0.9, \beta_2 = 0.96, \epsilon = 10^{-8}$$, weight decay multiplier = $$4.5 \cdot 10^{-2} $$
