@@ -241,7 +241,8 @@ $$
 * 총 64개의 self-attention layer 사용 
 * 4개의 블록으로 구성된 self-attention layer에는 row-column-row-row attention mask 사용 
 * 최종 블록만 convolutional attention mask 사용
-* 아래 그림 설: 길이 6의 텍스트 토큰과 길이 16의 이미지 토큰\(4x4 grid\)이 있다고 가정
+* 기본적으로는 같은 줄의 픽셀을 참조하되, 가끔씩 위쪽 픽셀을 참조한다고 이해하면 
+* 아래 그림 설명: 길이 6의 텍스트 토큰과 길이 16의 이미지 토큰\(4x4 grid\)이 있다고 가정
   * 텍스트 토큰은 기존 attention mask 방식 그대로 사용
   * Row attention mask: 현재 픽셀에서 raster order로 이전 5개의 이미지 토큰만 지역적으로 참조 
   * Column attention mask: 현재 픽셀에서 위쪽 픽셀만 지역적으로 참조 \(4x4므로 3칸씩 건너뜀\)
