@@ -201,20 +201,22 @@ $$
 * Stage-2: dVAE network를 frozen하고 $$p(\mathbf{z}|\mathbf{y})$$를 학습
   * dVAE와 Transformer를 동시에 학습하는 것도 가능하지만, 실험 결과 퍼포먼스 개선은 없었음
 * MS-COCO 데이터셋에서 zero-shot으로도 높은 성능을 보이며, 사람이 주관적으로 평가 시에도 90%의 평가자들이 DALL-E의 결과를 더 선호
-* 약 12 billion개의 파라터로 상당히 많은 리소스가 필요함 \(GPT-3 17.5B params, iGPT 6.8B params JukeBox 5B params\)
+* 약 120억개\(12B\)의 파라터로 상당히 많은 리소스가 필요함 
+  * 참고: GPT-2 1.5B params, GPT-3 175B params, mT5 13B params, iGPT 6.8B params, JukeBox 5B params
 
 ### Stage-1: dVAE\(discrete VAE\)
 
 * 이미지의 모든 픽셀을 예측하는 것이 아닌 image latent의 sequence를 예측하고 dVAE로 디코딩하여 픽셀 정보 복구
-* 256x256 RGB 이미지를 32x32=1024개의 이미지 토큰으로 임베딩
-* 각 이미지 토큰은 8192 차원의 codebook 벡터를 가짐
-* 따라서, transformer가 처리해야 하는 context 크기를 192배 압축하면서, visual quality는 유지 가
+* 256x256 RGB 이미지를 32x32=1024개의 이미지 토큰으로 임베딩 \(각 이미지 토큰은 8192 차원의 codebook 벡터를 가짐\)
+* 따라서, transformer가 처리해야 하는 context 크기를 192배 압축하면서, visual quality는 유지 가능
+  * \(\(256x256x3\)\) / \(32x32\) = 192
 
 ### Stage 2: Transformer
 
-* 256개의 BPE로 인코딩된 텍스트 토큰과 32x32=1024 이미지 토큰을 concat하여 transformer에 입력
+* 256개의 BPE\(Byte Pair Encoding\)로 인코딩된 텍스트 토큰과 32x32=1024 이미지 토큰을 concat하여 transformer에 입력
   * sequence 길이는 1024+256로 꽤 크지만 transformer에서 수용 가능
 * 텍스트와 이미지 토큰에 대한 joint 확률분포 학습
+* 모델 크기가 방대하기 Model parallelism 없이는 학습 불가능
 
 ![](../../.gitbook/assets/dalle-1%20%281%29.png)
 
