@@ -58,13 +58,13 @@ $$
 따라서, \(4\)는 아래와 같이 정리할 수 있으며,
 
 $$
-\log { p\left( \mathbf{x} \right) } \ge { E }_{ \mathbf{z}\sim q\left( \mathbf{z}|\mathbf{x} \right) }\left[ \log { p(\mathbf{x}|\mathbf{z}) }\right] -{ D }_{ KL }\left( q\left( \mathbf{z}|\mathbf{x} \right) ||p\left( \mathbf{z} \right) \right) \tag{7}
+\log { p\left( \mathbf{x} \right) } \ge { E }_{ \mathbf{z}\sim q\left( \mathbf{z}|\mathbf{x} \right) }\left[ \log { p(\mathbf{x}|\mathbf{z}) }\right] -{ D }_{ KL }\left( q\left( \mathbf{z}|\mathbf{x} \right) ||p\left( \mathbf{z}  \right) \right) \tag{7}
 $$
 
 ELBO를 최대화하는 대신 일반적으로 딥러닝에서 쓰이는 최소화 문제로 변경하여\(즉, 음수를 곱하면\) loss function으로 정의 후 stochastic gradient descent로 최적화할 수 있다.
 
 $$
-L(\theta, \phi) = -{ E }_{ \mathbf{z}\sim q_{\theta}\left( \mathbf{z}|\mathbf{x} \right) }\left[ \log { p_{\phi}(\mathbf{x}|\mathbf{z}) } \right] +{ D }_{ KL }\left( q_{\theta}\left( \mathbf{z}|\mathbf{x} \right) ||p\left( \mathbf{z} \right) \right) \tag{8}
+L(\theta, \phi) = -{ E }_{ \mathbf{z}\sim q_{\phi}\left( \mathbf{z}|\mathbf{x} \right) }\left[ \log { p_{\theta}(\mathbf{x}|\mathbf{z}) } \right] +{ D }_{ KL }\left( q_{\phi}\left( \mathbf{z}|\mathbf{x} \right) ||p_{\theta}\left( \mathbf{z} \right) \right) \tag{8}
 $$
 
 Loss function의 첫번째 항은 reconstruction loss로 현재 샘플 $$\mathbf{z}$$에 대한 negative log likelihood이며, 두번째 항은 KLD regularizer로 샘플링된 $$\mathbf{z}$$에 대한 제약 조건\($$q(\mathbf{z}|\mathbf{x})$$가 $$p(\mathbf{z})$$와 유사해야 함\)을 부여함으로써, latent space 내에서 컴팩트한 볼륨을 구성할 수 있게 한다.
@@ -186,13 +186,27 @@ $$\tau$$가 0에 가까워질 수록 Gumbel-Softmax의 샘플이 one-hot argmax 
 ### Overview
 
 * Zero-shot image generation by a text prompt
-* Objective: 이미지 $$\mathbf{x}$$와 캡션 $$\mathbf{y}$$, 인코딩된 RGB 이미지에 대한 토큰 $$\mathbf{z}$$의 joint 확률분포에 대한 evidence lower bound\(ELB\)를 최대화 \(autoregressive하게 텍스트와 이미지 토큰을 같이 묶어서 트랜스포머로 학습\)
-* Inputs: Text tokens + image tokens \(text-image로 이루어진 2억 5천만 쌍에 대해 학습\)
-* Outputs: image tokens
-* $$p(\mathbf{x}|\mathbf{y})$$를 직접적으로 모델링하는 대신 factorization을 통해 아래와 같이 분해 후 2-stage 학습으로 간소화
+* Objective: 이미지 $$\mathbf{x}$$와 캡션 $$\mathbf{y}$$, 인코딩된 RGB 이미지에 대한 이미지 토큰 $$\mathbf{z}$$의 joint 확률분포에 대한 evidence lower bound\(ELB\)를 최대화 \(autoregressive하게 텍스트와 이미지 토큰을 같이 묶어서 트랜스포머로 학습\)
 
 $$
-p(\mathbf{x},\mathbf{z}| \mathbf{y}) = \underbrace{p(\mathbf{x}|\mathbf{z,y})}_{\textrm{dVAE}} \ \underbrace{p(\mathbf{z}|\mathbf{y})}_{\textrm{Transformer}} \tag{18}
+\log p_{\theta, \psi} (\mathbf{x,y}) \geq { E }_{ \mathbf{z}\sim q_{\phi}\left( \mathbf{z}|\mathbf{x} \right) }\left[ \log { p_{\theta}(\mathbf{x}|\mathbf{y,z}) } \right] - \beta{ D }_{ KL }\left( q_{\phi}\left( \mathbf{y,z}|\mathbf{x} \right) ||p_{\psi}\left( \mathbf{y,z} \right) \right) \tag{18}
+$$
+
+* Model: $$p(\mathbf{x}|\mathbf{y})$$를 직접적으로 모델링하는 대신 factorization을 통해 아래와 같이 분해 후 2-stage 학습으로 간소화
+
+$$
+p_{\theta, \psi}(\mathbf{x,y,z}) = \underbrace{p_{\theta}(\mathbf{x}|\mathbf{y,z})}_{\textrm{dVAE}} \;\underbrace{p_{\psi} (\mathbf{y,z})}_{\textrm{Transformer}} \tag{19}
+$$
+
+* $$q_{\phi}$$: the distribution over the 32x32 image tokens by the dVAE encoder
+* $$p_{\theta}$$: the distribution over the RGB images by the dVAE encoder
+* $$p_{\psi}$$: the joint distribution over the text and image tokens by the transformer
+* Inputs: Text tokens + image tokens \(text-image로 이루어진 2억 5천만 쌍에 대해 학습\)
+* Outputs: image tokens
+* \(19\)의 식은 아래와 같이 해석해도 무방함
+
+$$
+p_{\theta, \psi}(\mathbf{x,z} | \mathbf{y}) = \underbrace{p_{\theta}(\mathbf{x}|\mathbf{y,z})}_{\textrm{dVAE}} \;\underbrace{p_{\psi} (\mathbf{z}|\mathbf{y})}_{\textrm{Transformer}} \tag{19}
 $$
 
 * Stage-1: $$p(\mathbf{z}|\mathbf{y})$$를 uniform distribution으로 놓고 dVAE를 먼저 학습
@@ -202,16 +216,16 @@ $$
 * 약 120억개\(12B\)의 파라터로 상당히 많은 리소스가 필요함 
   * 참고: GPT-2 1.5B params, GPT-3 175B params, mT5 13B params, iGPT 6.8B params, JukeBox 5B params
 
-### Stage-1: dVAE\(discrete VAE\)
+### Stage-1: Training dVAE\(discrete VAE\)
 
 * 이미지의 모든 픽셀을 예측하는 것이 아닌 image latent의 sequence를 예측하고 dVAE로 디코딩하여 픽셀 정보 복구
 * 256x256 RGB 이미지를 32x32=1024개의 이미지 토큰으로 임베딩 \(각 이미지 토큰은 8192 차원의 codebook 벡터를 가짐\)
 * 따라서, transformer가 처리해야 하는 context 크기를 192배 압축하면서, visual quality는 유지 가능
   * \(\(256x256x3\)\) / \(32x32\) = 192
 
-### Stage 2: Transformer
+### Stage 2: Training Transformer
 
-* 256개의 BPE\(Byte Pair Encoding\)로 인코딩된 텍스트 토큰과 32x32=1024 이미지 토큰을 concat하여 transformer에 입력
+* 256개의 BPE\(Byte Pair Encoding\)로 인코딩된 텍스트 토큰\(vocabulary size = 16384\)과 32x32=1024 이미지 토큰\(vocabulary size = 8192\)을 concat하여 transformer에 입력
   * sequence 길이는 1024+256로 꽤 크지만 transformer에서 수용 가능
 * 텍스트와 이미지 토큰에 대한 joint 확률분포 학습
 * 모델 크기가 방대하기 Model parallelism 없이는 학습 불가능
@@ -342,6 +356,7 @@ def preprocess_image(img, target_res):
   *  [github.com/lucidrains/DALLE-pytorch](https://github.com/lucidrains/DALLE-pytorch)
 * Blog
   * Understanding VQ-VAE: [https://ml.berkeley.edu/blog/posts/vq-vae/](https://ml.berkeley.edu/blog/posts/vq-vae/)
+  * From Autoencoder to Beta-VAE: [https://lilianweng.github.io/lil-log/2018/08/12/from-autoencoder-to-beta-vae.html](https://lilianweng.github.io/lil-log/2018/08/12/from-autoencoder-to-beta-vae.html)
   * Tutorial: Categorical Variational Autoencoders using Gumbel-Softmax: [https://blog.evjang.com/2016/11/tutorial-categorical-variational.html](https://blog.evjang.com/2016/11/tutorial-categorical-variational.html)
 * Movie Clip
   * PR-301: [https://www.youtube.com/watch?v=az-OV47oKvA](https://www.youtube.com/watch?v=az-OV47oKvA)
