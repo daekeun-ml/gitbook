@@ -117,8 +117,6 @@ $$
 * $$k$$: nearest neighborhood search를 통해 K개의 임베딩 벡터 중 하나와 일치하는 코드 백터
 * $$\mathbf{e}_k$$: codebook에서 input과 가장 가까운 code vector
 
-$$\text{argmin}(\cdot)$$은 미분 불가능하므로, decoder input $$z_q$$는 encoder output $$z_e$$로 복사된다.
-
 Latent vector들의 set인 codebook을 학습하기 위하여 VQ-VAE의 loss function은 3가지 loss function의 합으로 이루어져 있다.
 
 $$
@@ -139,7 +137,7 @@ q(\mathbf{z} = \mathbf{e}_k|\mathbf{x}) =
     \end{cases} \tag{14}
 $$
 
-VQ-VAE의 학습 과정을 그림으 표현하면 아래와 같다.  
+VQ-VAE의 학습 과정을 그림으로 표현하면 아래와 같다.  
 
 
 ![](../../.gitbook/assets/va-vae.png)
