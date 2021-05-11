@@ -228,11 +228,25 @@ $$
 * 256개의 BPE\(Byte Pair Encoding\)로 인코딩된 텍스트 토큰\(vocabulary size = 16384\)과 32x32=1024 이미지 토큰\(vocabulary size = 8192\)을 concat하여 transformer에 입력
   * sequence 길이는 1024+256로 꽤 크지만 transformer에서 수용 가능
 * 텍스트와 이미지 토큰에 대한 joint 확률분포 학습
-* 모델 크기가 방대하기 Model parallelism 없이는 학습 불가능
+* 이미지 생성에 포커스를 맞추기 때문에 텍스트에 대한 cross entropy loss를 1/8로, 이미지에 대한 cross entropy loss 가중치를 7/8로 부여
+* 모델 크기가 방대하므로 Model parallelism 없이는 학습 불가능
 
 ![](../../.gitbook/assets/dalle-1%20%281%29.png)
 
 ![ &#xCD9C;&#xCC98;: https://ml.berkeley.edu/blog/posts/dalle2/](../../.gitbook/assets/dalle-2.png)
+
+
+
+* Attention mask는 Sparse Transformer 논문\([https://arxiv.org/pdf/1904.10509.pdf](https://arxiv.org/pdf/1904.10509.pdf)\)의 아이디어를 응용
+* 총 64개의 self-attention layer 사용 
+* 4개의 블록으로 구성된 self-attention layer에는 row-column-row-row attention mask 사용 
+* 최종 블록만 convolutional attention mask 사용
+* 아래 그림 설: 길이 6의 텍스트 토큰과 길이 16의 이미지 토큰\(4x4 grid\)이 있다고 가정
+  * 텍스트 토큰은 기존 attention mask 방식 그대로 사용
+  * Row attention mask: 현재 픽셀에서 raster order로 이전 5개의 이미지 토큰만 지역적으로 참조 
+  * Column attention mask: 현재 픽셀에서 위쪽 픽셀만 지역적으로 참조 \(4x4므로 3칸씩 건너뜀\)
+
+![&#xCD9C;&#xCC98;: https://arxiv.org/pdf/2102.12092.pdf](../../.gitbook/assets/attention-mask.png)
 
 ## 3. Training
 
@@ -350,6 +364,7 @@ def preprocess_image(img, target_res):
   * The Concrete Distribution: A Continuous Relaxation of Discrete Random Variables: [https://arxiv.org/pdf/1611.00712.pdf](https://arxiv.org/pdf/1611.00712.pdf)
   * Neural Discrete Representation Learning: [https://arxiv.org/abs/1711.00937](https://arxiv.org/abs/1711.00937)
   * PowerSGD: [https://arxiv.org/abs/1905.13727](https://arxiv.org/abs/1905.13727)
+  * Generating Long Sequences with Sparse Transformers: [https://arxiv.org/pdf/1904.10509.pdf](https://arxiv.org/pdf/1904.10509.pdf)
 * Dataset
   * [http://www.vision.caltech.edu/visipedia/CUB-200-2011.html](http://www.vision.caltech.edu/visipedia/CUB-200-2011.html)
 * GitHub
