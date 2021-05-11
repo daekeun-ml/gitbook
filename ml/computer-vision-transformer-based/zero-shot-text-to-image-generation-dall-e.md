@@ -206,7 +206,7 @@ $$
 * \(19\)의 식은 아래와 같이 해석해도 무방함
 
 $$
-p_{\theta, \psi}(\mathbf{x,z} | \mathbf{y}) = \underbrace{p_{\theta}(\mathbf{x}|\mathbf{y,z})}_{\textrm{dVAE}} \;\underbrace{p_{\psi} (\mathbf{z}|\mathbf{y})}_{\textrm{Transformer}} \tag{19}
+p_{\theta, \psi}(\mathbf{x,z} | \mathbf{y}) = \underbrace{p_{\theta}(\mathbf{x}|\mathbf{y,z})}_{\textrm{dVAE}} \;\underbrace{p_{\psi} (\mathbf{z}|\mathbf{y})}_{\textrm{Transformer}} \tag{20}
 $$
 
 * Stage-1: $$p(\mathbf{z}|\mathbf{y})$$를 uniform distribution으로 놓고 dVAE를 먼저 학습
