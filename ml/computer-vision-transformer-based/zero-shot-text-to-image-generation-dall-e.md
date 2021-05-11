@@ -70,7 +70,7 @@ $$
 Loss function의 첫번째 항은 reconstruction loss로 현재 샘플 $$\mathbf{z}$$에 대한 negative log likelihood이며, 두번째 항은 KLD regularizer로 샘플링된 $$\mathbf{z}$$에 대한 제약 조건\($$q(\mathbf{z}|\mathbf{x})$$가 $$p(\mathbf{z})$$와 유사해야 함\)을 부여함으로써, latent space 내에서 컴팩트한 볼륨을 구성할 수 있게 한다.
 
 * $$q(\mathbf{z}|\mathbf{x})$$는 probabilistic encoder라고도 하며, $$p(\mathbf{x}|\mathbf{z})$$는 probabilistic decoder\(Likelihood of generating true data sample given the latent code\)라고도 한다.
-* KLD regularizer를 Entropy 항으로 분해해서 살펴보면, Posterior에서 샘플링된 $$\mathbf{z}$$는 최대햔 다양해야 한다는 제약 조건이 같이 포함되기에, GAN의 고질적인 문제 mode collapse 방지 효과가 있다.
+* KLD regularizer를 Entropy 항으로 분해해서 살펴보면, Posterior에서 샘플링된 $$\mathbf{z}$$는 최대한 다양해야 한다는 제약 조건이 같이 포함되기에, GAN의 고질적인 문제인 mode collapse를 방지하는 효과가 있다.
 * 하지만, KLD regularizer로 인한 posterior collapse 문제가 발생한다.
 
 하지만, $$\mathbf{z}$$는 샘플링된 fixed 데이터로 $$\theta$$에 대한 $$\mathbf{z}$$의 미분을 직접적으로 계산할 수 없기에, 노이즈\($$\boldsymbol{\epsilon}$$\)를 샘플링하는 문제로 변경하여 평균과 분산에 대한 미분을 계산하는 reparameterization trick을 적용한다. \($$\odot$$는 element-wise product\)
