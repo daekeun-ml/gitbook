@@ -4,7 +4,7 @@ description: 'Distributed Training 100: 딥러닝 분산 학습, 하루만 하�
 
 # Data Parallelism Overview
 
-## Single GPU
+## 1. Single GPU
 
 ### Gradient Accumulation
 
@@ -63,7 +63,7 @@ for i, (inputs, labels) in enumerate(training_set):
 * 주의: Multi-process로 사용 시 동일한 데이터셋 객체가 각 worker processing에 복제되어 중복데이터가 모델에 feeding되므로 워크로드를 분배해야 함.
 * 참조: [https://pytorch.org/docs/stable/data.html](https://pytorch.org/docs/stable/data.html)
 
-## Single-Machine Multi-GPU
+## 2. Single-Machine Multi-GPU
 
 ### 기본 용어
 
@@ -129,7 +129,7 @@ class DataParallelCriterion(DataParallel):
         return Reduce.apply(*outputs) / len(outputs), targets
 ```
 
-## Multi-Machine Multi-GPU
+## 3. Multi-Machine Multi-GPU
 
 ### PyTorch DistributedDataParallel \(DDP\)
 
@@ -307,7 +307,7 @@ for data, label in data_iter:
 * **master\_weights**: 연산 시의 weight를 FP32로 할지 여부
 * **loss\_scale**: Gradient Scaling 관련 파라메터
 
-## Collective Communication
+## 4. Collective Communication
 
 다수 프로세스 간 파라메터 간의 통신을 위한 방법
 
@@ -368,7 +368,7 @@ P=4, N=4일 때의 All-Reduce 모식도 \(출처: [https://tech.preferred.jp/ja/
   * Recall: All-Reduce의 경우 각 프로세스의 communication cost는 $$N(P - 1)$$
 * Total Communication cost = $$O(NP)$$
 
-## Hardware Communication
+## 5. Hardware Communication
 
 ### AWS GPU instances
 
@@ -390,4 +390,24 @@ P=4, N=4일 때의 All-Reduce 모식도 \(출처: [https://tech.preferred.jp/ja/
 | 각 노드의 GPU간 통신 성 | 600 Gbps | 600 Gbps |
 
 * 직관적으로 GPU-GPU간 성능은 동등하며, 노드 간 통신 성능은 CPU-GPU 간의 통신이 빈번하게 발생할 경우 불리함
+
+### Good to know
+
+* Turing 아키텍처 이전까지는 동일한 아키텍처라 하더라도 일부 게이밍 카드에서 FP16 및 FP64 성능이 심각하게 낮음
+  * GeForce GTX 1080 Ti: &lt; 0.177 TFLOPS \(FP16\)
+  * Tesla P100: 18.7 ~ 21.2 TFLOPS \(FP16\)
+* Turing 아키텍처부터는 FP16에 대한 성능 제약이 없음
+
+## References
+
+* Training Deep Nets with Sublinear Memory Cost: [https://arxiv.org/pdf/1604.06174.pdf](https://arxiv.org/pdf/1604.06174.pdf)
+* Fitting larger networks into memory: [https://medium.com/tensorflow/fitting-larger-networks-into-memory-583e3c758ff9](https://medium.com/tensorflow/fitting-larger-networks-into-memory-583e3c758ff9)
+* PyTorch Multi-GPU 제대로 학습하기\(당근마켓 블로그\): [https://medium.com/daangn/pytorch-multi-gpu-%ED%95%99%EC%8A%B5-%EC%A0%9C%EB%8C%80%EB%A1%9C-%ED%95%98%EA%B8%B0-27270617936b](https://medium.com/daangn/pytorch-multi-gpu-%ED%95%99%EC%8A%B5-%EC%A0%9C%EB%8C%80%EB%A1%9C-%ED%95%98%EA%B8%B0-27270617936b)
+* Technologies behind Distributed Deep Learning: AllReduce: [https://tech.preferred.jp/en/blog/technologies-behind-distributed-deep-learning-allreduce/](https://tech.preferred.jp/en/blog/technologies-behind-distributed-deep-learning-allreduce/)
+* Comparison of NVIDIA Tesla/Quadro and NVIDIA GeForce GPUs: [https://www.microway.com/knowledge-center-articles/comparison-of-nvidia-geforce-gpus-and-nvidia-tesla-gpus/](https://www.microway.com/knowledge-center-articles/comparison-of-nvidia-geforce-gpus-and-nvidia-tesla-gpus/)
+* OpenMPI: [https://www.open-mpi.org/](https://www.open-mpi.org/)
+* NVIDIA NCCL: [https://developer.nvidia.com/nccl](https://developer.nvidia.com/nccl)
+* PyTorch Official Documents: [https://pytorch.org/docs/stable/distributed.html](https://pytorch.org/docs/stable/distributed.html)
+
+
 
