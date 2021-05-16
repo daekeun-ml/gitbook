@@ -12,6 +12,8 @@ description: 'Distributed Training 100: 딥러닝 분산 학습, 하루만 하�
 * 매 step마다 파라메터를 업데이트하지 않고\(`optimizer.step()` 호출\) parameter.grad 텐서에서 여러 backward 연산의 gradient들을 모았다가 일정 step이 경과하면 파라메터를 업데이트
 * loss도 합산되므로 `accumulation_steps`로 나눠야 함
 
+![Gradient accumulation reuses shard memory to scale to out-of-memory datasets. \(Source: Cloud Native Machine Learning\)](../../.gitbook/assets/gradient-accumulation.png)
+
 ```python
 model.zero_grad()                                   # Reset gradients tensors
 for i, (inputs, labels) in enumerate(training_set):
