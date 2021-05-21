@@ -337,10 +337,10 @@ $$
 
 ![](../../.gitbook/assets/allreduce1.png)
 
-P=4, N=4일 때의 All-Reduce 모식도 \(출처: [https://tech.preferred.jp/ja/blog/prototype-allreduce-library/](https://tech.preferred.jp/ja/blog/prototype-allreduce-library/)\)
+$$P=4, N=4$$일 때의 All-Reduce 모식도 \(출처: [https://tech.preferred.jp/ja/blog/prototype-allreduce-library/](https://tech.preferred.jp/ja/blog/prototype-allreduce-library/)\)
 
 * Naive하게 하나의 프로세스를 마스터로 선택 후 이 프로세스에서 Reduce 연산을 수행하고 전체 프로세스에 배포할 수 있는데, 이 경우 프로세스 간의 처리량에 불균형이 발생
-* 총 프로세스 수를 P,  파라메터 개수가 N일 때 각 프로세스의 Communication Cost = $$N(P - 1)$$
+* 총 프로세스 수를 $$P$$,  파라메터 개수가 $$N$$일 때 각 프로세스의 Communication Cost = $$N(P - 1)$$
 * Total Communication cost = $$P$$ senders x $$(P-1)$$ receivers x $$O(N)$$ tensor = $$O(NP^2)$$
 * 이를 개선하기 위한 여러 기법들이 제안되어 있음 \(Ring All-Reduce, Rabenseifner 알고리즘, SageMaker Data Parallelism 등\)
 
@@ -386,10 +386,10 @@ P=4, N=4일 때의 All-Reduce 모식도 \(출처: [https://tech.preferred.jp/ja/
 |  | AWS p4d.24xlarge | NVIDIA DGX A100 |
 | :--- | :--- | :--- |
 | CPU | Intel Xeon Platinum 8275CL x2 sockets = 48 physical cores | AMD EPYC 7742 x2 sockets = 128 physical cores |
-| CPU/GPU 간의 통 | PCIe gen3 x16: 단방향으로 15.75 GB/s | PCIe gen4 x16: 단방향으로 31.51 GB/s |
-| 통신 연결 방 | Elastic Fabric Adapter \(EFA\): [https://aws.amazon.com/ko/hpc/efa/](https://aws.amazon.com/ko/hpc/efa/) | ConnextX-6 HDR 200GB/s Infiniband: [https://www.nvidia.com/en-us/networking/infiniband-adapters/connectx-6/](https://www.nvidia.com/en-us/networking/infiniband-adapters/connectx-6/) |
-| 노드 간 통신 성 | 100 Gbps x4 links = 400 Gbps | 200 Gbps x8 links = 1600 Gbps |
-| 각 노드의 GPU간 통신 성 | 600 Gbps | 600 Gbps |
+| CPU/GPU 간의 통신 | PCIe gen3 x16: 단방향으로 15.75 GB/s | PCIe gen4 x16: 단방향으로 31.51 GB/s |
+| 통신 연결 방식 | Elastic Fabric Adapter \(EFA\): [https://aws.amazon.com/ko/hpc/efa/](https://aws.amazon.com/ko/hpc/efa/) | ConnextX-6 HDR 200GB/s Infiniband: [https://www.nvidia.com/en-us/networking/infiniband-adapters/connectx-6/](https://www.nvidia.com/en-us/networking/infiniband-adapters/connectx-6/) |
+| 노드 간 통신 성능 | 100 Gbps x4 links = 400 Gbps | 200 Gbps x8 links = 1600 Gbps |
+| 각 노드의 GPU간 통신 성능 | 600 Gbps | 600 Gbps |
 
 * 직관적으로 GPU-GPU간 성능은 동등하며, 노드 간 통신 성능은 CPU-GPU 간의 통신이 빈번하게 발생할 경우 불리함
 
