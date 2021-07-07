@@ -4,6 +4,10 @@ description: 'Distributed Training 100: 딥러닝 분산 학습, 하루만 하�
 
 # Data Parallelism Overview
 
+## Deck
+
+{% file src="../../.gitbook/assets/distributed\_training\_100.pdf" %}
+
 ## 1. Single GPU
 
 ### Gradient Accumulation
