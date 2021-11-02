@@ -18,7 +18,7 @@
 중간의 공백 기간은 학업에 충실했던 기간이며, 2001~2004년은 산업기능요원으로 근무했습니다.
 {% endhint %}
 
-* AIML Specialist Solutions Architect @ Amazon Web Services \(2019.06~\)
+* Senior AIML Specialist Solutions Architect @ Amazon Web Services \(2019.06~\)
 * Senior Engineer & Data Scientist @ Hyundai Card&Capital \(2017.02~2019.06\)
 * Senior Research Engineer & Computer Vision Engineer @ LG Display \(2013.03~2017.02\)
 * Research Engineer & Computer Vision Engineer @ Atalgo \(Startup\) \(2008.02~2010.01\)
@@ -37,10 +37,13 @@
 | :--- | :--- |
 | linkedin | [https://www.linkedin.com/in/daekeun-kim/](https://www.linkedin.com/in/daekeun-kim/) |
 | GitHub | [https://github.com/daekeun-ml](https://github.com/daekeun-ml) |
-| Public Speaking | [Amazon SageMaker 기반 사전 훈련된 딥러닝 모델 손쉽게 배포하기](https://www.youtube.com/watch?v=ZdOcrLKow3I) |
+| Public Speaking | [AWS Innovate 2021 - Amazon SageMaker 기반 사전 훈련된 딥러닝 모델 손쉽게 배포하기](https://www.youtube.com/watch?v=ZdOcrLKow3I) |
+|  | [AWS Seoul Summit 2021 - Amazon SageMaker를 통한 대용량 모델 훈련 방법 살펴보기](https://www.youtube.com/watch?v=csr84BKbFeg) |
+|  | [AI PLUS 2021 - AIoT on Cloud: 클라우드 기반 엣지 디바이스 머신 러닝 실시간 추론](https://www.youtube.com/watch?v=W7le2sZRb90) |
+|  | [AWS Builders 300 - AutoGluon on AWS](https://github.com/aws-samples/autogluon-on-aws) |
+|  | [2021 BIOPLUS-INTERPHEX Korea - 스마트 팩토리](https://www.youtube.com/watch?v=iZGa5TRATGQ) |
 |  | [re:Invent 2020 Recap - SageMaker Deep Dive](https://bit.ly/reinvent2020-recap-deepdive-sagemaker) |
 |  | [AWS AIML 특집 웨비나 - SageMaker Demo](https://www.youtube.com/watch?v=miIVGlq6OUk) |
 |  | [AWS Seoul Summit 2020 - AWS로 강화 학습 시작하기](https://www.youtube.com/watch?v=eIz_rC7hEyE) |
 |  | [AWS Seoul Summit 2020 - AWS 스마트 팩토리](https://www.youtube.com/watch?v=R0sMMphzOhw) |
 |  | [AWS Builders 300 - KoBERT Fine-tuning on AWS](https://attendee.gotowebinar.com/recording/6067766376359184398) |
-
