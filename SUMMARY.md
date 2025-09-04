@@ -78,3 +78,5 @@
   * [Part 1: Overview & Background](genai/open-source-slm-based-hybrid-agent-ai-architecture/part-1-overview-and-background.md)
   * [Part 2: Agentic Patterns & Prompting](genai/open-source-slm-based-hybrid-agent-ai-architecture/part-2-agentic-patterns-and-prompting.md)
   * [Part 3: Tool Integration & Fine-Tuning](genai/open-source-slm-based-hybrid-agent-ai-architecture/part-3-tool-integration-and-fine-tuning.md)
+* [Fine-tuning](genai/fine-tuning/README.md)
+  * [Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML](genai/fine-tuning/fine-tune-evaluate-quantize-slm-llm-using-the-torchtune-on-azure-ml.md)
