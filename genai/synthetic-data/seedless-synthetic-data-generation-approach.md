@@ -18,7 +18,7 @@ Seedless 접근법은 **기존에 준비된 데이터 없이**, 오로지 LLM의
 * 데이터가 부족한 **저자원 언어**에 대한 지원 (희귀 언어로 모델 학습 데이터 생성)
 * **창의적 콘텐츠 생성** 모델 (기존 데이터에 얽매이지 않고 참신한 문장/아이디어 생성)
 
-### 1. Seedless 합성 데이터 접근의 핵심 아이디어
+## 1. Seedless 합성 데이터 접근의 핵심 아이디어
 
 Seedless 방식의 핵심은 _“모델에게 무엇을 만들어야 하는지 체계적으로 가이드”_ 하는 것입니다. 과거 방식으로는 몇 가지 예시(seed)를 주고 Self-Instruct 기법으로 모델이 비슷한 데이터를 만들어내게 하곤 했습니다. 그러나 이는 seed가 편협하면 결과도 편중되는 한계가 있었습니다. 최신 연구 동향은 **인간 지식의 구조**를 활용하여 가능한 한 전 범위의 과제를 망라하는 방향으로 나아갑니다.
 
@@ -36,7 +36,7 @@ Seedless 방식의 핵심은 _“모델에게 무엇을 만들어야 하는지 �
 
 GLAN의 자세한 구현은 [이 GitHub 리포지토리](https://github.com/daekeun-ml/synthetic-qa-generation/tree/main/glan-instruct)을 참조하세요.
 
-### 2. 일반화된 Instruction 튜닝을 위한 기법 (GLAN 사례)
+## 2. 일반화된 Instruction 튜닝을 위한 기법 (GLAN 사례)
 
 위에서 설명한 GLAN을 통해 알 수 있듯, seedless 합성의 핵심은 **일반화**와 **체계화**입니다. 이를 구현하는 구체적인 방안과 그 효과를 GLAN 사례를 들어 조금 더 상세히 살펴보면:
 
@@ -183,7 +183,7 @@ class CreativeGenerator:
         return creative_items
 ```
 
-### 3. Seedless 합성 데이터 생성 아키텍처
+## 3. Seedless 합성 데이터 생성 아키텍처
 
 기존 데이터 없이 순수 LLM 능력으로 합성 데이터를 생성하는 아키텍처입니다. Self-Instruct로 지시사항 자동 생성, 도메인 지식 추출, 창의적 콘텐츠 생성을 Lambda와 Bedrock으로 처리합니다. Kinesis로 실시간 수집, Step Functions로 품질 관리, Glue로 데이터 통합하여 새로운 도메인 AI 모델이나 범용 instruction following 모델 개발에 활용됩니다.
 
@@ -199,9 +199,7 @@ _그림 2. Seedless Synthetic Data Generation Architecture_
 
 > 참고: 이 아키텍처는 설명을 위한 참조 사례이며, 모든 프로덕션 요구 사항을 반영하지 않을 수 있습니다. 실제 구현은 특정 사용 사례, 규모 요구 사항 및 조직의 제약 조건에 따라 더 간단하거나 더 복잡할 수 있습니다. 이 패턴을 적용할 때는 항상 고유한 요구 사항을 고려하십시오.
 
-### 아키텍처 개요
-
-#### 3.1. Self-Instruct 엔진
+### 3.1. Self-Instruct 엔진
 
 * AWS Lambda - 지시사항 생성
   * **자동 지시사항 생성**: 기본 템플릿에서 새로운 지시사항 자동 생성
@@ -212,7 +210,7 @@ _그림 2. Seedless Synthetic Data Generation Architecture_
   * **모델 선택**: Claude, Llama 등 다양한 LLM 모델 활용
   * **배치 처리**: 대량의 지시사항 효율적 처리
 
-#### 3.2. 지식 생성 (Knowledge Generation)
+### 3.2. 지식 생성 (Knowledge Generation)
 
 * AWS Lambda - 지식 추출
   * **도메인 지식 생성**: 특정 분야의 전문 지식 자동 생성
@@ -223,7 +221,7 @@ _그림 2. Seedless Synthetic Data Generation Architecture_
   * **다층 추론**: 복잡한 개념의 단계별 설명
   * **상호 연관성**: 개념 간 관계 및 의존성 표현
 
-#### 3.3. 창의 생성 (Creative Generation)
+### 3.3. 창의 생성 (Creative Generation)
 
 *   AWS Lambda - 창의 엔진
 
@@ -259,7 +257,7 @@ _그림 2. Seedless Synthetic Data Generation Architecture_
   * **스타일 다양성**: 다양한 문체와 장르 지원
   * **감정 표현**: 감정이 풍부한 자연스러운 콘텐츠
 
-#### 3.4. 품질 관리 (Quality Management)
+### 3.4. 품질 관리 (Quality Management)
 
 * AWS Step Functions - 워크플로우
   * **복잡한 품질 관리**: 다단계 검증 프로세스 조율
@@ -274,7 +272,7 @@ _그림 2. Seedless Synthetic Data Generation Architecture_
   * **감정 분석**: 생성된 콘텐츠의 감정 적절성 검증
   * **주제 일관성**: 주제와 내용의 일치도 평가
 
-#### 3.5. 데이터 통합 (Data Integration)
+### 3.5. 데이터 통합 (Data Integration)
 
 * Amazon Kinesis Data Streams - 실시간 수집
   * **스트리밍 처리**: 생성되는 데이터의 실시간 수집
@@ -289,7 +287,7 @@ _그림 2. Seedless Synthetic Data Generation Architecture_
   * **스키마 진화**: 데이터 구조 변경에 대한 자동 대응
   * **데이터 품질**: 중복 제거, 형식 통일, 검증
 
-#### 3.6. 결과 저장 (Result Storage)
+### 3.6. 결과 저장 (Result Storage)
 
 * Amazon S3 - 합성 데이터
   * **대용량 저장**: 생성된 대량의 합성 데이터 저장

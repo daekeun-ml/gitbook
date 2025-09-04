@@ -7,11 +7,11 @@
 * [Part 1: Overview & Background](part-1-overview-and-background.md)
 * [Part 2: Agentic Patterns & Prompting](part-2-agentic-patterns-and-prompting.md)
 
-### TL;DR
+## TL;DR
 
 이 패턴은 SLM을 RAG/VectorDB, SQL 데이터베이스, 내부 API, 계산/코드 실행 도구와 통합하여 실용적인 작업을 수행합니다. 기업 환경에 최적화하기 위한 파인튜닝 전략에는 대화 스타일 조정, 도구 인터페이스 학습, 도메인별 지식 주입, 사고 연쇄 훈련이 포함됩니다. LoRA와 같은 경량 기법으로 효율적인 커스터마이징이 가능합니다.
 
-### 1. Tool Integration Patterns with SLMs
+## 1. Tool Integration Patterns with SLMs
 
 기업 지식 탐색과 작업 자동화에 LLM을 활용하려면 외부 지식 소스와 소프트웨어 도구를 LLM 에이전트와 긴밀하게 연결하는 것이 필수적입니다. 이 아키텍처는 SLM 에이전트가 다양한 플러그인/도구를 사용하여 한계를 보완하도록 설계합니다. 대표적인 통합 패턴은 다음과 같습니다:
 
@@ -22,7 +22,7 @@
 
 위 패턴들의 통합을 통해 SLM 에이전트는 **풍부한 도구 생태계** 내에서 단순한 언어 응답을 넘어 **행동하는 AI**가 됩니다. 이는 독립형 LLM의 한계를 극복하고 기업 워크플로우에서 실제 활용하기 위한 필수 조건입니다. 중요한 고려사항으로는 **모델이 도구 정의와 사용법을 정확히 이해**하도록 보장하고 **오용에 대한 안전장치**를 구축하는 것입니다. 예를 들어, 도구 사용 전후에 Claude가 "이 호출이 적절합니까?"를 판단하거나 도구 결과 신뢰성을 평가하는 것입니다. 또한 각 통합 지점에서 로그를 유지하여 모델 행동을 모니터링하고 필요시 인간 검토를 받는 **Human-in-the-loop** 메커니즘을 고려해야 합니다.
 
-### 2. Fine-Tuning Strategies for Enterprise SLMs
+## 2. Fine-Tuning Strategies for Enterprise SLMs
 
 **파인튜닝** 기법은 기업 환경에 맞게 오픈소스 SLM을 최적화하는 데 중요합니다. 파인튜닝을 통해 모델은 일반적인 문장 생성기에서 **기업 도메인 전문가**나 **도구 활용에 숙련된 어시스턴트**로 진화할 수 있습니다. 다음과 같은 파인튜닝 전략을 적용할 수 있습니다:
 
