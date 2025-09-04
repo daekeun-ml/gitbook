@@ -1,2 +1,6 @@
-# Computer Vision \(CNN-based\)
+---
+coverY: 0
+---
+
+# Computer Vision (CNN-based)
 

@@ -1,3 +1,7 @@
+---
+icon: user-hair
+---
+
 # About me
 
 ## 서문
@@ -18,10 +22,12 @@
 중간의 공백 기간은 학업에 충실했던 기간이며, 2001\~2004년은 산업기능요원으로 근무했습니다.
 {% endhint %}
 
-* Senior AIML Specialist Solutions Architect @ Amazon Web Services (2019.06\~Current)
+* Principal AIML Specialist Solutions Architect @ Amazon Web Services (2025.06\~Current)
+* Senior Technical ML Specialist @ Microsoft (2024.03\~2025.06)
+* Senior AIML Specialist Solutions Architect @ Amazon Web Services (2019.06\~2024.03)
 * Senior Engineer & Data Scientist @ Hyundai Card\&Capital (2017.02\~2019.06)
-* Senior Research Engineer & Computer Vision Engineer @ LG Display (2013.03\~2017.02)
-* Research Engineer & Computer Vision Engineer @ Atalgo (Startup) (2008.02\~2010.01)
+* Senior Research Engineer @ LG Display (2013.03\~2017.02)
+* Computer Vision Research Engineer @ Atalgo (Startup) (2008.02\~2010.01)
 * Assistant Manager & Web Developer @ Nara-i-net (2001.09\~2004.09)
 
 ## 특허 (1저자)
