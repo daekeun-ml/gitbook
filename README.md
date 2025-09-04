@@ -4,7 +4,7 @@ icon: user-hair
 
 # About me
 
-## 서문
+## :man\_bowing: 서문
 
 먼저, 보잘 것 없는 페이지에 방문해 주셔서 감사합니다.
 
@@ -16,7 +16,7 @@ icon: user-hair
 
 이미 훌륭한 강좌들이 많고 제 역량 부족으로 별도로 강좌로 정리할 예정은 없습니다. 하지만, 단편적으로 기술한 내용들이 조금이나마 도움이 될 수 있었으면 좋겠습니다.
 
-## 약력
+## :feet: 약력
 
 {% hint style="info" %}
 중간의 공백 기간은 학업에 충실했던 기간이며, 2001\~2004년은 산업기능요원으로 근무했습니다.
@@ -30,7 +30,7 @@ icon: user-hair
 * Computer Vision Research Engineer @ Atalgo (Startup) (2008.02\~2010.01)
 * Assistant Manager & Web Developer @ Nara-i-net (2001.09\~2004.09)
 
-## 특허 (1저자)
+## 📝 특허 (1저자)
 
 * Method and Device for Generating Compensation data of Display Device (kr 10-2018-0074907)
 * Display Device and Method for Driving the same (kr 10-2018-0073296)
@@ -39,17 +39,27 @@ icon: user-hair
 * Inspection Method and Device for Flat Panel Display Device (kr 10-2016-0004811)
 * Method and Device of LCD Device for Generating Compensation Data (kr 10-2016-0016214)
 
-| Name            | URL                                                                                                            |
-| --------------- | -------------------------------------------------------------------------------------------------------------- |
-| linkedin        | [https://www.linkedin.com/in/daekeun-kim/](https://www.linkedin.com/in/daekeun-kim/)                           |
-| GitHub          | [https://github.com/daekeun-ml](https://github.com/daekeun-ml)                                                 |
-| Public Speaking | [AWS Innovate 2021 - Amazon SageMaker 기반 사전 훈련된 딥러닝 모델 손쉽게 배포하기](https://www.youtube.com/watch?v=ZdOcrLKow3I)  |
-|                 | [AWS Seoul Summit 2021 - Amazon SageMaker를 통한 대용량 모델 훈련 방법 살펴보기](https://www.youtube.com/watch?v=csr84BKbFeg)  |
-|                 | [AI PLUS 2021 - AIoT on Cloud: 클라우드 기반 엣지 디바이스 머신 러닝 실시간 추론](https://www.youtube.com/watch?v=W7le2sZRb90)      |
-|                 | [AWS Builders 300 - AutoGluon on AWS](https://github.com/aws-samples/autogluon-on-aws)                         |
-|                 | [2021 BIOPLUS-INTERPHEX Korea - 스마트 팩토리](https://www.youtube.com/watch?v=iZGa5TRATGQ)                          |
-|                 | [re:Invent 2020 Recap - SageMaker Deep Dive](https://bit.ly/reinvent2020-recap-deepdive-sagemaker)             |
-|                 | [AWS AIML 특집 웨비나 - SageMaker Demo](https://www.youtube.com/watch?v=miIVGlq6OUk)                                |
-|                 | [AWS Seoul Summit 2020 - AWS로 강화 학습 시작하기](https://www.youtube.com/watch?v=eIz_rC7hEyE)                         |
-|                 | [AWS Seoul Summit 2020 - AWS 스마트 팩토리](https://www.youtube.com/watch?v=R0sMMphzOhw)                             |
-|                 | [AWS Builders 300 - KoBERT Fine-tuning on AWS](https://attendee.gotowebinar.com/recording/6067766376359184398) |
+### 📝 Tech Blog Contributions
+
+* **Daekeun Kim** (2024). [Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML. _Microsoft Tech Community._](https://techcommunity.microsoft.com/blog/machinelearningblog/fine-tuneevaluatequantize-slmllm-using-the-torchtune-on-azure-ml/4285663)
+* **Daekeun Kim** (2024). [Generate Synthetic QnAs from Real-world Data on Azure. _Microsoft Tech Community._](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/generate-synthetic-qnas-from-real-world-data-on-azure/ba-p/4202053)
+* **Daekeun Kim** (2024). [Fine-tuning Florence-2 for VQA (Visual Question Answering) using the Azure ML Python SDK and MLflow. _Microsoft Tech Community_](https://techcommunity.microsoft.com/t5/ai-machine-learning-blog/fine-tuning-florence-2-for-vqa-visual-question-answering-using/ba-p/4181123)
+* Manoranjan Rajguru and **Daekeun Kim** (2024). [Fine-tune Small Language Model (SLM) Phi-3 using Azure Machine Learning. _Microsoft Tech Community._](https://techcommunity.microsoft.com/t5/ai-machine-learning-blog/finetune-small-language-model-slm-phi-3-using-azure-machine/ba-p/4130399)
+* **Daekeun Kim** (2023). [Quickly build high-accuracy Generative AI applications on enterprise data using Amazon Kendra, LangChain, and LLMs. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/quickly-build-high-accuracy-generative-ai-applications-on-enterprise-data-using-amazon-kendra-langchain-and-large-language-models)
+* **Daekeun Kim** (2023). [Build a powerful question answering bot with Amazon SageMaker, Amazon OpenSearch Service, Streamlit, and LangChain. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/build-a-powerful-question-answering-bot-with-amazon-sagemaker-amazon-opensearch-service-streamlit-and-langchain)
+* **Daekeun Kim** (2023). [Interactively fine-tune Falcon-40B and other LLMs on Amazon SageMaker Studio notebooks using QLoRA. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/interactively-fine-tune-falcon-40b-and-other-llms-on-amazon-sagemaker-studio-notebooks-using-qlora)
+* **Daekeun Kim** (2023). [Deploy Falcon-40B with large model inference DLCs on Amazon SageMaker. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/machine-learning-deploy-falcon-40b-with-large-model-inference-dlcs-on-amazon-sagemaker)
+* Hyundoo Jin, **Daekeun Kim**, Daeyeol Shim, and Daehoon Oh (2023). [Using Amazon SageMaker Distributed Training with KakaoStyle to Model a Category Automated Classification System. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/amazon-sagemaker-distributed-training-for-automated-category-classification)
+* **Daekeun Kim** and Hyeonsang Jeon (2023). [Train a Large Language Model on a single Amazon SageMaker GPU with Hugging Face and LoRA. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/train-a-large-language-model-on-a-single-amazon-sagemaker-gpu-with-hugging-face-and-lora)
+* Sungwon Han, Heewon Ko, Hyojung Kang, Kyungdae Cho, Sanghwa Na, and **Daekeun Kim** (2023). [SK Telecom's Case Study of Building a ML Pipeline Using AWS Inferentia and AWS Step Functions. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/skt-mlops-using-aws-inferentia-stepfunctions/)
+
+### 📕 Tech book Translation
+
+* **Daekeun Kim** and Daeyeol Shim (2023). Co-translated “[Machine Learning System Engineering in Action](https://product.kyobobook.co.kr/detail/S000211556863)”, authored by Ben Wilson.
+* **Daekeun Kim** and Youngmin Kim (2023). Co-translated “[Designing Machine Learning System](https://product.kyobobook.co.kr/detail/S000201212403)”, authored by Chip Huyen.
+
+| Name         | URL                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------ |
+| LinkedIn     | [https://www.linkedin.com/in/daekeun-kim/](https://www.linkedin.com/in/daekeun-kim/) |
+| GitHub       | [https://github.com/daekeun-ml](https://github.com/daekeun-ml)                       |
+| Hugging Face | [https://huggingface.co/daekeun-ml](https://huggingface.co/daekeun-ml)               |
