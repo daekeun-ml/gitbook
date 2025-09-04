@@ -197,7 +197,7 @@ Seedless 접근법의 데이터 생성 과정은 7단계의 자동화된 파이�
 
 _그림 2. Seedless Synthetic Data Generation Architecture_
 
-> Note: This architecture represents a reference example for illustration purposes and may not reflect all production requirements. Actual implementations may be simpler or more complex depending on specific use cases, scale requirements, and organizational constraints. Always consider your unique requirements when adapting this pattern.
+> 참고: 이 아키텍처는 설명을 위한 참조 사례이며, 모든 프로덕션 요구 사항을 반영하지 않을 수 있습니다. 실제 구현은 특정 사용 사례, 규모 요구 사항 및 조직의 제약 조건에 따라 더 간단하거나 더 복잡할 수 있습니다. 이 패턴을 적용할 때는 항상 고유한 요구 사항을 고려하십시오.
 
 ### 아키텍처 개요
 
@@ -296,4 +296,4 @@ _그림 2. Seedless Synthetic Data Generation Architecture_
   * **계층화 저장**: 접근 빈도에 따른 스토리지 클래스 자동 조정
   * **버전 관리**: 데이터 변경 이력 추적
 
-이 아키텍처를 통해 기존 데이터 없이도 고품질의 다양한 합성 데이터를 생성할 수 있으며, 새로운 도메인이나 창의적 AI 모델 개발에 활용할 수 있습니다. 이제 마지막으로, 앞서 소개한 seed 기반이든 Seedless 기반이든 **합성 데이터를 만들 때 공통적으로 고려해야 할 사항들과 기법들**을 다루겠습니다. (예: 추가 데이터 증강, 개인 정보 제거, 데이터 검증, 레드팀 테스트, 버전 관리 등.)
+이 아키텍처를 통해 기존 데이터 없이도 고품질의 다양한 합성 데이터를 생성할 수 있으며, 새로운 도메인이나 창의적 AI 모델 개발에 활용할 수 있습니다. 이제 마지막으로, 앞서 소개한 seed 기반이든 Seedless 기반이든 **합성 데이터를 만들 때 공통적으로 고려해야 할 사항들과 기법들**을 다루겠습니다. (예: 추가 데이터 증강, 개인 정보 제거, 데이터 검증, 레드팀 테스트, 버전 관리 등)

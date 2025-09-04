@@ -18,6 +18,8 @@ icon: user-hair
 
 ## :feet: 약력
 
+한줄요약: ML 고군분투러 (not 전문가), GenAI 왕초보 (not 전문가)
+
 {% hint style="info" %}
 중간의 공백 기간은 학업에 충실했던 기간이며, 2001\~2004년은 산업기능요원으로 근무했습니다.
 {% endhint %}
