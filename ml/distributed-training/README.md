@@ -1,4 +1,5 @@
 ---
+icon: chart-network
 coverY: 0
 ---
 

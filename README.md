@@ -1,11 +1,14 @@
 ---
-description: >-
-  Disclaimer: 본 Gitbook은 저자의 개인적인 의견과 가이드로 저자가 재직 중인 회사의 공식 문서와 입장을 대변하는 것이 아니며,
-  모든 내용은 저자가 재직 중인 회사의 공식 문서를 우선으로 합니다.
 icon: user-hair
 ---
 
 # About me
+
+{% hint style="danger" %}
+**Disclaimer**
+
+본 Gitbook은 저자의 개인적인 의견과 가이드로 저자가 재직 중인 회사의 공식 문서와 입장을 대변하는 것이 아니며, 모든 내용은 저자가 재직 중인 회사의 공식 문서를 우선으로 합니다.
+{% endhint %}
 
 ## :man\_bowing: 서문
 
@@ -21,12 +24,18 @@ icon: user-hair
 
 ## :feet: 약력
 
-한줄요약: ML 고군분투러 (not 전문가), GenAI 왕초보 (not 전문가)
-
 {% hint style="info" %}
-중간의 공백 기간은 학업에 충실했던 기간이며, 2001\~2004년은 산업기능요원으로 근무했습니다.
+한줄요약: ML 고군분투러 (not 전문가), GenAI 왕초보 (not 전문가)
 {% endhint %}
 
+{% tabs %}
+{% tab title="URL" %}
+:link: LinkedIn: [https://www.linkedin.com/in/daekeun-kim/](https://www.linkedin.com/in/daekeun-kim/)\
+🧰 GitHub: [https://github.com/daekeun-ml](https://github.com/daekeun-ml)\
+:hugging: Hugging Face: [https://huggingface.co/daekeun-ml](https://huggingface.co/daekeun-ml)-
+{% endtab %}
+
+{% tab title="Professional Experiences" %}
 * Principal AIML Specialist Solutions Architect @ Amazon Web Services (2025.06\~Current)
 * Senior Technical ML Specialist @ Microsoft (2024.03\~2025.06)
 * Senior AIML Specialist Solutions Architect @ Amazon Web Services (2019.06\~2024.03)
@@ -34,8 +43,10 @@ icon: user-hair
 * Senior Research Engineer @ LG Display (2013.03\~2017.02)
 * Computer Vision Research Engineer @ Atalgo (Startup) (2008.02\~2010.01)
 * Assistant Manager & Web Developer @ Nara-i-net (2001.09\~2004.09)
+{% endtab %}
+{% endtabs %}
 
-## 📝 특허 (1저자)
+## 📔 Patents (1st author)
 
 * Method and Device for Generating Compensation data of Display Device (kr 10-2018-0074907)
 * Display Device and Method for Driving the same (kr 10-2018-0073296)
@@ -44,7 +55,7 @@ icon: user-hair
 * Inspection Method and Device for Flat Panel Display Device (kr 10-2016-0004811)
 * Method and Device of LCD Device for Generating Compensation Data (kr 10-2016-0016214)
 
-### 📝 Tech Blog Contributions
+## 📝 Tech Blog Contributions
 
 * **Daekeun Kim** (2024). [Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML. _Microsoft Tech Community._](https://techcommunity.microsoft.com/blog/machinelearningblog/fine-tuneevaluatequantize-slmllm-using-the-torchtune-on-azure-ml/4285663)
 * **Daekeun Kim** (2024). [Generate Synthetic QnAs from Real-world Data on Azure. _Microsoft Tech Community._](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/generate-synthetic-qnas-from-real-world-data-on-azure/ba-p/4202053)
@@ -58,13 +69,7 @@ icon: user-hair
 * **Daekeun Kim** and Hyeonsang Jeon (2023). [Train a Large Language Model on a single Amazon SageMaker GPU with Hugging Face and LoRA. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/train-a-large-language-model-on-a-single-amazon-sagemaker-gpu-with-hugging-face-and-lora)
 * Sungwon Han, Heewon Ko, Hyojung Kang, Kyungdae Cho, Sanghwa Na, and **Daekeun Kim** (2023). [SK Telecom's Case Study of Building a ML Pipeline Using AWS Inferentia and AWS Step Functions. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/skt-mlops-using-aws-inferentia-stepfunctions/)
 
-### 📕 Tech book Translation
+## 📕 Tech book Translation
 
 * **Daekeun Kim** and Daeyeol Shim (2023). Co-translated “[Machine Learning System Engineering in Action](https://product.kyobobook.co.kr/detail/S000211556863)”, authored by Ben Wilson.
 * **Daekeun Kim** and Youngmin Kim (2023). Co-translated “[Designing Machine Learning System](https://product.kyobobook.co.kr/detail/S000201212403)”, authored by Chip Huyen.
-
-| Name         | URL                                                                                  |
-| ------------ | ------------------------------------------------------------------------------------ |
-| LinkedIn     | [https://www.linkedin.com/in/daekeun-kim/](https://www.linkedin.com/in/daekeun-kim/) |
-| GitHub       | [https://github.com/daekeun-ml](https://github.com/daekeun-ml)                       |
-| Hugging Face | [https://huggingface.co/daekeun-ml](https://huggingface.co/daekeun-ml)               |

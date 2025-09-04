@@ -1,4 +1,5 @@
 ---
+icon: product-hunt
 coverY: 0
 ---
 

@@ -1,4 +1,5 @@
 ---
+icon: rectangle-ad
 coverY: 0
 ---
 

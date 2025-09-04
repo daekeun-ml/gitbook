@@ -1,4 +1,5 @@
 ---
+icon: arrow-progress
 coverY: 0
 ---
 
