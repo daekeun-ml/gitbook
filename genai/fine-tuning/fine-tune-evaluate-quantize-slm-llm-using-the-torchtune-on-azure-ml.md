@@ -506,7 +506,7 @@ if DOWNLOAD_TO_LOCAL:
     ml_client.models.download(name=azure_model_name, download_path=local_model_dir, version=model.version)
 ```
 
-엔드-투-엔드 작업을 수행하는 핸즈온랩을 [https://github.com/Azure/torchtune-azureml](https://github.com/Azure/torchtune-azureml) 에 공개했습니다. torchtune과Azure ML을 사용하여 파인 튜닝/평가/양자화를 쉽게 수행할 수 있기를 바랍니다.
+엔드-투-엔드 작업을 수행하는 핸즈온랩을 [https://github.com/Azure/torchtune-azureml](https://github.com/Azure/torchtune-azureml) 에 공개했습니다. torchtune과 Azure ML을 사용하여 파인 튜닝/평가/양자화를 쉽게 수행할 수 있기를 바랍니다.
 
 ### References <a href="#id-0f65" id="id-0f65"></a>
 
