@@ -2,33 +2,33 @@
 description: 'Author: Daekeun Kim (daekeun@amazon.com)'
 ---
 
-# \[Hands-on\] Fine Tuning Naver Movie Review Sentiment Classification with KoBERT using GluonNLP
+# \[Hands-on] Fine Tuning Naver Movie Review Sentiment Classification with KoBERT using GluonNLP
 
 ## Goal
 
-This document is for people who need fine-tuning KoBERT model. Currently, the original author’s PyTorch code for fine-tuning works fine if you follow the Colab tutorial on the official website as it is, but MXNet code does not work properly with the latest GluonNLP\(0.9.1\) version. So we modified it so that we can perform fine-tuning by referring to the GluonNLP tutorial \(See [https://gluon-nlp.mxnet.io/examples/sentence\_embedding/bert.html](https://gluon-nlp.mxnet.io/examples/sentence_embedding/bert.html)\).
+This document is for people who need fine-tuning KoBERT model. Currently, the original author’s PyTorch code for fine-tuning works fine if you follow the Colab tutorial on the official website as it is, but MXNet code does not work properly with the latest GluonNLP(0.9.1) version. So we modified it so that we can perform fine-tuning by referring to the GluonNLP tutorial (See [https://gluon-nlp.mxnet.io/examples/sentence\_embedding/bert.html](https://gluon-nlp.mxnet.io/examples/sentence_embedding/bert.html)).
 
 ## Notes
 
-* Since Korean has a lot of vocabulary, it takes 2-3 times more time than English for fine tuning. Therefore, it is not recommended as a real-time hands-on lab. It is possible by sampling the dataset and training only 1 epoch. However, GPU-family\(p, g\) instances are recommended.
+* Since Korean has a lot of vocabulary, it takes 2-3 times more time than English for fine tuning. Therefore, it is not recommended as a real-time hands-on lab. It is possible by sampling the dataset and training only 1 epoch. However, GPU-family(p, g) instances are recommended.
 * The following website is strongly recommended as a tutorial for BERT fine-tuning. Fine-tuning takes less than 10 minutes.
   * [https://mccormickml.com/2019/07/22/BERT-fine-tuning/](https://mccormickml.com/2019/07/22/BERT-fine-tuning/)
 * Naver Movie Review data is publicly available at [https://github.com/e9t/nsmc/,](https://github.com/e9t/nsmc/) and consists of 150,000 training data and 50,000 test data. This data is often used for NLP benchmarking like IMDB review data in Korea. Sample data is shown below.
 
-![](../../.gitbook/assets/naver-movie-sample.png)
+![](<../../.gitbook/assets/naver-movie-sample (1).png>)
 
 ## Prerequisites
 
 * SageMaker GPU notebook instances or EC2 DLAMI
-* Since CUDA 10.0 is the default, **you must upgrade to CUDA 10.1 or 10.2**. To respond to the latest version of gluonnlp, MXNet 1.6.0 installation is required, . Alternatively, you can use CUDA 10.1 DLAMI in the marketplace. **but MXNet 1.6.0 does not support CUDA 10.0**
+*   Since CUDA 10.0 is the default, **you must upgrade to CUDA 10.1 or 10.2**. To respond to the latest version of gluonnlp, MXNet 1.6.0 installation is required, . Alternatively, you can use CUDA 10.1 DLAMI in the marketplace. **but MXNet 1.6.0 does not support CUDA 10.0**
 
-  * CUDA Toolkit Download: [https://developer.nvidia.com/cuda-downloads](https://developer.nvidia.com/cuda-downloads)
-  * Installation
+    * CUDA Toolkit Download: [https://developer.nvidia.com/cuda-downloads](https://developer.nvidia.com/cuda-downloads)
+    * Installation
 
-  ```bash
-  $ wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run 
-  $ sudo sh cuda_10.2.89_440.33.01_linux.run
-  ```
+    ```bash
+    $ wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda_10.2.89_440.33.01_linux.run 
+    $ sudo sh cuda_10.2.89_440.33.01_linux.run
+    ```
 
 ## Step 1. Setting
 
@@ -180,7 +180,7 @@ $ pip install .
 
 Just a little tweaking in the GluonNLP tutorial code. Or download and use the Jupyter notebook below.
 
-[kobert\_nsmc\_finetuning.ipynb]([Hands-on]%20Fine%20Tuning%20Naver%20Movie%20Review%20Sentimen%20be4ebac3a831400d93e8775eb3913dca/kobert_nsmc_finetuning.ipynb)
+[kobert\_nsmc\_finetuning.ipynb](https://app.gitbook.com/s/-MM9anUwG1_XXIkWZ5fh/ml/nlp/\[Hands-on]%20Fine%20Tuning%20Naver%20Movie%20Review%20Sentimen%20be4ebac3a831400d93e8775eb3913dca/kobert_nsmc_finetuning.ipynb)
 
 Get KoBERT model parameter and vocabulary.
 
@@ -315,7 +315,7 @@ for epoch_id in range(num_epochs):
 
 If you run the code, you will get the following result.
 
-```text
+```
 [Epoch 0 Batch 4/4693] loss=0.6930, lr=0.0000050, acc=0.539
 [Epoch 0 Batch 8/4693] loss=0.6919, lr=0.0000050, acc=0.539
 [Epoch 0 Batch 12/4693] loss=0.6920, lr=0.0000050, acc=0.518
@@ -441,7 +441,7 @@ for epoch_id in range(num_epochs):
 
 If you run the code, you will get the following result.
 
-```text
+```
 [Epoch 0 Batch 50/592] loss=2.3501, lr=0.0000500, acc=0.687
 [Epoch 0 Batch 100/592] loss=1.8168, lr=0.0000500, acc=0.741
 [Epoch 0 Batch 150/592] loss=1.5575, lr=0.0000500, acc=0.772
@@ -468,15 +468,15 @@ Validation loss=1.1555, acc=0.883
 Validation loss=1.0516, acc=0.891
 ```
 
-Overfitting occurs from the 4th epoch usually because the validation metrics are increasing while the training metrics are decreasing. Thus, we store the results of the 3rd epoch as final model parameters. The validation accuracy was pretty good with **89.6~89.7% accuracy**, which is less than the **90.1% accuracy** on the official site, but has not been hyperparameter tuned.
+Overfitting occurs from the 4th epoch usually because the validation metrics are increasing while the training metrics are decreasing. Thus, we store the results of the 3rd epoch as final model parameters. The validation accuracy was pretty good with **89.6\~89.7% accuracy**, which is less than the **90.1% accuracy** on the official site, but has not been hyperparameter tuned.
 
 Even training only 1 epoch shows **88% accuracy,** so we will convert it to the SageMaker for hands-on lab in the future.
 
-![](../../.gitbook/assets/kobert-evaluation-df%20%281%29%20%281%29%20%281%29%20%281%29.png)
+![](<../../.gitbook/assets/kobert-evaluation-df (1) (1) (1) (1).png>)
 
-![](../../.gitbook/assets/kobert-evaluation%20%281%29.png)
+![](../../.gitbook/assets/kobert-evaluation.png)
 
-After completing the training, compress the vocab file\(`.spiece`\) and model file into `model.tar.gz` and save it in Amazon S3 in order to create the SageMaker endpoint.
+After completing the training, compress the vocab file(`.spiece`) and model file into `model.tar.gz` and save it in Amazon S3 in order to create the SageMaker endpoint.
 
 ```bash
 $ cp ~/kobert/kobert_news_wiki_ko_cased-1087f8699e.spiece ./model_save/.
@@ -493,7 +493,7 @@ A great tutorial has already been introduced in the AWS Korea AIML blog. Based o
 
 ### Modify DockerFile
 
-Basic contents can be done in the same way as for blogs. When editing Dockerfile\(Based on `./docker/1.6.0/py3/Dockerfile.gpu`\), you need to edit as follows. \(If you do not use KoGPT2, you can delete 4 lines below `#For KoGPT2 installation`.\)
+Basic contents can be done in the same way as for blogs. When editing Dockerfile(Based on `./docker/1.6.0/py3/Dockerfile.gpu`), you need to edit as follows. (If you do not use KoGPT2, you can delete 4 lines below `#For KoGPT2 installation`.)
 
 ```bash
 RUN ${PIP} install --no-cache-dir \
@@ -530,7 +530,7 @@ Now you can paste the script code below in the SageMaker notebook instance and t
 
 Note that the endpoint deployment time is about 9-11 minutes when using the GPU and about 7-8 minutes when using the CPU.
 
-[kobert-inference.py]([Hands-on]%20Fine%20Tuning%20Naver%20Movie%20Review%20Sentimen%20be4ebac3a831400d93e8775eb3913dca/kobert-inference.py)
+[kobert-inference.py](https://app.gitbook.com/s/-MM9anUwG1_XXIkWZ5fh/ml/nlp/\[Hands-on]%20Fine%20Tuning%20Naver%20Movie%20Review%20Sentimen%20be4ebac3a831400d93e8775eb3913dca/kobert-inference.py)
 
 ```python
 import os
@@ -683,5 +683,4 @@ print(pred_out)
 
 Below is an example of test sentences.
 
-![](../../.gitbook/assets/kobert%20%282%29%20%282%29%20%282%29.png)
-
+![](<../../.gitbook/assets/kobert (2) (2) (2).png>)

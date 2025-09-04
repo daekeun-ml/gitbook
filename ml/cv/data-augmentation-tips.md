@@ -17,9 +17,9 @@
 
 #### How to use
 
-* PyTorch의 torchvision과 매우 유사 \(5~10분이면 익힐 수 있음\)
+* PyTorch의 torchvision과 매우 유사 (5\~10분이면 익힐 수 있음)
 * Documentation: [https://albumentations.readthedocs.io/en/latest/](https://albumentations.readthedocs.io/en/latest/)
-* Colab에서 쉽게 테스트 가능: [https://colab.research.google.com/drive/1JuZ23u0C0gx93kV0oJ8Mq0B6CBYhPLXy\#scrollTo=GwFN-In3iagp&forceEdit=true&offline=true&sandboxMode=true](https://colab.research.google.com/drive/1JuZ23u0C0gx93kV0oJ8Mq0B6CBYhPLXy#scrollTo=GwFN-In3iagp&forceEdit=true&offline=true&sandboxMode=true)
+* Colab에서 쉽게 테스트 가능: [https://colab.research.google.com/drive/1JuZ23u0C0gx93kV0oJ8Mq0B6CBYhPLXy#scrollTo=GwFN-In3iagp\&forceEdit=true\&offline=true\&sandboxMode=true](https://colab.research.google.com/drive/1JuZ23u0C0gx93kV0oJ8Mq0B6CBYhPLXy#scrollTo=GwFN-In3iagp\&forceEdit=true\&offline=true\&sandboxMode=true)
 
 ```python
 torchvision_transform = transforms.Compose([
@@ -69,24 +69,24 @@ augmented = augmentation(**data)
 image, mask, whatever_data, additional = augmented["image"], augmented["mask"], augmented["whatever_data"], augmented["additional"]
 ```
 
-* $$p_1$$: augmentation 적용 여부 판단 \(1일 경우에는 항상 augmentation 적용\)
+* $$p_1$$: augmentation 적용 여부 판단 (1일 경우에는 항상 augmentation 적용)
 * $$p_2$$: 90도 회전 여부 결정
-* $$p_3$$: `OneOf` 블록 적용 여부 결정 \(블록 내 모든 확률을 1로 정규화한 다음, 정규화한 확률에 따라 augmentation 선택\)
+* $$p_3$$: `OneOf` 블록 적용 여부 결정 (블록 내 모든 확률을 1로 정규화한 다음, 정규화한 확률에 따라 augmentation 선택)
   * 예: `IAAAdditiveGaussianNoise`의 확률이 0.9이고 `GaussNoise`의 확률이 0.6이면 정규화 후에는 각각 0.6과 0.4로 변경됨
-    * $$0.6 = (0.9 / (0.9 + 0.6)),  0.4 = (0.9 / (0.9 + 0.6))$$ 
+    * $$0.6 = (0.9 / (0.9 + 0.6)),  0.4 = (0.9 / (0.9 + 0.6))$$&#x20;
 * 각 augmentation은 아래와 같은 확률이 적용됨
-  * `RandomRotate90`: $$p_1 * p_2$$ 
-  * `IAAAdditiveGaussianNoise`: $$p_1 * p_3 * 0.6$$ 
-  * `GaussianNoise`: $$p_1 * p_3 * 0.4$$ 
+  * `RandomRotate90`: $$p_1 * p_2$$&#x20;
+  * `IAAAdditiveGaussianNoise`: $$p_1 * p_3 * 0.6$$&#x20;
+  * `GaussianNoise`: $$p_1 * p_3 * 0.4$$&#x20;
 
 ## 2. CutMix
 
 ### Background
 
 * Cutout: 훈련 이미지에서 일부 영역을 검은 색 픽셀 및 랜덤 노이즈 패치로 오버레이하여 제거 → 일부 경우에 잘 동작하지만  작은 object나 중요한 영역에 대한 정보 손실이 많이 발생하는 문제
-* Mixup: 이미지와 정답 레이블의 선형 보간\(linear interpolation\)을 통해 두 개의 샘플을 혼합 → 지나친 smoothing 효과로 object detection에서 그리 좋지 않음
+* Mixup: 이미지와 정답 레이블의 선형 보간(linear interpolation)을 통해 두 개의 샘플을 혼합 → 지나친 smoothing 효과로 object detection에서 그리 좋지 않음
 * CutMix: 두 이미지의 정보를 모두 살려 보자는 취지
-* ![](../../.gitbook/assets/untitled-1%20%2810%29.png) ![](../../.gitbook/assets/untitled-2.png) 
+* <img src="../../.gitbook/assets/Untitled 1 (4).png" alt="" data-size="original"> <img src="../../.gitbook/assets/Untitled 2 (9).png" alt="" data-size="original">&#x20;
 
 ### **Algorithm**
 
@@ -96,9 +96,9 @@ $$
 (x, y): \text{Training image, label} \\ (A, B): \text{Training class} \\ (x_A, y_A), (x_B, y_B): \text{Training sample}
 $$
 
-* 두 개의 샘플 이미지인 $$(x_A, y_A), (x_B, y_B)$$를  사용하여 새로운 샘플 $$(\tilde{x}, \tilde{y})$$를 생성할 수 있다. 
+*   두 개의 샘플 이미지인 $$(x_A, y_A), (x_B, y_B)$$를  사용하여 새로운 샘플 $$(\tilde{x}, \tilde{y})$$를 생성할 수 있다.&#x20;
 
-  \($$\odot$$: element-wise multiplication\)
+    ($$\odot$$: element-wise multiplication)
 
 $$
 \tilde{x} = \mathrm{M} \odot x_A + (1 - \mathrm{M}) \odot x_B \\ \tilde{y} = \lambda{y_A} + (1 - \lambda)y_B
@@ -107,7 +107,7 @@ $$
 * $$M$$: 0이나 1로 표현되는 $$W*H$$ 차원의 binary mask 영역으로 어느 부분을 mix할 것인지 결정
   * $$M$$의 영역은 $$\lambda$$파라메터에 의해 결정되며, 두 이미지에서 잘라낼 영역을 알려 주는 bounding box 좌표 B를 가져와서 샘플링
   * $$x_A, x_B$$라는 이미지가 있을 때, $$x_A$$내의  특정 bounding box 영역을 $$x_B$$ 이미지로부터 가져와서 붙임
-  * 즉, $$x_A$$의 bounding box 영역 B가 제거\(crop\)되고 그 영역은 $$x_B$$ 의 bounding box B에서 잘린 패치로 대체됨\(paste\).
+  * 즉, $$x_A$$의 bounding box 영역 B가 제거(crop)되고 그 영역은 $$x_B$$ 의 bounding box B에서 잘린 패치로 대체됨(paste).
 * $$\lambda$$: mixing ratio로 베타 분포에 의해 결정
 * 이를 수식으로 표현하면 아래와 같다.
 
@@ -116,8 +116,8 @@ $$
 $$
 
 * $$r_x, r_y$$는 bounding box 중심 좌표이며, uniform distribution에 의해 결정됨
-* $$r_w, r_h$$는 bounding box의 너비 및 높이로, 이 수식을 통해 cropped area ratio $$1-\lambda$$는 아래와 같이 계산할 수 있다. 
-* $$\dfrac{r_w r_h}{WH} = 1 - \lambda$$ 
+* $$r_w, r_h$$는 bounding box의 너비 및 높이로, 이 수식을 통해 cropped area ratio $$1-\lambda$$는 아래와 같이 계산할 수 있다.&#x20;
+* $$\dfrac{r_w r_h}{WH} = 1 - \lambda$$&#x20;
 
 ### Code Snippets
 
@@ -150,7 +150,7 @@ def rand_bbox(size, lam):
     return bbx1, bby1, bbx2, bby2
 ```
 
-#### 실제 호출 예시 \(Kaggle Bangali.ai Handwritten recognition\)
+#### 실제 호출 예시 (Kaggle Bangali.ai Handwritten recognition)
 
 ```python
 bbx1, bby1, bbx2, bby2 = rand_bbox(inputs.size(), lam)
@@ -176,7 +176,6 @@ loss1 = loss_fn(grapheme, targets_gra) * lam + loss_fn(grapheme, shuffled_target
   * CutMix: [https://github.com/clovaai/CutMix-PyTorch](https://github.com/clovaai/CutMix-PyTorch)
 * Blog
   * [https://towardsdatascience.com/cutmix-a-new-strategy-for-data-augmentation-bbc1c3d29aab](https://towardsdatascience.com/cutmix-a-new-strategy-for-data-augmentation-bbc1c3d29aab)
-* Video Clip \(강추\)
+* Video Clip (강추)
   * Albumentations: [https://www.youtube.com/watch?v=n\_f6d4bPFME](https://www.youtube.com/watch?v=n_f6d4bPFME)
   * CutMix: [https://www.youtube.com/watch?v=Haj-SRL72LY](https://www.youtube.com/watch?v=Haj-SRL72LY)
-

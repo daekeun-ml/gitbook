@@ -1,32 +1,33 @@
 # Learning to Rank
 
 {% hint style="info" %}
-입력 데이터에 대한 정답 스코어를 직접 예측하는 것을 배우는 것이 아닌 리스트의 순서\(order, rank\), 즉 문서의 상대적인 거리를 고려하는 방법으로 **Metric Learning**이라고도 함.
+입력 데이터에 대한 정답 스코어를 직접 예측하는 것을 배우는 것이 아닌 리스트의 순서(order, rank), 즉 문서의 상대적인 거리를 고려하는 방법으로 **Metric Learning**이라고도 함.
 {% endhint %}
 
 ## Definition
 
 * Objective: Learn a function $$f(q,D)$$that produces an optimal permutation $$\pi_{i}$$.
-  * $$q$$: 쿼리\(query\), $$D$$ : 문서\(document\)
-  * \_\_$$\pi_i$$: $$i$$번째 쿼리에 대한 추천 리스트 \(predicted ranking of document $$d_{i,j}$$\),  예: $$\pi_i = \{d_{i,3}, d_{i,4}, d_{i,2}, d_{i,1}\}$$ 
-* Training set: 3-tuples $$(q_{i}, d_{i,j}, y_{i,j})$$로 구성 $$i=1,2,...,m; j = 1,2,...,n_i$$ 
+  * $$q$$: 쿼리(query), $$D$$ : 문서(document)
+  * $$\pi_i$$: $$i$$번째 쿼리에 대한 추천 리스트 (predicted ranking of document $$d_{i,j}$$), \
+    예: $$\pi_i = \{d_{i,3}, d_{i,4}, d_{i,2}, d_{i,1}\}$$&#x20;
+* Training set: 3-tuples $$(q_{i}, d_{i,j}, y_{i,j})$$로 구성 $$i=1,2,...,m; j = 1,2,...,n_i$$&#x20;
   * $$q_i$$: $$i$$번째 쿼리
   * $$d_{i,j}$$: $$i$$번째 쿼리에 대한 Candidate 문서; $$i$$번째 쿼리에 대응하는 $$n_i$$개의 문서들이 있을 때  $$D_{i}=\{ d_{i,1},d_{i,2},...,d_{i,n_i} \}$$으로 정의한다.
-  * $$y_{i,j}$$: Label 데이터로 $$j$$번째 문서가 얼마나 $$i$$번째 쿼리와 연관이 있는지를 나타냄\(relevant\). 이를 상대적인 순위 rank로도 표현할 수 있다.
+  * $$y_{i,j}$$: Label 데이터로 $$j$$번째 문서가 얼마나 $$i$$번째 쿼리와 연관이 있는지를 나타냄(relevant). 이를 상대적인 순위 rank로도 표현할 수 있다.
     * $$y_{i,j} \in \{1, 2, 3, 4, 5\}$$ , 1의 경우 연관이 거의 없고 5의 경우 연관성이 매우 높음
   * OHSUMED 데이터셋 예시
     * $$q_{1}$$: “Are there adverse effects on lipids when progesterone is given with estrogen replacement therapy”
-    * $$d_{1,1}$$= \#docid 244338 = “Effects on bone of surgical menopause and estrogen therapy with or without progesterone replacement in cynomolgus monkeys.”
+    * $$d_{1,1}$$= #docid 244338 = “Effects on bone of surgical menopause and estrogen therapy with or without progesterone replacement in cynomolgus monkeys.”
     * $$y_{1,1} = 0$$ = not relevant
   * 각 pair $$(q_{i}, d_{i, j})$$는 실제로는 feature vector $$x_{i,j} = \phi(q_{i}, d_{i, j})$$이므로, 훈련 데이터는 아래와 같이 정의할 수 있다.
-    * $$T=\{(\phi(q_{i}, d_{i, j}),y_{i,j})\} = \{(\textbf{x}_{i}, \textbf{y}_{i})\}, \text{by letting } \textbf{x}_i = \{x_{i,1}, x_{i,2} ..., x_{i,n_i}\}$$ 
-    * $$\mathbf{y}_i  = r(\mathbf{x}_i)$$ 로 표현하기도 함 \( $$r$$= rank function\)
+    * $$T=\{(\phi(q_{i}, d_{i, j}),y_{i,j})\} = \{(\textbf{x}_{i}, \textbf{y}_{i})\}, \text{by letting } \textbf{x}_i = \{x_{i,1}, x_{i,2} ..., x_{i,n_i}\}$$&#x20;
+    * $$\mathbf{y}_i  = r(\mathbf{x}_i)$$ 로 표현하기도 함 ( $$r$$= rank function)
     * 예시:
       * Matching Feature; Sum of tf\*idf ,Match term Ratio, etc
       * Document-specific Feature
       * Query-specific Feature: 쿼리 길이 등
 * Test set: 신규 쿼리 $$q_{m+1}$$과 관련 문서 $$D_{m+1}$$ 로 테스트
-* ![](../../.gitbook/assets/_2020-07-21__8.34.39.png) ![](../../.gitbook/assets/_2020-07-21__8.35.48.png) 
+* <img src="../../.gitbook/assets/_2020-07-21__8.34.39.png" alt="" data-size="original"> <img src="../../.gitbook/assets/_2020-07-21__8.35.48.png" alt="" data-size="original">&#x20;
 
 ### Datasets
 
@@ -57,10 +58,10 @@
   * 실제로는 두 개의 입력에 대한 rank가 확실히 차이나게 하기 위해 margin $$\alpha > 0$$을 적용한다.
   * 따라서, negative pair인 경우, $$\max(0, \alpha - f(\mathbf{x}_{i}) + f(\mathbf{x}_{j}))$$를 최소화하면 된다.
   * positive pair의 경우에는 margin이 필요 없으므로, $$f(\mathbf{x}_{j})-  f(\mathbf{x}_{i})$$를 최소화하면 된다.
-  * 두 입력 간의 거리를 측정하는 distance function d 적용하면 블로그 [https://gombru.github.io/2019/04/03/ranking\_loss/](https://gombru.github.io/2019/04/03/ranking_loss/) 의 Loss와 동일한 것을 알 수 있다.
+  *   두 입력 간의 거리를 측정하는 distance function d 적용하면 블로그 [https://gombru.github.io/2019/04/03/ranking\_loss/](https://gombru.github.io/2019/04/03/ranking_loss/) 의 Loss와 동일한 것을 알 수 있다.
 
-    $$L = \left\{\begin{matrix} & d(f(\mathbf{x}_i),f(\mathbf{x}_{pos})) & & if & \text{Positive Pair} \\ & max(0, \alpha - d(f(\mathbf{x}_i),f(\mathbf{x}_{neg}))) & & if & \text{Negative Pair} \end{matrix}\right.$$
-* 훈련 데이터 형태: $$(\phi(q_{i},d_{i,j}),\phi(q_{i},d_{i,k}),\{+1,-1\})$$ 
+      $$L = \left\{\begin{matrix} & d(f(\mathbf{x}_i),f(\mathbf{x}_{pos})) & & if & \text{Positive Pair} \\ & max(0, \alpha - d(f(\mathbf{x}_i),f(\mathbf{x}_{neg}))) & & if & \text{Negative Pair} \end{matrix}\right.$$
+* 훈련 데이터 형태: $$(\phi(q_{i},d_{i,j}),\phi(q_{i},d_{i,k}),\{+1,-1\})$$&#x20;
 * 참고로, HRNN의 Pairwise Loss function은 이를 변형한 BPR이나 TOP1을 사용한다.
 
 ![](../../.gitbook/assets/_2020-07-07__7.22.34.png)
@@ -71,20 +72,20 @@
 #### Tripet
 
 * Learning to Rank에서는 언급되어 있지 않지만 최근에 많이 쓰이고 있는 ranking loss
-* $$L = \max(0, \alpha + d(f(\mathbf{x}_i),f(\mathbf{x}_{pos}))-d(f(\mathbf{x}_i),f(\mathbf{x}_{neg})))$$ 
-* pairwise loss는 서로 다른 pair 끼리 멀어지는 효과\(push\)만 있지만, triplet은 push 뿐만 아니라 anchor - positive distance를 통해 비슷한 점들이 모이는\(pull\) 효과가 있음
+* $$L = \max(0, \alpha + d(f(\mathbf{x}_i),f(\mathbf{x}_{pos}))-d(f(\mathbf{x}_i),f(\mathbf{x}_{neg})))$$&#x20;
+* pairwise loss는 서로 다른 pair 끼리 멀어지는 효과(push)만 있지만, triplet은 push 뿐만 아니라 anchor - positive distance를 통해 비슷한 점들이 모이는(pull) 효과가 있음
 * 단, sampling에 따라 성능 편차가 심하기 때문에 anchor, positive, negative로 이루어진 tripet sampling을 잘 해야 함
-* Easy Tripets: $$d(f(\mathbf{x}_i),f(\mathbf{x}_{neg})) > d(f(\mathbf{x}_i),f(\mathbf{x}_{pos})) + \alpha$$ 
+* Easy Tripets: $$d(f(\mathbf{x}_i),f(\mathbf{x}_{neg})) > d(f(\mathbf{x}_i),f(\mathbf{x}_{pos})) + \alpha$$&#x20;
   * anchor 샘플에 대응하는 negative 샘플은 임베딩 공간에서 positive 샘플에 이미 충분히 떨어져 있기 때문에 loss는 0
-* Hard Tripets: $$d(f(\mathbf{x}_i),f(\mathbf{x}_{neg})) <d(f(\mathbf{x}_i),f(\mathbf{x}_{pos}))$$ 
+* Hard Tripets: $$d(f(\mathbf{x}_i),f(\mathbf{x}_{neg})) <d(f(\mathbf{x}_i),f(\mathbf{x}_{pos}))$$&#x20;
   * negative 샘플이 positive 샘플보다 anchor에 더 가깝기 때문에 loss는$$\alpha$$보다 큰 양수
-* Semi-Hard Tripets: $$d(f(\mathbf{x}_i),f(\mathbf{x}_{pos})) <d(f(\mathbf{x}_i),f(\mathbf{x}_{neg}))<d(f(\mathbf{x}_i),f(\mathbf{x}_{pos})) + \alpha$$ 
+* Semi-Hard Tripets: $$d(f(\mathbf{x}_i),f(\mathbf{x}_{pos})) <d(f(\mathbf{x}_i),f(\mathbf{x}_{neg}))<d(f(\mathbf{x}_i),f(\mathbf{x}_{pos})) + \alpha$$&#x20;
   * negative 샘플은 positive 샘플보다 anchor에 더 멀리 있지만 거리가 마진보다 크지 않으므로 loss는 $$\alpha$$보다 작은 양수
 * FaceNet 등
 
-![](../../.gitbook/assets/untitled.png)
+![](<../../.gitbook/assets/Untitled (10).png>)
 
-![](../../.gitbook/assets/untitled-1%20%286%29.png) 
+<img src="../../.gitbook/assets/Untitled 1 (6).png" alt="" data-size="original">&#x20;
 
 #### Listwise
 
@@ -95,4 +96,3 @@
 
 * A Short Introduction to Learning to Rank: [http://times.cs.uiuc.edu/course/598f14/l2r.pdf](http://times.cs.uiuc.edu/course/598f14/l2r.pdf)
 * Learning to Rank Overview : [https://wellecks.wordpress.com/2015/01/15/learning-to-rank-overview/](https://wellecks.wordpress.com/2015/01/15/learning-to-rank-overview/)
-

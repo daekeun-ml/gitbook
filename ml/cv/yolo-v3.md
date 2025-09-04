@@ -16,29 +16,29 @@
 
 ### Predictions across Scales
 
-* 3개의 다른 스케일의 box 예측 \(Spatial Pyramid\)
-  * 416x416 영상의 경우 bounding box의 개수는 \(52 x 52\) + \(26 x 26\) + 13 x 13\)\) x 3 = **10647** 개
+* 3개의 다른 스케일의 box 예측 (Spatial Pyramid)
+  * 416x416 영상의 경우 bounding box의 개수는 (52 x 52) + (26 x 26) + 13 x 13)) x 3 = **10647** 개
 
-![](../../.gitbook/assets/untitled%20%2813%29.png)
+![](<../../.gitbook/assets/Untitled (11).png>)
 
 * 최종 layer에서 bounding box, objectness, class prediction 예측
 * 예: COCO dataset
-  * N x N x \[3\*\(4+1+80\)\]
+  * N x N x \[3\*(4+1+80)]
   * N: grid 개수, 3: anchor box 개수
   * 4 bounding box offsets, 1 objectness score, 80 class predictions
 * k-means clustering을 좀 더 정교하게 수행
   * 9개의 cluster를 사용해서 3개의 scale에 대해 임의로 anchor box dimension 할당
-  * COCO dataset의 경우 \(10×13\), \(16×30\), \(33×23\), \(30×61\), \(62×45\), \(59×119\), \(116×90\), \(156×198\), \(373×326\) 사용
+  * COCO dataset의 경우 (10×13), (16×30), (33×23), (30×61), (62×45), (59×119), (116×90), (156×198), (373×326) 사용
 
 ### Feature Extractor
 
-* Darknet-53 사용 \(resnet과 동일한 성능인데 속도는 2배 빠름,  주로 3x3, 1x1 Conv와 skip-connection으로 이루어져 있음\)
+* Darknet-53 사용 (resnet과 동일한 성능인데 속도는 2배 빠름,  주로 3x3, 1x1 Conv와 skip-connection으로 이루어져 있음)
 
-![](../../.gitbook/assets/untitled-1%20%283%29.png)
+![](<../../.gitbook/assets/Untitled 1 (1).png>)
 
 * ResNet-101보다 1.5배 빠르고 성능은 더 좋고 RsesNet-152와 성능은 비슷하면서 2배 이상 빠름
 
-![](../../.gitbook/assets/untitled-2%20%287%29.png)
+![](<../../.gitbook/assets/Untitled 2 (1).png>)
 
 ### Training
 
@@ -52,4 +52,3 @@
 * Blog
   * [https://taeu.github.io/paper/deeplearning-paper-ssd/](https://taeu.github.io/paper/deeplearning-paper-ssd/)
   * [https://blog.paperspace.com/how-to-implement-a-yolo-object-detector-in-pytorch/](https://blog.paperspace.com/how-to-implement-a-yolo-object-detector-in-pytorch/)
-
