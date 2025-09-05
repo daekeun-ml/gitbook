@@ -1,6 +1,8 @@
-# Part 2: Agentic Patterns & Prompting
+---
+description: 'Content Level: 200'
+---
 
-#### Content Level: 200
+# Part 2: Agentic Patterns & Prompting
 
 ## Suggested Pre-Reading
 

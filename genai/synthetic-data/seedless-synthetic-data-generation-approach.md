@@ -1,6 +1,8 @@
-# Seedless Synthetic Data Generation Approach
+---
+description: 'Content Level: 200-300'
+---
 
-#### Content Level: 200-300
+# Seedless Synthetic Data Generation Approach
 
 ## Suggested Pre-Reading
 

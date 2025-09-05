@@ -1,6 +1,8 @@
-# Part 3: Tool Integration & Fine-Tuning
+---
+description: 'Content Level: 200'
+---
 
-#### Content Level: 200
+# Part 3: Tool Integration & Fine-Tuning
 
 ## Suggested Pre-Reading
 

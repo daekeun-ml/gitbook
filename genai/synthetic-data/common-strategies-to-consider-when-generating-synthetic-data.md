@@ -1,6 +1,8 @@
-# Common Strategies to Consider When Generating Synthetic Data
+---
+description: 'Content Level: 200-300'
+---
 
-#### Content Level: 200-300
+# Common Strategies to Consider When Generating Synthetic Data
 
 ## Suggested Pre-Reading
 

@@ -1,6 +1,8 @@
-# The Necessity of Synthetic Data
+---
+description: 'Content Level: 100'
+---
 
-#### Content Level: 100
+# The Necessity of Synthetic Data
 
 ## TL;DR
 
