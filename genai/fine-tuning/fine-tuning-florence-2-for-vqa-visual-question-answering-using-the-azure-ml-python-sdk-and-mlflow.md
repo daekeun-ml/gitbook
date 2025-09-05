@@ -1,6 +1,6 @@
 # Fine-tuning Florence-2 for VQA (Visual Question Answering) using the Azure ML Python SDK and MLflow
 
-> _이 글은 저자가 마이크로소프트 머신 러닝 블로그에 기고한_ [_Fine-tuning Florence-2 for VQA (Visual Question Answering) using the Azure ML Python SDK and MLflow_](https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/fine-tuning-florence-2-for-vqa-visual-question-answering-using-the-azure-ml-pyth/4181123) _을 직접 한국어로 번역 및 편집하였습니다._
+> _이 글은 저자가 마이크로소프트 AIML 기술 커뮤니티에 기고한_ [_Fine-tuning Florence-2 for VQA (Visual Question Answering) using the Azure ML Python SDK and MLflow_](https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/fine-tuning-florence-2-for-vqa-visual-question-answering-using-the-azure-ml-pyth/4181123) _을 직접 한국어로 번역 및 편집하였습니다._
 
 2024년 6월 중순 Microsoft에서 MIT 라이선스로 출시한 Florence-2는 1B 미만의 크기(베이스 모델 0.23B, 라지 모델 0.77B)로 비전 및 비전-언어 작업(OCR, 캡셔닝, 객체 감지, 인스턴스 분할 등)에 효율적입니다.
 

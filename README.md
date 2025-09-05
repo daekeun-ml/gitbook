@@ -30,9 +30,9 @@ icon: user-hair
 
 {% tabs %}
 {% tab title="URL" %}
-:link: LinkedIn: [https://www.linkedin.com/in/daekeun-kim/](https://www.linkedin.com/in/daekeun-kim/)\
-🧰 GitHub: [https://github.com/daekeun-ml](https://github.com/daekeun-ml)\
-:hugging: Hugging Face: [https://huggingface.co/daekeun-ml](https://huggingface.co/daekeun-ml)-
+* :link: LinkedIn: [https://www.linkedin.com/in/daekeun-kim/](https://www.linkedin.com/in/daekeun-kim/)
+* 🧰 GitHub: [https://github.com/daekeun-ml](https://github.com/daekeun-ml)
+* &#x20;Hugging Face: [https://huggingface.co/daekeun-ml](https://huggingface.co/daekeun-ml)
 {% endtab %}
 
 {% tab title="Professional Experiences" %}
@@ -43,6 +43,12 @@ icon: user-hair
 * Senior Research Engineer @ LG Display (2013.03\~2017.02)
 * Computer Vision Research Engineer @ Atalgo (Startup) (2008.02\~2010.01)
 * Assistant Manager & Web Developer @ Nara-i-net (2001.09\~2004.09)
+{% endtab %}
+
+{% tab title="Related News" %}
+* [\[AI 타임즈\] Open Ko-LLM 리더보드 최초 50점 돌파](https://www.aitimes.com/news/articleView.html?idxno=154927)
+* [\[AI 타임즈\] 패스트캠퍼스 2024 GenCon AI 컨퍼런스 @ 코엑스 발표](https://m.ddaily.co.kr/page/view/2024090909555902427)
+* [\[뉴스핌\] 생성형 AI 서밋 2023 @ 코엑스 발표](https://www.newspim.com/news/view/20230522000996)
 {% endtab %}
 {% endtabs %}
 

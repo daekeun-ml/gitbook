@@ -1,6 +1,6 @@
 # Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML
 
-> _이 글은 저자가 마이크로소프트 머신 러닝 블로그에 기고한_ [_Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML_](https://techcommunity.microsoft.com/blog/machinelearningblog/fine-tuneevaluatequantize-slmllm-using-the-torchtune-on-azure-ml/4285663) _을 직접 한국어로 번역 및 편집하였습니다._
+> _이 글은 저자가 마이크로소프트 AIML 기술 커뮤니티에 기고한_ [_Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML_](https://techcommunity.microsoft.com/blog/machinelearningblog/fine-tuneevaluatequantize-slmllm-using-the-torchtune-on-azure-ml/4285663) _을 직접 한국어로 번역 및 편집하였습니다._
 
 Azure ML에서 torchtune을 활용해 소형 및 대형 언어 모델(SLM/LLM)을 효과적으로 파인 튜닝하고 평가하며 양자화 하는 방법을 살펴보겠습니다.
 

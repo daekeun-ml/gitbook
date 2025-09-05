@@ -1,14 +1,16 @@
 # Generate Synthetic QnAs from Real-world Data on Azure
 
+> _이 글은 저자가 마이크로소프트 AIML 기술 커뮤니티에 기고한_ [_Generate Synthetic QnAs from Real-world Data on Azure_](https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/generate-synthetic-qnas-from-real-world-data-on-azure/4202053) _를 직접 한국어로 번역 및 편집하였습니다._
+
 ## 1. Background <a href="#community-4202053-toc-hid-1223282387" id="community-4202053-toc-hid-1223282387"></a>
 
 ***
 
-In the rapidly evolving field of Generative AI, SLM/LLM fine-tuning and implementing RAG (Retrieval-Augmented Generation) techniques have become essential for achieving high-performance and domain-specific applications. Creating synthetic datasets for these purposes is crucial as it allows for the generation of tailored training data that addresses specific gaps and nuances in the target domain, which might not be adequately covered by existing datasets. This approach enhances the model's ability to understand and generate relevant and accurate information, ultimately leading to more robust, reliable, and context-aware AI systems that can better serve users' needs in specialized areas.
+빠르게 발전하는 생성형 AI 분야에서 SLM/LLM 파인튜닝과 RAG(Retrieval-Augmented Generation) 기법 구현은 고성능의 도메인별 애플리케이션을 달성하기 위해 필수적이 되었습니다. 이러한 목적을 위한 합성 데이터셋 생성은 기존 데이터셋으로는 적절히 다루어지지 않을 수 있는 대상 도메인의 특정 격차와 뉘앙스를 해결하는 맞춤형 훈련 데이터 생성을 가능하게 하므로 매우 중요합니다. 이 접근법은 모델이 관련성 있고 정확한 정보를 이해하고 생성하는 능력을 향상시켜, 궁극적으로 전문 분야에서 사용자의 요구를 더 잘 충족할 수 있는 더욱 견고하고 신뢰할 수 있으며 맥락을 인식하는 AI 시스템으로 이어집니다.
 
-Generating high-quality datasets from diverse formats of raw data, such as PDFs, CSVs, and TXTs, especially those containing a mix of images, tables, and text, presents several significant challenges. This is mainly because the extraction process itself is complex, as each format requires different parsing techniques to accurately retrieve and interpret the content. PDFs, for instance, can have varied structures and may not follow a standardized layout, making it difficult to consistently extract text and images. Additionally, handling tables within PDFs is particularly challenging because they can span multiple pages and have complex cell structures.
+PDF, CSV, TXT와 같은 다양한 형식의 원시 데이터, 특히 이미지, 표, 텍스트가 혼재된 데이터로부터 고품질 데이터셋을 생성하는 것은 여러 중요한 과제를 제시합니다. 이는 주로 추출 과정 자체가 복잡하기 때문인데, 각 형식마다 콘텐츠를 정확하게 검색하고 해석하기 위해 서로 다른 파싱 기법이 필요하기 때문입니다. 예를 들어, PDF는 다양한 구조를 가질 수 있고 표준화된 레이아웃을 따르지 않을 수 있어 텍스트와 이미지를 일관되게 추출하기 어렵게 만듭니다. 또한 PDF 내의 표 처리는 여러 페이지에 걸쳐 있을 수 있고 복잡한 셀 구조를 가질 수 있어 특히 어렵습니다.
 
-If you want to improve the performance of your model using a seed dataset generated from raw data as a baseline, you may need data augmentation to generate high-quality synthetic data. But there is a risk of introducing biases or inconsistencies during the augmentation process. Augmented data needs to be representative of the diversity and variability present in the real-world data. If not carefully managed, augmentation can lead to overfitting, where the model performs well on augmented data but poorly on actual data, or it can amplify existing biases in the dataset. In this blog, we share in detail the methodology and code snippets that will help you solve these challenges.
+원시 데이터로부터 생성된 시드 데이터셋을 기준선으로 사용하여 모델의 성능을 향상시키고자 한다면, 고품질 합성 데이터를 생성하기 위한 데이터 증강이 필요할 수 있습니다. 하지만 증강 과정에서 편향이나 불일치를 도입할 위험이 있습니다. 증강된 데이터는 실제 데이터에 존재하는 다양성과 변동성을 대표해야 합니다. 신중하게 관리되지 않으면, 증강은 모델이 증강된 데이터에서는 잘 수행하지만 실제 데이터에서는 성능이 떨어지는 과적합으로 이어지거나, 데이터셋의 기존 편향을 증폭시킬 수 있습니다. 이 블로그에서는 이러한 과제를 해결하는 데 도움이 될 방법론과 코드 스니펫을 자세히 공유합니다.
 
 ## 2. Constructing a Seed Dataset <a href="#community-4202053-toc-hid-543224017" id="community-4202053-toc-hid-543224017"></a>
 
@@ -16,27 +18,27 @@ If you want to improve the performance of your model using a seed dataset genera
 
 <figure><img src="../../.gitbook/assets/diagram1.png" alt=""><figcaption></figcaption></figure>
 
-### 2.1. Overview <a href="#community-4202053-toc-hid-147337457" id="community-4202053-toc-hid-147337457"></a>
+### 2.1. 개요 <a href="#community-4202053-toc-hid-147337457" id="community-4202053-toc-hid-147337457"></a>
 
-The task is to preprocess and convert this heterogeneous data into a structured format suitable for fine-tuning or RAG. This includes extracting and cleaning text from a variety of file formats and, where necessary, converting tables and images to text using AI services represented by [Azure AI Document Intelligence](https://azure.microsoft.com/en-us/products/ai-services/ai-document-intelligence). This dataset is used as a seed dataset for fine-tuning or RAG and serves as a baseline to improve the performance of domain-specific use cases. Here is an easy to follow hands-on for you based on a typical use case. All of this code is uploaded [here](https://github.com/Azure/synthetic-qa-generation/tree/main/seed).
+이 작업은 이러한 이질적인 데이터를 파인튜닝이나 RAG에 적합한 구조화된 형식으로 전처리하고 변환하는 것입니다. 여기에는 다양한 파일 형식에서 텍스트를 추출하고 정리하는 것이 포함되며, 필요한 경우 [Azure AI Document Intelligence](https://azure.microsoft.com/en-us/products/ai-services/ai-document-intelligence)로 대표되는 AI 서비스를 사용하여 표와 이미지를 텍스트로 변환하는 것도 포함됩니다. 이 데이터셋은 파인튜닝이나 RAG를 위한 시드 데이터셋으로 사용되며 도메인별 사용 사례의 성능을 향상시키기 위한 기준선 역할을 합니다. 다음은 일반적인 사용 사례를 기반으로 한 따라하기 쉬운 실습입니다. 모든 코드는 [여기](https://github.com/Azure/synthetic-qa-generation/tree/main/seed)에 업로드되어 있습니다.
 
-#### **PDF** <a href="#community-4202053-toc-hid-969555532" id="community-4202053-toc-hid-969555532"></a>
+**PDF**
 
-* `make_qa_multimodal_pdf_docai.ipynb`: (Recommended) Generate QnA synthetic dataset from a Complex PDF using Azure AI Document Intelligence.
-* `make_qa_multimodal_pdf_oss.ipynb`: Generate QnA synthetic dataset from a Complex PDF using Open source (Unstructured toolkit for this hands-on). To run this file, you first need to install the required packages with `startup_unstructured.sh`. The installation will take a few minutes.
-* `make_qa_only_image_multiple_pdf.ipynb`: Generate QnA synthetic dataset from multiple PDFs - Image-heavy PDF.
-* `make_qa_only_image_pdf.ipynb`: Generate QnA synthetic dataset from a PDF - Image-heavy PDF.
+* `make_qa_multimodal_pdf_docai.ipynb`: (권장) Azure AI Document Intelligence를 사용하여 복잡한 PDF에서 QnA 합성 데이터셋 생성.
+* `make_qa_multimodal_pdf_oss.ipynb`: 오픈 소스(이 실습에서는 Unstructured 툴킷)를 사용하여 복잡한 PDF에서 QnA 합성 데이터셋 생성. 이 파일을 실행하려면 먼저 `startup_unstructured.sh`로 필요한 패키지를 설치해야 합니다. 설치에는 몇 분이 소요됩니다.
+* `make_qa_only_image_multiple_pdf.ipynb`: 여러 PDF에서 QnA 합성 데이터셋 생성 - 이미지 중심 PDF.
+* `make_qa_only_image_pdf.ipynb`: PDF에서 QnA 합성 데이터셋 생성 - 이미지 중심 PDF.
 
-#### **CSV** <a href="#community-4202053-toc-hid-1517957301" id="community-4202053-toc-hid-1517957301"></a>
+**CSV**
 
-* `make_qa_csv.ipynb`: This is the general case. It is not difficult to create a QnA dataset by reading and chunking with CSVLoader.
-* `make_qa_image_url_csv.ipynb`: This is another common case. If image url information is included, change this url to a summary result for that image.
+* `make_qa_csv.ipynb`: 일반적인 경우입니다. CSVLoader로 읽고 청킹하여 QnA 데이터셋을 만드는 것은 어렵지 않습니다.
+* `make_qa_image_url_csv.ipynb`: 또 다른 일반적인 경우입니다. 이미지 URL 정보가 포함된 경우, 이 URL을 해당 이미지에 대한 요약 결과로 변경합니다.
 
-Let's take a look at the contents of the most representative `make_qa_multimodal_pdf_docai.ipynb`.
+가장 대표적인 `make_qa_multimodal_pdf_docai.ipynb`의 내용을 살펴보겠습니다.
 
-### 2.2. Separate the PDF pages <a href="#community-4202053-toc-hid-300000266" id="community-4202053-toc-hid-300000266"></a>
+### 2.2. PDF 페이지 분리 <a href="#community-4202053-toc-hid-300000266" id="community-4202053-toc-hid-300000266"></a>
 
-Separate the PDF pages into "Text", "Image", and "Mixed" with text, image, and table by using `analyze_pdf_page_content(...)`
+`analyze_pdf_page_content(...)`를 사용하여 PDF 페이지를 텍스트, 이미지, 표가 포함된 "Text", "Image", "Mixed"로 분리합니다.
 
 ```python
 def analyze_pdf_page_content(pdf_path, text_length_thres=600):
@@ -63,28 +65,28 @@ def analyze_pdf_page_content(pdf_path, text_length_thres=600):
     return dict(page_analysis)
 ```
 
-* **Text-heavy page** can be processed with open source (e.g., PyMuPDF) without the need to use toolkits like Azure AI Document Intelligence or Unstructured.
-* **Image-heavy page** can be converted the entire page to images and let a multimodal LLM like Azure OpenAI GPT-4o summarize each page.
-* **Mixed page** uses Azure AI Document Intelligence to separate images, text, and tables. Azure Document Intelligence's built-in models offer key features for document analysis, including:
-  1. **Text Extraction:** Identifies and extracts text from various document types.
-  2. **Table Recognition:** Detects and extracts table structures.
-  3. **Selection Marks:** Recognizes checkboxes and radio buttons.
-  4. **Form Field Recognition:** Extracts fields from forms.
-  5. **Document Structure Understanding:** Differentiates between titles, headers, footers, and other sections.
-  6. **Multi-language Support:** Handles documents in multiple languages.
-  7. **SDK and REST API Integration:** Provides tools for seamless integration into applications.
+* **텍스트 중심 페이지**는 Azure AI Document Intelligence나 Unstructured 같은 툴킷을 사용할 필요 없이 오픈 소스(예: PyMuPDF)로 처리할 수 있습니다.
+* **이미지 중심 페이지**는 전체 페이지를 이미지로 변환하고 Azure OpenAI GPT-4o 같은 멀티모달 LLM이 각 페이지를 요약하도록 할 수 있습니다.
+* **혼합 페이지**는 Azure AI Document Intelligence를 사용하여 이미지, 텍스트, 표를 분리합니다. Azure Document Intelligence의 내장 모델은 문서 분석을 위한 주요 기능을 제공합니다:
+  1. **텍스트 추출:** 다양한 문서 유형에서 텍스트를 식별하고 추출합니다.
+  2. **표 인식:** 표 구조를 감지하고 추출합니다.
+  3. **선택 표시:** 체크박스와 라디오 버튼을 인식합니다.
+  4. **양식 필드 인식:** 양식에서 필드를 추출합니다.
+  5. **문서 구조 이해:** 제목, 헤더, 푸터 및 기타 섹션을 구분합니다.
+  6. **다국어 지원:** 여러 언어의 문서를 처리합니다.
+  7. **SDK 및 REST API 통합:** 애플리케이션에 원활한 통합을 위한 도구를 제공합니다.
 
-For more details, visit [Microsoft's AI Document Intelligence official page](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/concept-layout?view=doc-intel-4.0.0\&tabs=sample-code).
+자세한 내용은 [Microsoft의 AI Document Intelligence 공식 페이지](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/concept-layout?view=doc-intel-4.0.0\&tabs=sample-code)를 참조하세요.
 
 ### 2.3. Mixed page processing <a href="#community-4202053-toc-hid-2053827843" id="community-4202053-toc-hid-2053827843"></a>
 
-Now let's look at how to extract information from mixed pages in detail.
+이제 혼합 페이지에서 정보를 추출하는 방법을 자세히 살펴보겠습니다.
 
-* Extract mixed pages as prebuilt-layout models and convert them to markdown -`document_intelligence_client.begin_analyze_document("prebuilt-layout", output_content_format=ContentFormat.MARKDOWN, ...)`
-* Extract images using bounding boxes (x, y, w, h) stored in figure tags - `crop_image_from_file(...)`. If the bounding box size is too small (`is_bounding_box_larger_than(...)`) or the image is a simple pattern with no meaning (`image_complexity(...)`), the image is not extracted.
-* Summarize the extracted images with GPT-4o. (`understand_image_with_gpt(...)`). Please note that if you need to make your dataset public, you must use the open source LLM and not OpenAI's model.
+* 혼합 페이지를 prebuilt-layout 모델로 추출하고 마크다운으로 변환 - `document_intelligence_client.begin_analyze_document("prebuilt-layout", output_content_format=ContentFormat.MARKDOWN, ...)`
+* figure 태그에 저장된 바운딩 박스(x, y, w, h)를 사용하여 이미지 추출 - `crop_image_from_file(...)`. 바운딩 박스 크기가 너무 작거나(`is_bounding_box_larger_than(...)`) 이미지가 의미 없는 단순한 패턴인 경우(`image_complexity(...)`), 이미지는 추출되지 않습니다.
+* 추출된 이미지를 GPT-4o로 요약합니다(`understand_image_with_gpt(...)`). 데이터셋을 공개해야 하는 경우 OpenAI 모델이 아닌 오픈 소스 LLM을 사용해야 함에 주의하세요.
 
-Here is a code snippet that summarizes this briefly. Note that the actual implementation is more complex than this.
+다음은 이를 간략히 요약한 코드 스니펫입니다. 실제 구현은 이보다 더 복잡합니다.
 
 ```python
 # Import necessary functions for processing
@@ -136,7 +138,7 @@ if "Mixed" in analyzed_pdf_result:
             md_content = update_figure_description(md_content, img_description, idx)
 ```
 
-`image_complexity(...)` assesses the complexity of an image by analyzing its histogram entropy, Laplacian variance, and edge count. It converts the image to a format suitable for [OpenCV](https://opencv.org/) processing, calculates the entropy of the color histograms, the variance of the Laplacian to measure focus, and the number of edges detected by the [Canny edge detector](https://en.wikipedia.org/wiki/Canny_edge_detector). Based on these metrics, it classifies the image as either **"Complex"** or **"Simple"** depending on predefined threshold values for each metric. The code snippet is below.
+`image_complexity(...)`는 히스토그램 엔트로피, 라플라시안 분산, 엣지 수를 분석하여 이미지의 복잡도를 평가합니다. 이미지를 [OpenCV](https://opencv.org/) 처리에 적합한 형식으로 변환하고, 색상 히스토그램의 엔트로피, 초점을 측정하는 라플라시안의 분산, [Canny 엣지 검출기](https://en.wikipedia.org/wiki/Canny_edge_detector)로 감지된 엣지 수를 계산합니다. 이러한 메트릭을 기반으로 각 메트릭에 대한 미리 정의된 임계값에 따라 이미지를 **"Complex"** 또는 **"Simple"**&#xB85C; 분류합니다. 코드 스니펫은 다음과 같습니다.
 
 ```python
 # Function to calculate complexity using variance of Laplacian and Canny edge detection
@@ -177,9 +179,9 @@ def image_complexity(img, laplacian_var_thres=500, edge_count_thres=10000, total
         return "Simple", laplacian_var, edge_count, total_entropy
 ```
 
-### 2.4. Construct QnA Pairs <a href="#community-4202053-toc-hid-246373380" id="community-4202053-toc-hid-246373380"></a>
+### 2.4. QnA 쌍 구성 <a href="#community-4202053-toc-hid-246373380" id="community-4202053-toc-hid-246373380"></a>
 
-We can leverage the `azure-ai-generative` package. The `QADataGenerator` class in this package makes it easy to generate QnA synthetic questions. However, using this class as is has the disadvantage of not being able to use custom prompts, so we inherited from it and created the `CustomQADataGenerator` class as follows.
+`azure-ai-generative` 패키지를 활용할 수 있습니다. 이 패키지의 `QADataGenerator` 클래스는 QnA 합성 질문을 쉽게 생성할 수 있게 해줍니다. 하지만 이 클래스를 그대로 사용하면 사용자 정의 프롬프트를 사용할 수 없다는 단점이 있어서, 이를 상속받아 다음과 같이 `CustomQADataGenerator` 클래스를 만들었습니다.
 
 ```python
 import os
@@ -228,9 +230,9 @@ class CustomQADataGenerator(QADataGenerator):
         return messages
 ```
 
-All you have to do is put your own prompts into a text file and you're done. There are some prompt examples at this [link](https://github.com/Azure/slm-innovator-lab/tree/main/1_synthetic-qa-generation/seed/prompt_template).
+자신만의 프롬프트를 텍스트 파일에 넣기만 하면 됩니다. 이 [링크](https://github.com/Azure/slm-innovator-lab/tree/main/1_synthetic-qa-generation/seed/prompt_template)에 몇 가지 프롬프트 예제가 있습니다.
 
-Now, you can easily create a QnA dataset for fine-tuning using the code snippet below. Of course, you can also use it for RAG with just a little modification of the code.
+이제 아래 코드 스니펫을 사용하여 파인튜닝용 QnA 데이터셋을 쉽게 만들 수 있습니다. 물론 코드를 조금만 수정하면 RAG에도 사용할 수 있습니다.
 
 ```python
 import os
@@ -275,11 +277,11 @@ for result in results:
 print("Successfully generated QAs")
 ```
 
-The screenshot below is a Q\&A result extracted from sample raw data, you can see sample results in this [folder](https://github.com/Azure/synthetic-qa-generation/tree/main/seed/samples), all of the sample raw data is based on articles I have written or data I have generated using Llama3, so there are no license issues. If you are doing a PoC/MVP, please prepare your own dataset.
+아래 스크린샷은 샘플 원시 데이터에서 추출한 Q\&A 결과입니다. 이 [폴더](https://github.com/Azure/synthetic-qa-generation/tree/main/seed/samples)에서 샘플 결과를 볼 수 있습니다. 모든 샘플 원시 데이터는 제가 작성한 기사나 Llama3를 사용하여 생성한 데이터를 기반으로 하므로 라이선스 문제가 없습니다. PoC/MVP를 진행하는 경우 자체 데이터셋을 준비해 주세요.
 
 <figure><img src="../../.gitbook/assets/qna_examples.png" alt=""><figcaption></figcaption></figure>
 
-Below is a comparison of the results before and after fine tuning of GPT-4o without RAG for a Korea customer PoC. GPT-4o is available to a small number of customers as a private preview as of July 2024. This is the result of creating a set of 16 questions and answers for PoC and comparing three indicators of **Similarity, Coherence, and Fluency** in [Azure AI studio](https://azure.microsoft.com/products/ai-studio). The values of the indicator are on a scale of 1-5, with higher values being better.
+다음은 한국 고객 PoC를 위해 RAG 없이 GPT-4o를 파인튜닝하기 전후의 결과 비교입니다. GPT-4o는 2024년 7월 기준으로 소수의 고객에게 비공개 미리보기로 제공됩니다. 이는 PoC용으로 16개의 질문과 답변 세트를 만들고 Azure AI Foundry에서 **유사성, 일관성, 유창성**의 세 가지 지표를 비교한 결과입니다. 지표 값은 1-5 척도이며, 높을수록 좋습니다.
 
 <figure><img src="../../.gitbook/assets/evaluation-sample.png" alt=""><figcaption></figcaption></figure>
 
@@ -287,30 +289,30 @@ Below is a comparison of the results before and after fine tuning of GPT-4o with
 
 ***
 
-After fine-tuning with the generated dataset from the above section, a baseline was established, but the performance requires improvement due to a lack of data (e.g., there are only 1,000 samples in the dataset). In this case, a synthetic dataset must be created by applying data augmentation techniques to enhance performance. The data augmentation technique utilizes the representative techniques announced by Microsoft: Evol-Instruct, GLAN (Generalized Instruction Tuning), and Auto Evol-Instruct.
+위 섹션에서 생성된 데이터셋으로 파인튜닝한 후 기준선이 설정되었지만, 데이터 부족으로 인해 성능 개선이 필요합니다(예: 데이터셋에 1,000개 샘플만 있는 경우). 이 경우 성능을 향상시키기 위해 데이터 증강 기법을 적용하여 합성 데이터셋을 만들어야 합니다. 데이터 증강 기법은 Microsoft에서 발표한 대표적인 기법들을 활용합니다: Evol-Instruct, GLAN (Generalized Instruction Tuning), Auto Evol-Instruct.
 
-* **Evol-Instruct:** Generate diverse instructional data to augment the dataset from the seed datset.
-* **GLAN:** Apply generalized instruction tuning to expand the variety of Q\&A pairs.
-* **Auto Evol-Instruct:** Automate the generation of synthetic data to scale the augmentation process.
+* **Evol-Instruct:** 시드 데이터셋에서 데이터셋을 증강하기 위해 다양한 교육 데이터를 생성합니다.
+* **GLAN:** 일반화된 명령어 튜닝을 적용하여 Q\&A 쌍의 다양성을 확장합니다.
+* **Auto Evol-Instruct:** 합성 데이터 생성을 자동화하여 증강 과정을 확장합니다.
 
-### 3.1. Augment your dataset - Evol-Instruct <a href="#community-4202053-toc-hid-881022713" id="community-4202053-toc-hid-881022713"></a>
+### 3.1. 데이터셋 증강 - Evol-Instruct <a href="#id-31-eb-8d-b0-ec-9d-b4-ed-84-b0-ec-85-8b-ec-a6-9d-ea-b0-95-evol-instruct" id="id-31-eb-8d-b0-ec-9d-b4-ed-84-b0-ec-85-8b-ec-a6-9d-ea-b0-95-evol-instruct"></a>
 
 <figure><img src="../../.gitbook/assets/diagram2.png" alt=""><figcaption></figcaption></figure>
 
-The Evol-Instruct concept developed by Microsoft aims to enhance the capabilities of LLMs by automatically evolving instructions to various complexity levels, instead of relying solely on manually created instructions. This method involves several key components and steps:
+Microsoft에서 개발한 Evol-Instruct 개념은 수동으로 생성된 명령어에만 의존하는 대신 명령어를 다양한 복잡도 수준으로 자동 진화시켜 LLM의 능력을 향상시키는 것을 목표로 합니다. 이 방법은 여러 주요 구성 요소와 단계를 포함합니다:
 
-* **Instruction Evolution**: Starting with an initial set of instructions, the model uses a LLM like GPT-4o to iteratively rewrite these instructions into more complex versions. The evolution process involves two types of instruction enhancement: in-depth evolving (adding constraints, deepening, increasing reasoning steps) and in-breadth evolving (generating new, diverse instructions).
-* **Response Generation**: After evolving the instructions, the LLM generates responses to these newly complex instructions, ensuring that they are reasonable and understandable by humans.
-* **Instruction Elimination**: The process includes a step to filter out any instructions that fail to evolve properly, ensuring only high-quality, challenging instructions remain.
+* **명령어 진화**: 초기 명령어 세트에서 시작하여 모델은 GPT-4o 같은 LLM을 사용하여 이러한 명령어를 더 복잡한 버전으로 반복적으로 다시 작성합니다. 진화 과정은 두 가지 유형의 명령어 향상을 포함합니다: 심화 진화(제약 추가, 심화, 추론 단계 증가)와 확장 진화(새롭고 다양한 명령어 생성).
+* **응답 생성**: 명령어를 진화시킨 후, LLM은 이러한 새로운 복잡한 명령어에 대한 응답을 생성하여 인간이 이해할 수 있고 합리적인지 확인합니다.
+* **명령어 제거**: 이 과정에는 제대로 진화하지 못한 명령어를 필터링하는 단계가 포함되어 고품질의 도전적인 명령어만 남도록 합니다.
 
-This open-source implementation is based on the [WizardLM paper](https://arxiv.org/abs/2304.12244) and [h2o-wizardlm.](https://github.com/h2oai/h2o-wizardlm) We added the following features to the original implementation:
+이 오픈 소스 구현은 [WizardLM 논문](https://arxiv.org/abs/2304.12244)과 [h2o-wizardlm](https://github.com/h2oai/h2o-wizardlm)을 기반으로 합니다. 원래 구현에 다음 기능을 추가했습니다:
 
-* Modified it to be able to call Azure OpenAI by adding the `AzureGPTPipeline` class.
-* The prompt has been refined and modified to support multiple languages. Use `--language` argument for other language. (e.g., `--language Korean`)
-* Made it possible to create questions only when necessary. A better strategy is to create questions and answers separately. Use `--question_only` argument. (e.g., `--question_only True`)
-* Prevented infinite loop. `mutate(...)` in the original implementation determines the validity of the augmented statement and repeats the loop until it is valid. However, this process takes a very long time and there is a problem in that the loop repeats infinitely in certain situations.
+* `AzureGPTPipeline` 클래스를 추가하여 Azure OpenAI를 호출할 수 있도록 수정했습니다.
+* 프롬프트를 개선하고 여러 언어를 지원하도록 수정했습니다. 다른 언어의 경우 `--language` 인수를 사용하세요. (예: `--language Korean`)
+* 필요할 때만 질문을 만들 수 있도록 했습니다. 더 나은 전략은 질문과 답변을 별도로 만드는 것입니다. `--question_only` 인수를 사용하세요. (예: `--question_only True`)
+* 무한 루프를 방지했습니다. 원래 구현의 `mutate(...)`는 증강된 문장의 유효성을 판단하고 유효할 때까지 루프를 반복합니다. 하지만 이 과정은 매우 오래 걸리고 특정 상황에서 루프가 무한히 반복되는 문제가 있습니다.
 
-You can easily convert your jsonl file from the previous section with [convert.py](https://github.com/Azure/synthetic-qa-generation/blob/main/evolve-instruct/convert.py) and augment your dataset with [evolve.py](https://github.com/Azure/synthetic-qa-generation/blob/main/evolve-instruct/evolve.py).
+이전 섹션의 jsonl 파일을 [convert.py](https://github.com/Azure/synthetic-qa-generation/blob/main/evolve-instruct/convert.py)로 쉽게 변환하고 [evolve.py](https://github.com/Azure/synthetic-qa-generation/blob/main/evolve-instruct/evolve.py)로 데이터셋을 증강할 수 있습니다.
 
 ```applescript
 #!/bin/bash
@@ -325,7 +327,7 @@ python convert.py --input_file "$INPUT_FILE" --output_file "$SEED_FILE
 python evolve.py --seed_file "$SEED_FILE" --column_names "$COLUMN_NAMES" --num_rows "$NUM_ROWS" --max_len_chars "$MAX_LEN_CHARS"
 ```
 
-Seed instruction - after running `convert.py`
+시드 명령어 - `convert.py` 실행 후
 
 ```applescript
 {"idx": 1, "Skill": "Distributed training on Cloud", "Difficulty": 5, "Instruction": "What version of TensorFlow was used in the evaluation?"}
@@ -333,7 +335,7 @@ Seed instruction - after running `convert.py`
 {"idx": 3, "Skill": "Distributed training on Cloud", "Difficulty": 5, "Instruction": "What is the purpose of the script 'preprocess_imagenet.py' and how is it executed?"}
 ```
 
-Synthetic instruction - after running `evolve.py` (shows only 10 samples)
+합성 명령어 - `evolve.py` 실행 후 (10개 샘플만 표시)
 
 ```applescript
 [
@@ -370,31 +372,31 @@ Synthetic instruction - after running `evolve.py` (shows only 10 samples)
 ]
 ```
 
-Example datasets are placed in this [folder](https://github.com/Azure/synthetic-qa-generation/blob/main/seed/samples). Please try the minimal example first and configure your dataset by referring to the tunable parameters.
+예제 데이터셋은 이 [폴더](https://github.com/Azure/synthetic-qa-generation/blob/main/seed/samples)에 있습니다. 먼저 최소 예제를 시도하고 조정 가능한 매개변수를 참조하여 데이터셋을 구성해 보세요.
 
-### 3.2. Improve the generalizability of your model - GLAN <a href="#community-4202053-toc-hid-200964343" id="community-4202053-toc-hid-200964343"></a>
+### 3.2. 모델의 일반화 능력 향상 - GLAN <a href="#id-32-eb-aa-a8-eb-8d-b8-ec-9d-98-ec-9d-bc-eb-b0-98-ed-99-94-eb-8a-a5-eb-a0-a5-ed-96-a5-ec-83-81-glan" id="id-32-eb-aa-a8-eb-8d-b8-ec-9d-98-ec-9d-bc-eb-b0-98-ed-99-94-eb-8a-a5-eb-a0-a5-ed-96-a5-ec-83-81-glan"></a>
 
 <figure><img src="../../.gitbook/assets/diagram3.png" alt=""><figcaption></figcaption></figure>
 
-&#x20;Catastrophic forgetting, also known as catastrophic interference, occurs during SLM/LLM fine-tuning when a model trained on new data overwrites the knowledge it previously acquired, leading to a significant drop in performance on earlier tasks. This issue is particularly prominent in scenarios where the model needs to adapt to diverse and potentially conflicting data distributions without losing its ability to perform well on initial tasks.
+파국적 망각(catastrophic forgetting), 파국적 간섭이라고도 알려진 현상은 SLM/LLM 파인튜닝 중에 새로운 데이터로 훈련된 모델이 이전에 습득한 지식을 덮어쓰면서 이전 작업에서의 성능이 크게 떨어지는 현상입니다. 이 문제는 모델이 초기 작업에서 잘 수행할 수 있는 능력을 잃지 않으면서 다양하고 잠재적으로 상충하는 데이터 분포에 적응해야 하는 시나리오에서 특히 두드러집니다.
 
-GLAN (Generalized Instruction Tuning) addresses catastrophic forgetting by leveraging a systematically curated taxonomy of human knowledge to generate synthetic, diverse, and comprehensive instruction datasets. Specifically, GLAN uses a pre-curated taxonomy of human knowledge and capabilities to generate large-scale, diverse instruction data across various disciplines. This taxonomy mirrors the systematic structure of human education, breaking down knowledge into fields, sub-fields, and distinct disciplines, which are then used to design syllabi for different subjects. These syllabi detail key concepts for each class session, enabling the generation of diverse and comprehensive instructions. Here is GLAN's key features:
+GLAN(Generalized Instruction Tuning)은 체계적으로 큐레이션된 인간 지식의 분류 체계를 활용하여 합성적이고 다양하며 포괄적인 명령어 데이터셋을 생성함으로써 파국적 망각을 해결합니다. 구체적으로, GLAN은 미리 큐레이션된 인간 지식과 능력의 분류 체계를 사용하여 다양한 분야에 걸쳐 대규모의 다양한 명령어 데이터를 생성합니다. 이 분류 체계는 인간 교육의 체계적 구조를 반영하여 지식을 분야, 하위 분야, 개별 학문으로 나누고, 이를 사용하여 다양한 과목의 강의 계획서를 설계합니다. 이러한 강의 계획서는 각 수업 세션의 핵심 개념을 자세히 설명하여 다양하고 포괄적인 명령어 생성을 가능하게 합니다. GLAN의 주요 특징은 다음과 같습니다:
 
-* **Taxonomy Creation**: A detailed hierarchy of human knowledge is built using LLMs and human verification.
-* **Subject and Syllabus Generation**: LLMs generate a list of subjects and detailed syllabi, breaking down subjects into class sessions with key concepts.
-* **Instruction Generation**: Homework questions and their answers are generated based on the syllabi, ensuring broad coverage and diversity.
+* **분류 체계 생성**: LLM과 인간 검증을 사용하여 인간 지식의 상세한 계층 구조를 구축합니다.
+* **과목 및 강의 계획서 생성**: LLM이 과목 목록과 상세한 강의 계획서를 생성하여 과목을 핵심 개념이 있는 수업 세션으로 나눕니다.
+* **명령어 생성**: 강의 계획서를 기반으로 숙제 문제와 답변을 생성하여 광범위한 범위와 다양성을 보장합니다.
 
-We have implemented the concept of this paper from the scratch and made it public. Let's take a look at the core concepts of the code.
+우리는 이 논문의 개념을 처음부터 구현하여 공개했습니다. 코드의 핵심 개념을 살펴보겠습니다.
 
-* `generate_taxonomy(...)`: Generate a taxonomy of human knowledge and capabilities.
-* `generate_subjects(...):` Generate a list of subjects for a given discipline. Please refer to section 2.2 of the paper.
-* `generate_syllabus(...)`: Generate a syllabus for a given subject at a specific level. Please refer to section 2.3 of the paper.
-* `sample_class_sessions_and_key_concepts(...)`: Sample class sessions and key concepts to generate questions of varying difficulty.
-* `generate_questions(...)`: Generate questions based on class sessions and key concepts using LangChain pipeline. Please refer to section 2.4 of the paper.
-* `generate_answers(...)`: Generate answers to the questions using LangChain pipeline. Please refer to section 2.4 of the paper.
-* `glan_instruction_generation(...)`: GLAN pipeline
+* `generate_taxonomy(...)`: 인간 지식과 능력의 분류 체계를 생성합니다.
+* `generate_subjects(...)`: 주어진 학문 분야에 대한 과목 목록을 생성합니다. 논문의 섹션 2.2를 참조하세요.
+* `generate_syllabus(...)`: 특정 수준의 주어진 과목에 대한 강의 계획서를 생성합니다. 논문의 섹션 2.3을 참조하세요.
+* `sample_class_sessions_and_key_concepts(...)`: 다양한 난이도의 질문을 생성하기 위해 수업 세션과 핵심 개념을 샘플링합니다.
+* `generate_questions(...)`: LangChain 파이프라인을 사용하여 수업 세션과 핵심 개념을 기반으로 질문을 생성합니다. 논문의 섹션 2.4를 참조하세요.
+* `generate_answers(...)`: LangChain 파이프라인을 사용하여 질문에 대한 답변을 생성합니다. 논문의 섹션 2.4를 참조하세요.
+* `glan_instruction_generation(...)`: GLAN 파이프라인
 
-This pseudo-code for `glan_instruction_generation(...)` outlines the steps of generating or loading disciplines, generating subjects and syllabi for each discipline, creating questions based on the syllabi, saving the questions, and optionally generating and saving answers to create a comprehensive instruction dataset.
+`glan_instruction_generation(...)`에 대한 이 의사 코드는 학문 분야 생성 또는 로드, 각 학문 분야에 대한 과목과 강의 계획서 생성, 강의 계획서를 기반으로 한 질문 생성, 질문 저장, 선택적으로 답변 생성 및 저장하여 포괄적인 명령어 데이터셋을 만드는 단계를 개략적으로 설명합니다.
 
 ```python
 def glan_instruction_generation(args):
@@ -450,19 +452,19 @@ def glan_instruction_generation(args):
         save_instructions(all_questions, all_answers, args.output_dir, args.language)
 ```
 
-This implementation supports all languages supported by LLM, so you can easily create datasets in your country's language. Below is an example created with this code.
+이 구현은 LLM이 지원하는 모든 언어를 지원하므로 자국 언어로 데이터셋을 쉽게 만들 수 있습니다. 다음은 이 코드로 생성한 예제입니다.
 
-**English language**
+**영어**
 
 <figure><img src="../../.gitbook/assets/english_samples.png" alt=""><figcaption></figcaption></figure>
 
-**Korean language**
+**한국어**
 
 <figure><img src="../../.gitbook/assets/korean_samples.png" alt=""><figcaption></figcaption></figure>
 
-Example datasets are placed in this [folder](https://github.com/Azure/synthetic-qa-generation/tree/main/glan-instruct/samples). Please try the minimal example first and configure your dataset by referring to the tunable parameters.
+예제 데이터셋은 이 [폴더](https://github.com/Azure/synthetic-qa-generation/tree/main/glan-instruct/samples)에 있습니다. 먼저 최소 예제를 시도하고 조정 가능한 매개변수를 참조하여 데이터셋을 구성해 보세요.
 
-The code snippet below is a shell script that generates a large synthetic dataset. If you are willing to pay enough Azure OpenAI PTUs (Provisioned Throughput Units), you can create your own datasets just by running this script.&#x20;
+아래 코드 스니펫은 대규모 합성 데이터셋을 생성하는 셸 스크립트입니다. 충분한 Azure OpenAI PTU(Provisioned Throughput Units)를 지불할 의향이 있다면 이 스크립트를 실행하는 것만으로 자체 데이터셋을 만들 수 있습니다.
 
 ```applescript
 # Initialize counter
@@ -499,19 +501,23 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 done < disciplines_sample.txt
 ```
 
-_Disclaimer: The code the author published uses Azure OpenAI, but the dataset created with Azure OpenAI cannot be publicly released due to policy. The author will create a dataset with Llama3.1, which has no license issues, and release it on Hugging Face._
+{% hint style="warning" %}
+Disclaimer: _저자가 게시한 코드는 Azure OpenAI를 사용하지만, Azure OpenAI 모델(예: GPT-4o, GPT-4o-mini)로 생성된 데이터셋은 정책상 공개적으로 릴리스할 수 없습니다. 저자는 라이선스 문제가 없는 Phi-3.5 MoE 모델로 합성 데이터셋을 생성하여 Hugging Face에 릴리스하였습니다._
 
-## 4. Conclusion <a href="#community-4202053-toc-hid-2137501525" id="community-4202053-toc-hid-2137501525"></a>
+* Dataset: [_https://huggingface.co/datasets/daekeun-ml/GLAN-qna-kr-300k_](https://huggingface.co/datasets/daekeun-ml/GLAN-qna-kr-300k)
+{% endhint %}
+
+### 4. 결론 <a href="#community-4202053-toc-hid-2137501525" id="community-4202053-toc-hid-2137501525"></a>
 
 ***
 
-In the realm of Generative AI, creating and augmenting datasets for fine-tuning SLM/LLM models is a crucial step to ensure robust, reliable, and context-aware AI systems. This blog post outlined the process of constructing a seed dataset from diverse raw data formats and then applying data augmentation techniques such as Evol-Instruct and GLAN to enhance the dataset's quality and diversity. These techniques help mitigate the challenges of extracting high-quality data from complex formats like PDFs and CSVs and prevent issues such as catastrophic forgetting during the fine-tuning process.
+생성형 AI 영역에서 SLM/LLM 모델의 파인튜닝을 위한 데이터셋 생성 및 증강은 견고하고 신뢰할 수 있으며 맥락을 인식하는 AI 시스템을 보장하는 중요한 단계입니다. 이 블로그 포스트는 다양한 원시 데이터 형식에서 시드 데이터셋을 구축하고 Evol-Instruct 및 GLAN과 같은 데이터 증강 기법을 적용하여 데이터셋의 품질과 다양성을 향상시키는 과정을 개략적으로 설명했습니다. 이러한 기법은 PDF 및 CSV와 같은 복잡한 형식에서 고품질 데이터를 추출하는 과제를 완화하고 파인튜닝 과정에서 파국적 망각과 같은 문제를 방지하는 데 도움이 됩니다.
 
-By leveraging advanced methods like GLAN, we can systematically generate comprehensive instruction datasets across various disciplines, enhancing the model's performance without compromising previously learned knowledge. This approach not only improves the generalizability of the model but also ensures that it can handle a wide range of complex tasks effectively.
+GLAN과 같은 고급 방법을 활용하면 다양한 학문 분야에 걸쳐 포괄적인 명령어 데이터셋을 체계적으로 생성할 수 있어 이전에 학습한 지식을 손상시키지 않으면서 모델의 성능을 향상시킬 수 있습니다. 이 접근법은 모델의 일반화 능력을 향상시킬 뿐만 아니라 광범위한 복잡한 작업을 효과적으로 처리할 수 있도록 보장합니다.
 
-For those interested in exploring these techniques further and implementing them in their projects, all the code and examples discussed in this blog are available on the [Azure synthetic-qa-generation GitHub repository](https://github.com/Azure/synthetic-qa-generation). This resource provides a practical guide and tools to generate high-quality QnA datasets, enabling you to fine-tune and optimize your AI models for specialized applications. By following the methodologies and utilizing the tools provided, developers and data scientists can create robust datasets that significantly enhance the capabilities of their AI models, paving the way for more advanced and reliable AI solutions in various domains.
+이러한 기법을 더 자세히 탐구하고 프로젝트에 구현하는 데 관심이 있는 분들을 위해, 이 블로그에서 논의된 모든 코드와 예제는 [Azure synthetic-qa-generation GitHub 저장소](https://github.com/Azure/synthetic-qa-generation)에서 확인할 수 있습니다. 이 리소스는 고품질 QnA 데이터셋을 생성하는 실용적인 가이드와 도구를 제공하여 전문 애플리케이션을 위한 AI 모델을 파인튜닝하고 최적화할 수 있게 해줍니다. 제공된 방법론을 따르고 도구를 활용함으로써 개발자와 데이터 과학자는 AI 모델의 능력을 크게 향상시키는 견고한 데이터셋을 만들 수 있어 다양한 도메인에서 더욱 발전되고 신뢰할 수 있는 AI 솔루션의 길을 열 수 있습니다.
 
-**Start your end-to-end fine-tuning journey with this code:** [**https://github.com/Azure/synthetic-qa-generation**](https://github.com/Azure/synthetic-qa-generation)&#x20;
+**이 코드로 엔드투엔드 파인튜닝 여정을 시작하세요:** [**https://github.com/Azure/synthetic-qa-generation**](https://github.com/Azure/synthetic-qa-generation)
 
 ## References <a href="#community-4202053-toc-hid-1457443155" id="community-4202053-toc-hid-1457443155"></a>
 
