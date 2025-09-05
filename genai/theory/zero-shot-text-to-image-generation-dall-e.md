@@ -1,8 +1,8 @@
-# Zero-Shot Text-to-Image Generation (DALL-E) - Paper Review
+# Zero-Shot Text-to-Image Generation (DALL-E)
 
 ## 1. Preliminaries
 
-{% hint style="info" %}
+{% hint style="success" %}
 VAE, VQ-VAE에 대한 사전 지식이 부족하거나 리마인드가 필요할 때에만 참고&#x20;
 {% endhint %}
 
