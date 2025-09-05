@@ -30,7 +30,7 @@ icon: user-hair
 
 {% tabs %}
 {% tab title="URL" %}
-* :link: LinkedIn: [https://www.linkedin.com/in/daekeun-kim/](https://www.linkedin.com/in/daekeun-kim/)
+* :link: LinkedIn: [https://www.linkedin.com/in/daekeun-kim](https://www.linkedin.com/in/daekeun-kim/)
 * 🧰 GitHub: [https://github.com/daekeun-ml](https://github.com/daekeun-ml)
 * 🤗 Hugging Face: [https://huggingface.co/daekeun-ml](https://huggingface.co/daekeun-ml)
 {% endtab %}

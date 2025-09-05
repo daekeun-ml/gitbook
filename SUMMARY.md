@@ -95,5 +95,6 @@
 * [LLM Evaluation](genai/llm-evaluation/README.md)
   * [Overview](genai/llm-evaluation/overview.md)
   * [The Challenges of Korean LLM Evaluation](genai/llm-evaluation/the-challenges-of-korean-llm-evaluation.md)
+  * [KMMLU/KMMLU-Redux/KMMLU-Pro Dataset](genai/llm-evaluation/kmmlu-kmmlu-redux-kmmlu-pro-dataset.md)
   * [FunctionChat-Bench Paper review](genai/llm-evaluation/functionchat-bench-paper-review.md)
   * [Horangi Korean LLM Leaderboard](genai/llm-evaluation/horangi-korean-llm-leaderboard.md)
