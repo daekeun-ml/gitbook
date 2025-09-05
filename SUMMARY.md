@@ -76,6 +76,9 @@
 
 ## GenAI
 
+* [Theory](genai/theory/README.md)
+  * [Zero-Shot Text-to-Image Generation (DALL-E)](genai/theory/zero-shot-text-to-image-generation-dall-e.md)
+  * [Diffusion 정리](genai/theory/diffusion.md)
 * [Synthetic Data](genai/synthetic-data/README.md)
   * [The Necessity of Synthetic Data](genai/synthetic-data/the-necessity-of-synthetic-data.md)
   * [Seed Data-Based Synthetic Data Generation Approach](genai/synthetic-data/seed-data-based-synthetic-data-generation-approach.md)
@@ -89,6 +92,8 @@
 * [Fine-tuning](genai/fine-tuning/README.md)
   * [Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML](genai/fine-tuning/fine-tune-evaluate-quantize-slm-llm-using-the-torchtune-on-azure-ml.md)
   * [Fine-tuning Florence-2 for VQA (Visual Question Answering) using the Azure ML Python SDK and MLflow](genai/fine-tuning/fine-tuning-florence-2-for-vqa-visual-question-answering-using-the-azure-ml-python-sdk-and-mlflow.md)
-* [Theory](genai/theory/README.md)
-  * [Zero-Shot Text-to-Image Generation (DALL-E)](genai/theory/zero-shot-text-to-image-generation-dall-e.md)
-  * [Diffusion 정리](genai/theory/diffusion.md)
+* [LLM Evaluation](genai/llm-evaluation/README.md)
+  * [Overview](genai/llm-evaluation/overview.md)
+  * [The Challenges of Korean LLM Evaluation](genai/llm-evaluation/the-challenges-of-korean-llm-evaluation.md)
+  * [FunctionChat-Bench Paper review](genai/llm-evaluation/functionchat-bench-paper-review.md)
+  * [Horangi Korean LLM Leaderboard](genai/llm-evaluation/horangi-korean-llm-leaderboard.md)
