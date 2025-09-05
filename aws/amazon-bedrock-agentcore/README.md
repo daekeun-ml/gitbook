@@ -15,7 +15,7 @@ Contributors
 
 ## Overview
 
-AWS Bedrock AgentCore는 프로덕션 환경에서 AI 에이전트를 대규모로 배포하고 운영할 때 겪는 다양한 문제를 해결하기 위해 설계된 서비스입니다. 기존의 Bedrock Agents가 에이전트를 쉽게 만들고 실험하는 데 초점을 맞췄다면, AgentCore는 여기서 한 단계 나아가 다음과 같은 차별점을 제공합니다.
+Amazon Beddrock AgentCore는 프로덕션 환경에서 AI 에이전트를 대규모로 배포하고 운영할 때 겪는 다양한 문제를 해결하기 위해 설계된 서비스입니다. 기존의 Bedrock Agents가 에이전트를 쉽게 만들고 실험하는 데 초점을 맞췄다면, AgentCore는 여기서 한 단계 나아가 다음과 같은 차별점을 제공합니다.
 
 * **보안 및 안정성:** AgentCore Runtime은 세션 격리가 완벽한 보안 서버리스 실행 환경을 제공하여 데이터 유출을 방지합니다. 또한, 체크포인트 및 복구 기능을 통해 예기치 않은 중단이나 실패 시에도 에이전트가 원활하게 복구될 수 있도록 합니다.
 * **확장성:** 수천 개의 동시 세션으로 자동 확장될 수 있어 인프라 용량 계획이 필요 없습니다. 또한, 8시간까지 실행 가능한 비동기 워크로드를 지원하여 장기 실행 작업에도 적합합니다.
@@ -33,7 +33,7 @@ AWS Bedrock AgentCore는 프로덕션 환경에서 AI 에이전트를 대규모�
 
 ## 세부 서비스 살펴보기
 
-{% columns %}
+{% columns fullWidth="false" %}
 {% column width="50%" %}
 {% content-ref url="agentcore-runtime.md" %}
 [agentcore-runtime.md](agentcore-runtime.md)
@@ -45,6 +45,10 @@ AWS Bedrock AgentCore는 프로덕션 환경에서 AI 에이전트를 대규모�
 
 {% content-ref url="agentcore-code-interpreter.md" %}
 [agentcore-code-interpreter.md](agentcore-code-interpreter.md)
+{% endcontent-ref %}
+
+{% content-ref url="agentcore-memory.md" %}
+[agentcore-memory.md](agentcore-memory.md)
 {% endcontent-ref %}
 {% endcolumn %}
 
@@ -62,10 +66,6 @@ AWS Bedrock AgentCore는 프로덕션 환경에서 AI 에이전트를 대규모�
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}
-
-{% content-ref url="agentcore-memory.md" %}
-[agentcore-memory.md](agentcore-memory.md)
-{% endcontent-ref %}
 
 ## References
 
