@@ -37,18 +37,7 @@ GenAI & Agentic AI 시스템은 특히 예측하기 어려운 동작이 많아�
   * 프롬프트 변화 패턴 분석
   * 모델 버전, 온도 설정, 컨텍스트 길이 등 상관관계 파악
 
-| 구분              | Monitoring                                                  | Observability                                                                          |
-| --------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| **핵심 목적**       | 사전에 정의된 문제들을 감지하고 알림을 보내는 것이 주된 목적입니다.                      | 예상치 못한 문제까지 포함하여 시스템의 내부 상태를 이해하고 디버깅할 수 있는 능력을 제공합니다.                                 |
-| **접근 방식**       | 알려진 메트릭과 임계값을 기반으로 시스템 상태를 판단하는 반응적 접근을 취합니다.               | 시스템의 전체적인 동작을 이해하기 위해 다양한 데이터를 수집하고 분석하는 능동적 접근을 취합니다.                                 |
-| **질문의 종류**      | "시스템이 정상적으로 작동하고 있는가?"라는 이분법적 질문에 답합니다.                     | "왜 시스템이 이렇게 동작하는가?"라는 복잡한 질문에 답할 수 있도록 설계됩니다.                                          |
-| **데이터 형태**      | CPU 사용률, 메모리 사용량, 응답시간 등 집계된 메트릭 데이터를 주로 사용합니다.             | traces, logs, metrics를 포함한 원시 데이터와 풍부한 컨텍스트 정보를 활용합니다.                                 |
-| **문제 범위**       | 미리 예상하고 정의한 알려진 장애 상황들을 감지하는 데 특화되어 있습니다.                   | 예상하지 못한 새로운 문제나 복잡한 상호작용으로 인한 이슈까지 분석할 수 있습니다.                                         |
-| **시간적 관점**      | 현재 시점의 시스템 상태를 실시간으로 모니터링하는 데 집중합니다.                        | 과거의 특정 시점 상황을 재구성하고 시간에 따른 변화 패턴을 분석할 수 있습니다.                                          |
-| **GenAI 활용 예시** | LLM API 응답시간이 5초를 초과하거나 토큰 사용량이 일일 한도의 80%를 넘으면 알람을 발생시킵니다. | 특정 사용자가 "AI가 이상한 답변을 한다"고 보고했을 때, 해당 요청의 전체 trace를 추적하여 프롬프트, 모델 설정, 컨텍스트 등을 종합 분석합니다. |
-| **도구 설정**       | 임계값과 알람 규칙을 사전에 정의하고 대시보드를 구성하는 설정 중심적 접근입니다.               | 다양한 상황에서 필요한 정보를 쿼리하고 탐색할 수 있는 유연한 도구와 인터페이스를 제공합니다.                                   |
-| **장점**          | 빠른 장애 감지와 즉각적인 대응이 가능하며, 운영팀의 업무 부담을 줄여줍니다.                 | 복잡한 시스템의 근본 원인을 파악할 수 있고, 새로운 유형의 문제도 해결할 수 있는 통찰력을 제공합니다.                             |
-| **한계**          | 미리 정의하지 않은 문제는 감지할 수 없으며, 문제의 원인 파악보다는 증상 감지에 머물 수 있습니다.    | 더 많은 데이터 수집과 저장이 필요하며, 분석을 위한 전문성과 도구 활용 능력이 요구됩니다.                                    |
+<table><thead><tr><th width="136.203125">구분</th><th>Monitoring</th><th>Observability</th></tr></thead><tbody><tr><td><strong>핵심 목적</strong></td><td>사전에 정의된 문제들을 감지하고 알림을 보내는 것이 주된 목적입니다.</td><td>예상치 못한 문제까지 포함하여 시스템의 내부 상태를 이해하고 디버깅할 수 있는 능력을 제공합니다.</td></tr><tr><td><strong>접근 방식</strong></td><td>알려진 메트릭과 임계값을 기반으로 시스템 상태를 판단하는 반응적 접근을 취합니다.</td><td>시스템의 전체적인 동작을 이해하기 위해 다양한 데이터를 수집하고 분석하는 능동적 접근을 취합니다.</td></tr><tr><td><strong>질문의 종류</strong></td><td>"시스템이 정상적으로 작동하고 있는가?"라는 이분법적 질문에 답합니다.</td><td>"왜 시스템이 이렇게 동작하는가?"라는 복잡한 질문에 답할 수 있도록 설계됩니다.</td></tr><tr><td><strong>데이터 형태</strong></td><td>CPU 사용률, 메모리 사용량, 응답시간 등 집계된 메트릭 데이터를 주로 사용합니다.</td><td>traces, logs, metrics를 포함한 원시 데이터와 풍부한 컨텍스트 정보를 활용합니다.</td></tr><tr><td><strong>문제 범위</strong></td><td>미리 예상하고 정의한 알려진 장애 상황들을 감지하는 데 특화되어 있습니다.</td><td>예상하지 못한 새로운 문제나 복잡한 상호작용으로 인한 이슈까지 분석할 수 있습니다.</td></tr><tr><td><strong>시간적 관점</strong></td><td>현재 시점의 시스템 상태를 실시간으로 모니터링하는 데 집중합니다.</td><td>과거의 특정 시점 상황을 재구성하고 시간에 따른 변화 패턴을 분석할 수 있습니다.</td></tr><tr><td><strong>GenAI 활용 예시</strong></td><td>LLM API 응답시간이 5초를 초과하거나 토큰 사용량이 일일 한도의 80%를 넘으면 알람을 발생시킵니다.</td><td>특정 사용자가 "AI가 이상한 답변을 한다"고 보고했을 때, 해당 요청의 전체 trace를 추적하여 프롬프트, 모델 설정, 컨텍스트 등을 종합 분석합니다.</td></tr><tr><td><strong>도구 설정</strong></td><td>임계값과 알람 규칙을 사전에 정의하고 대시보드를 구성하는 설정 중심적 접근입니다.</td><td>다양한 상황에서 필요한 정보를 쿼리하고 탐색할 수 있는 유연한 도구와 인터페이스를 제공합니다.</td></tr><tr><td><strong>장점</strong></td><td>빠른 장애 감지와 즉각적인 대응이 가능하며, 운영팀의 업무 부담을 줄여줍니다.</td><td>복잡한 시스템의 근본 원인을 파악할 수 있고, 새로운 유형의 문제도 해결할 수 있는 통찰력을 제공합니다.</td></tr><tr><td><strong>한계</strong></td><td>미리 정의하지 않은 문제는 감지할 수 없으며, 문제의 원인 파악보다는 증상 감지에 머물 수 있습니다.</td><td>더 많은 데이터 수집과 저장이 필요하며, 분석을 위한 전문성과 도구 활용 능력이 요구됩니다.</td></tr></tbody></table>
 
 ### What is OpenTelemetry?
 
@@ -110,14 +99,7 @@ opentelemetry-instrument python my_app.py
 * AWS 환경에 최적화된 공식 Distro으로 설치 후 바로 **X-Ray, CloudWatch, OpenSearch 같은 AWS 서비스**와 연동되도록 구성됩니다.
 * Lambda, ECS, EC2, EKS 등에서 쉽게 배포 가능합니다.
 
-| **항목**    | **AWS X-Ray**           | **Amazon CloudWatch** |
-| --------- | ----------------------- | --------------------- |
-| **목적**    | 분산 추적(Trace) 분석         | 메트릭, 로그, 알람 관리        |
-| **분석 대상** | 요청 흐름, 서비스 간 호출         | CPU, Memory, 응답 시간 등  |
-| **시각화**   | 호출 트리(Trace Map), 타임라인  | 대시보드(그래프, 로그 검색)      |
-| **사용 환경** | 마이크로서비스, Lambda, 컨테이너 등 | 전체 AWS 서비스 전반         |
-| **알람 기능** | 없음 (CloudWatch 사용)      | 있음 (자동 알람 설정 가능)      |
-| **로그 기능** | 없음 (CloudWatch에 통합 가능)  | 있음 (CloudWatch Logs)  |
+<table><thead><tr><th width="157.23046875">항목</th><th>AWS X-Ray</th><th>Amazon CloudWatch</th></tr></thead><tbody><tr><td><strong>목적</strong></td><td>분산 추적(Trace) 분석</td><td>메트릭, 로그, 알람 관리</td></tr><tr><td><strong>분석 대상</strong></td><td>요청 흐름, 서비스 간 호출</td><td>CPU, Memory, 응답 시간 등</td></tr><tr><td><strong>시각화</strong></td><td>호출 트리(Trace Map), 타임라인</td><td>대시보드(그래프, 로그 검색)</td></tr><tr><td><strong>사용 환경</strong></td><td>마이크로서비스, Lambda, 컨테이너 등</td><td>전체 AWS 서비스 전반</td></tr><tr><td><strong>알람 기능</strong></td><td>없음 (CloudWatch 사용)</td><td>있음 (자동 알람 설정 가능)</td></tr><tr><td><strong>로그 기능</strong></td><td>없음 (CloudWatch에 통합 가능)</td><td>있음 (CloudWatch Logs)</td></tr></tbody></table>
 
 **ADOT Python 설치 및 실행 예시:**
 
@@ -160,23 +142,9 @@ App → OTLP → ADOT Collector → 모든 AWS 서비스
 
 OpenTelemetry Distro vs. ADOT
 
-| 구분             | OpenTelemetry Distro           | ADOT                              |
-| -------------- | ------------------------------ | --------------------------------- |
-| **제공자**        | OpenTelemetry 커뮤니티             | AWS                               |
-| **대상 환경**      | 모든 환경 (AWS, GCP, Azure, 온프레미스) | AWS 환경 최적화                        |
-| **AWS 서비스 통합** | 기본적인 HTTP 계측만                  | 네이티브 AWS SDK 계측                   |
-| **추적 ID 형식**   | 표준 OpenTelemetry 형식            | OpenTelemetry 형식 + X-Ray 호환 형식 지원 |
-| **메타데이터**      | 기본 리소스 정보                      | AWS 리소스 정보 자동 수집                  |
-| **백엔드 지원**     | 모든 OTLP 호환 백엔드                 | AWS 서비스 + OTLP 백엔드                |
+<table><thead><tr><th width="186.5">구분</th><th>OpenTelemetry Distro</th><th>ADOT</th></tr></thead><tbody><tr><td><strong>제공자</strong></td><td>OpenTelemetry 커뮤니티</td><td>AWS</td></tr><tr><td><strong>대상 환경</strong></td><td>모든 환경 (AWS, GCP, Azure, 온프레미스)</td><td>AWS 환경 최적화</td></tr><tr><td><strong>AWS 서비스 통합</strong></td><td>기본적인 HTTP 계측만</td><td>네이티브 AWS SDK 계측</td></tr><tr><td><strong>추적 ID 형식</strong></td><td>표준 OpenTelemetry 형식</td><td>OpenTelemetry 형식 + X-Ray 호환 형식 지원</td></tr><tr><td><strong>메타데이터</strong></td><td>기본 리소스 정보</td><td>AWS 리소스 정보 자동 수집</td></tr><tr><td><strong>백엔드 지원</strong></td><td>모든 OTLP 호환 백엔드</td><td>AWS 서비스 + OTLP 백엔드</td></tr></tbody></table>
 
-| Category                    | OpenTelemetry Distro                            | ADOT                                                   |
-| --------------------------- | ----------------------------------------------- | ------------------------------------------------------ |
-| **Provider**                | OpenTelemetry Community                         | AWS                                                    |
-| **Target Environment**      | All environments (AWS, GCP, Azure, On-premises) | Optimized for AWS environment                          |
-| **AWS Service Integration** | Basic HTTP instrumentation only                 | Native AWS SDK instrumentation                         |
-| **Trace ID Format**         | Standard OpenTelemetry format                   | OpenTelemetry format + X-Ray compatible format support |
-| **Metadata**                | Basic resource information                      | Automatic collection of AWS resource information       |
-| **Backend Support**         | All OTLP-compatible backends                    | AWS services + OTLP backends                           |
+<table><thead><tr><th width="186.8125">Category</th><th>OpenTelemetry Distro</th><th>ADOT</th></tr></thead><tbody><tr><td><strong>Provider</strong></td><td>OpenTelemetry Community</td><td>AWS</td></tr><tr><td><strong>Target Environment</strong></td><td>All environments (AWS, GCP, Azure, On-premises)</td><td>Optimized for AWS environment</td></tr><tr><td><strong>AWS Service Integration</strong></td><td>Basic HTTP instrumentation only</td><td>Native AWS SDK instrumentation</td></tr><tr><td><strong>Trace ID Format</strong></td><td>Standard OpenTelemetry format</td><td>OpenTelemetry format + X-Ray compatible format support</td></tr><tr><td><strong>Metadata</strong></td><td>Basic resource information</td><td>Automatic collection of AWS resource information</td></tr><tr><td><strong>Backend Support</strong></td><td>All OTLP-compatible backends</td><td>AWS services + OTLP backends</td></tr></tbody></table>
 
 **코드 수준에서의 차이**
 
@@ -270,6 +238,8 @@ AgentCore Observability는 다음과 같은 AWS 서비스와 통합되어 포괄
 
 ## 2. Getting Started
 
+***
+
 ### Enable Transaction Search
 
 AgentCore observability를 사용하려면 트랜잭션 검색([Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html))을 먼저 활성화해야 합니다. AgentCore 콘솔에서 트랜잭션 검색을 자동으로 활성화하려면 'Enable Observability' 버튼을 선택하세요. CloudWatch에서도 트랜잭션 검색을 활성화할 수 있습니다.
@@ -282,10 +252,7 @@ AgentCore observability를 사용하려면 트랜잭션 검색([Transaction Sear
 
     * 대규모 서비스에서는 trace 수가 많기 때문에, 전체 인덱싱은 **비효율적 + 쓸모 없는 정보가 많을 확률이 높습니다.**
 
-    | **고속 검색**                        | 특정 사용자 ID나 요청 ID로 trace를 빠르게 검색 가능    |
-    | -------------------------------- | ------------------------------------- |
-    | **APM 대시보드 기능**                  | Application Signals에서 오류 비율, 지연 시간 분석 |
-    | **CloudWatch Logs Insights와 연계** | SQL-like 쿼리로 인덱싱된 trace 데이터 분석        |
+    <table data-header-hidden><thead><tr><th width="274.12109375"></th><th></th></tr></thead><tbody><tr><td><strong>고속 검색</strong></td><td>특정 사용자 ID나 요청 ID로 trace를 빠르게 검색 가능</td></tr><tr><td><strong>APM 대시보드 기능</strong></td><td>Application Signals에서 오류 비율, 지연 시간 분석</td></tr><tr><td><strong>CloudWatch Logs Insights와 연계</strong></td><td>SQL-like 쿼리로 인덱싱된 trace 데이터 분석</td></tr></tbody></table>
 
     * [https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-ingesting-spans.html](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-ingesting-spans.html)
 * 성능 이슈 발생 시: 즉시 비율 증가 / AB 테스트시: 해당 기간만 증가

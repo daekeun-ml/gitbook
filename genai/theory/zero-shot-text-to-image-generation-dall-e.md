@@ -2,6 +2,8 @@
 
 ## 1. Preliminaries
 
+***
+
 {% hint style="success" %}
 VAE, VQ-VAE에 대한 사전 지식이 부족하거나 리마인드가 필요할 때에만 참고&#x20;
 {% endhint %}
@@ -183,6 +185,8 @@ $$\tau$$가 0에 가까워질 수록 Gumbel-Softmax의 샘플이 one-hot argmax 
 
 ## 2. DALL-E Summary
 
+***
+
 ### Overview
 
 * Zero-shot image generation by a text prompt
@@ -250,6 +254,8 @@ $$
 ![출처: https://arxiv.org/pdf/2102.12092.pdf](../../.gitbook/assets/attention-mask.png)
 
 ## 3. Training
+
+***
 
 #### Data Collection
 

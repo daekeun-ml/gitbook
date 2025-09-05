@@ -4,6 +4,10 @@
 이전에 TFC Summit에서 발표한 내용과 LLM Evaluation Overview 내용을 기반으로 한국어 Evaluation의 난제를 정리하였음/
 {% endhint %}
 
+## 1. Challenges
+
+***
+
 ### 1.1. 언어적 특성으로 인한 어려움
 
 #### 형태론적 복잡성

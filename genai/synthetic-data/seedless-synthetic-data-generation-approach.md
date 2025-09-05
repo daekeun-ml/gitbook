@@ -22,6 +22,8 @@ Seedless 접근법은 **기존에 준비된 데이터 없이**, 오로지 LLM의
 
 ## 1. Seedless 합성 데이터 접근의 핵심 아이디어
 
+***
+
 Seedless 방식의 핵심은 _“모델에게 무엇을 만들어야 하는지 체계적으로 가이드”_ 하는 것입니다. 과거 방식으로는 몇 가지 예시(seed)를 주고 Self-Instruct 기법으로 모델이 비슷한 데이터를 만들어내게 하곤 했습니다. 그러나 이는 seed가 편협하면 결과도 편중되는 한계가 있었습니다. 최신 연구 동향은 **인간 지식의 구조**를 활용하여 가능한 한 전 범위의 과제를 망라하는 방향으로 나아갑니다.
 
 특히 2024년 제안된 [**“Synthetic Data (Almost) from Scratch: Generalized Instruction Tuning (GLAN)”**](https://arxiv.org/abs/2402.13064) 방법은, **사전 지식 체계(taxonomy)** 만을 입력으로 하여 **대규모의 Instruction 튜닝 데이터**를 생성하는 혁신적인 접근입니다. GLAN은 사람이 준비한 실예나 정답 없이도 오직 방대한 **인류 지식의 지도를 그려놓고**, 이를 따라가며 문제와 답을 만들어냅니다. 구체적으로 GLAN의 절차를 살펴보면:
@@ -39,6 +41,8 @@ Seedless 방식의 핵심은 _“모델에게 무엇을 만들어야 하는지 �
 GLAN의 자세한 구현은 [이 GitHub 리포지토리](https://github.com/daekeun-ml/synthetic-qa-generation/tree/main/glan-instruct)을 참조하세요.
 
 ## 2. 일반화된 Instruction 튜닝을 위한 기법 (GLAN 사례)
+
+***
 
 위에서 설명한 GLAN을 통해 알 수 있듯, seedless 합성의 핵심은 **일반화**와 **체계화**입니다. 이를 구현하는 구체적인 방안과 그 효과를 GLAN 사례를 들어 조금 더 상세히 살펴보면:
 
@@ -186,6 +190,8 @@ class CreativeGenerator:
 ```
 
 ## 3. Seedless 합성 데이터 생성 아키텍처
+
+***
 
 기존 데이터 없이 순수 LLM 능력으로 합성 데이터를 생성하는 아키텍처입니다. Self-Instruct로 지시사항 자동 생성, 도메인 지식 추출, 창의적 콘텐츠 생성을 Lambda와 Bedrock으로 처리합니다. Kinesis로 실시간 수집, Step Functions로 품질 관리, Glue로 데이터 통합하여 새로운 도메인 AI 모델이나 범용 instruction following 모델 개발에 활용됩니다.
 
