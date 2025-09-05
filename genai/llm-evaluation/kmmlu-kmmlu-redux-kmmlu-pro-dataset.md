@@ -154,8 +154,6 @@
 
 <table><thead><tr><th width="100.515625">구분</th><th>KMMLU</th><th>KMMLU-Redux</th><th>KMMLU-Pro</th></tr></thead><tbody><tr><td><strong>개발 배경</strong></td><td>번역 기반 벤치마크의 한계(언어 자연성·문화적 맥락 부족) 극복</td><td>KMMLU 품질 문제(누설, 오류, 쉬운 문항) 보완</td><td>실제 전문 면허시험 기반으로 실무/산업 응용 평가</td></tr><tr><td><strong>데이터 규모</strong></td><td>35,030 test 문항 (총 243k 문항 포함)</td><td>2,587문항</td><td>2,822문항</td></tr><tr><td><strong>출처</strong></td><td>PSAT, 한국 면허시험(KNTQ), CSAT 등 533개 출처</td><td>KMMLU 중 KNTQ 관련 문항 정제</td><td>한국 국가 전문 면허시험(KNPL, 변호사·의사·약사 등 14종)</td></tr><tr><td><strong>분야</strong></td><td>45과목 (STEM, 인문·사회, 응용과학, 기타)</td><td>산업·공학 중심 (농림어업, 전기전자, 기계, 환경에너지 등)</td><td>법률, 회계·세무, 감정평가, 손해사정, 의약 계열 등</td></tr><tr><td><strong>특징</strong></td><td>한국어 원문 시험 기반, 인간 점수 참조, HARD subset 제공</td><td>쉬운 문항 제거 (소형 LLM 7개 중 4개 이상 맞춘 문항 제외), 정제/난이도 상향</td><td>최신 연도 시험문항, pass 기준 반영, 연간 갱신 계획</td></tr><tr><td><strong>구축 방법</strong></td><td>37만→24만 필터링, parsing/중복 제거, human 성적 확보, CoT exemplar 제작, 저작권/오류 수정</td><td>KMMLU 문항 manual review + 소형 LLM 난이도 필터링 + 정제</td><td>KNPL 시험 MCQA 직접 수집, manual review, 이미지 문항 제외, pass 기준 반영</td></tr><tr><td><strong>평가 방식</strong></td><td>5-shot, Direct vs CoT</td><td>5-shot, Direct vs Thinking</td><td>5-shot, Direct vs Thinking, pass 개수 측정</td></tr><tr><td><strong>주요 결과</strong></td><td>GPT-4 약 60%, HyperCLOVA X ~53%, Llama-2 70B ~40%</td><td>상위 모델 정확도 ~77–81%, 기존 KMMLU 대비 다소 낮음(난이도↑)</td><td>상위 모델 정확도 74–78%, 일부 모델은 1012개 면허시험 pass 가능</td></tr><tr><td><strong>의의</strong></td><td>한국어 고유 벤치마크 제시, 다국어 모델 > 한국어 특화 모델 현상 발견</td><td>품질 문제 제거·난이도 조정으로 신뢰성↑</td><td>실무 전문성 평가, LLM의 실제 자격시험 통과 가능성 측정</td></tr></tbody></table>
 
-
-
 ## 4. Korean Benchmark Results
 
 * KMMLU는 5-shot Direct, Redux/Pro는 논문 기본 세팅(대체로 zero-shot CoT, 일부 영어 프롬프트 전환) 기준
