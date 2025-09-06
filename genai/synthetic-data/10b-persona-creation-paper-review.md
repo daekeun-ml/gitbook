@@ -1,26 +1,19 @@
 # 10B Persona Creation Paper review
 
 {% hint style="success" %}
-Paper: Scaling Synthetic Data Creation with 1,000,000,000 Personas ([https://arxiv.org/abs/2406.20094](https://arxiv.org/abs/2406.20094))
-
-GitHub: [https://github.com/tencent-ailab/persona-hub](https://github.com/tencent-ailab/persona-hub)
-
-Hugging Face: [https://huggingface.co/datasets/proj-persona/PersonaHub](https://huggingface.co/datasets/proj-persona/PersonaHub)
+* Paper: Scaling Synthetic Data Creation with 1,000,000,000 Personas ([https://arxiv.org/abs/2406.20094](https://arxiv.org/abs/2406.20094))
+* GitHub: [https://github.com/tencent-ailab/persona-hub](https://github.com/tencent-ailab/persona-hub)
+* Hugging Face: [https://huggingface.co/datasets/proj-persona/PersonaHub](https://huggingface.co/datasets/proj-persona/PersonaHub)
 {% endhint %}
 
 ## 1. Overview
 
 ***
 
-#### **합성 데이터의 중요성과 한계**
-
-* 합성 데이터는 모델이나 알고리즘이 생성한 데이터로, 인간이 직접 만든 것이 아님
-* LLM 훈련에서 합성 데이터의 가치가 증가하고 있음
-* 핵심 문제: 합성 데이터의 양적 확장은 쉽지만 **다양성 확장이 어려움**
-* 샘플링을 고려하지 않으면, LLM은 하나의 데이터 합성 프롬프트당 단 1개의 인스턴스만 생성 가능
-
 #### 기존 방법론의 한계
 
+* 핵심 문제: 합성 데이터의 양적 확장은 쉽지만 **다양성 확장이 어려움**
+* 샘플링을 고려하지 않으면, LLM은 하나의 데이터 합성 프롬프트당 단 1개의 인스턴스만 생성 가능
 * **Instance-driven** 방식: 시드 코퍼스에 기반해 프롬프트를 변형·확장하지만, 다양성의 원천이 시드에 갇혀 **스케일과 커버리지가 제한**됨. 띠라서 대부분 실무에서 시드 코퍼스 크기가 제한적이기에 대규모로 진정한 다양성을 확보하기 어려움.
 * **Key-point-driven** 방식: 포괄적 키포인트 목록을 큐레이션해 프롬프트를 구성하나, **전 영역·다층의 키포인트를 인간이 열거**하는 것은 현실적으로 불가능(특히 범용 도메인) → 좁고 특정한 도메인(예: 수학)에만 제한적으로 적용 가능
 
@@ -303,7 +296,7 @@ Output Format:
 * 즉, Persona Hub는 LLM 내부 지식을 synthetic data 형태로 끄집어내는 도구(tool)가 될 수 있으며, 향후 LLM의 파라미터 압축 능력과 연결하여 synthetic data 생성 추출(extraction) 가능성을 탐구할 수 있다는 주장
 * 다만 아직은 현재 LLM의 hallucination(허위 생성) 리스크, 그로 인한 품질 저하 가능성, 의미적 정확성 한계 등이 존재하므로 완전한 “lossless” 복원은 불가능하다는 점도 언급되고 있음
 
-#### **5.2 Ethical Concerns**
+### **5.2 Ethical Concerns**
 
 #### **학습 데이터 보안 및 LLM 우위성 유지 위협**
 
