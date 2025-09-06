@@ -84,6 +84,7 @@
   * [Seed Data-Based Synthetic Data Generation Approach](genai/synthetic-data/seed-data-based-synthetic-data-generation-approach.md)
   * [Seedless Synthetic Data Generation Approach](genai/synthetic-data/seedless-synthetic-data-generation-approach.md)
   * [Common Strategies to Consider When Generating Synthetic Data](genai/synthetic-data/common-strategies-to-consider-when-generating-synthetic-data.md)
+  * [10B Persona Creation Paper review](genai/synthetic-data/10b-persona-creation-paper-review.md)
   * [Generate Synthetic QnAs from Real-world Data on Azure](genai/synthetic-data/generate-synthetic-qnas-from-real-world-data-on-azure.md)
 * [Open Source SLM-Based Hybrid Agent AI Architecture](genai/open-source-slm-based-hybrid-agent-ai-architecture/README.md)
   * [Part 1: Overview & Background](genai/open-source-slm-based-hybrid-agent-ai-architecture/part-1-overview-and-background.md)
