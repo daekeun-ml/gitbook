@@ -7,7 +7,6 @@ description: 'Content Level: 200-300'
 ## Suggested Pre-Reading
 
 * [Part 1. 합성 데이터의 필요성](part-1-overview.md)
-* [Part 2. Seed 데이터 기반 합성 데이터 생성 접근 방식](part-2-seed.md)
 
 ## TL;DR
 
