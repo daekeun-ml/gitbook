@@ -2,12 +2,12 @@
 description: 'Content Level: 200-300'
 ---
 
-# Seedless Synthetic Data Generation Approach
+# Part 3. Seedless 합성 데이터 생성 접근 방식
 
 ## Suggested Pre-Reading
 
-* [The Necessity of Synthetic Data: Core Requirements for Modern AI Development](the-necessity-of-synthetic-data.md)
-* [Seed Data-Based Synthetic Data Generation Approach (Persona-Specific)](seed-data-based-synthetic-data-generation-approach.md)
+* [The Necessity of Synthetic Data: Core Requirements for Modern AI Development](part-1-overview.md)
+* [Seed Data-Based Synthetic Data Generation Approach (Persona-Specific)](part-2-seed.md)
 
 ## TL;DR
 

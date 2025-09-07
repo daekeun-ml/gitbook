@@ -2,7 +2,7 @@
 description: 'Content Level: 100'
 ---
 
-# The Necessity of Synthetic Data
+# Part 1. 합성 데이터의 필요성
 
 ## TL;DR
 
@@ -111,6 +111,6 @@ GDPR(일반 데이터 보호 규정), CCPA(캘리포니아 소비자 프라이�
 
 ## Further Reading
 
-* [Seed Data-Based Synthetic Data Generation Approach (Persona-Specific)](seed-data-based-synthetic-data-generation-approach.md)
-* [Seedless Synthetic Data Generation Approach (Seedless Methods)](seedless-synthetic-data-generation-approach.md)
-* [Common Strategies to Consider When Generating Synthetic Data](common-strategies-to-consider-when-generating-synthetic-data.md)
+* [Seed Data-Based Synthetic Data Generation Approach (Persona-Specific)](part-2-seed.md)
+* [Seedless Synthetic Data Generation Approach (Seedless Methods)](part-3-seedless.md)
+* [Common Strategies to Consider When Generating Synthetic Data](part-4-strategy.md)

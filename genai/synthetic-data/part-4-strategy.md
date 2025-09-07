@@ -2,13 +2,13 @@
 description: 'Content Level: 200-300'
 ---
 
-# Common Strategies to Consider When Generating Synthetic Data
+# Part 4. 합성 데이터 생성 시 고려해야 할 일반적인 전략
 
 ## Suggested Pre-Reading
 
-* [The Necessity of Synthetic Data: Core Requirements for Modern AI Development](the-necessity-of-synthetic-data.md)
-* [Seed Data-Based Synthetic Data Generation Approach (Persona-Specific)](seed-data-based-synthetic-data-generation-approach.md)
-* [Seedless Synthetic Data Generation Approach (Seedless Methods)](seedless-synthetic-data-generation-approach.md)
+* [The Necessity of Synthetic Data: Core Requirements for Modern AI Development](part-1-overview.md)
+* [Seed Data-Based Synthetic Data Generation Approach (Persona-Specific)](part-2-seed.md)
+* [Seedless Synthetic Data Generation Approach (Seedless Methods)](part-3-seedless.md)
 
 ## TL;DR
 

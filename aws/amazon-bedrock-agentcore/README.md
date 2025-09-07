@@ -35,34 +35,34 @@ Amazon Beddrock AgentCore는 프로덕션 환경에서 AI 에이전트를 대규
 
 {% columns fullWidth="false" %}
 {% column width="50%" %}
-{% content-ref url="agentcore-runtime.md" %}
-[agentcore-runtime.md](agentcore-runtime.md)
+{% content-ref url="runtime.md" %}
+[runtime.md](runtime.md)
 {% endcontent-ref %}
 
-{% content-ref url="agentcore-identity.md" %}
-[agentcore-identity.md](agentcore-identity.md)
+{% content-ref url="identity.md" %}
+[identity.md](identity.md)
 {% endcontent-ref %}
 
-{% content-ref url="agentcore-code-interpreter.md" %}
-[agentcore-code-interpreter.md](agentcore-code-interpreter.md)
+{% content-ref url="code-interpreter.md" %}
+[code-interpreter.md](code-interpreter.md)
 {% endcontent-ref %}
 
-{% content-ref url="agentcore-memory.md" %}
-[agentcore-memory.md](agentcore-memory.md)
+{% content-ref url="memory.md" %}
+[memory.md](memory.md)
 {% endcontent-ref %}
 {% endcolumn %}
 
 {% column width="50%" %}
-{% content-ref url="agentcore-gateway.md" %}
-[agentcore-gateway.md](agentcore-gateway.md)
+{% content-ref url="gateway.md" %}
+[gateway.md](gateway.md)
 {% endcontent-ref %}
 
-{% content-ref url="agentcore-observability.md" %}
-[agentcore-observability.md](agentcore-observability.md)
+{% content-ref url="observability.md" %}
+[observability.md](observability.md)
 {% endcontent-ref %}
 
-{% content-ref url="agentcore-browser.md" %}
-[agentcore-browser.md](agentcore-browser.md)
+{% content-ref url="browser.md" %}
+[browser.md](browser.md)
 {% endcontent-ref %}
 {% endcolumn %}
 {% endcolumns %}

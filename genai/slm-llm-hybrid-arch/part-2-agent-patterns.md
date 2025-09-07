@@ -6,7 +6,7 @@ description: 'Content Level: 200'
 
 ## Suggested Pre-Reading
 
-* [Part 1: Overview & Background](part-1-overview-and-background.md)
+* [Part 1: Overview & Background](part-1-overview.md)
 
 ## TL;DR
 
@@ -102,7 +102,7 @@ SLM을 중심으로 한 그러한 멀티 에이전트 오케스트레이션을 �
 
 ## Further Reading&#x20;
 
-* [Part 3: Tool Integration & Fine-Tuning](part-3-tool-integration-and-fine-tuning.md)
+* [Part 3: Tool Integration & Fine-Tuning](part-3-other-patterns.md)
 
 ## References
 

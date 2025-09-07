@@ -6,8 +6,8 @@ description: 'Content Level: 200'
 
 ## Suggested Pre-Reading
 
-* [Part 1: Overview & Background](part-1-overview-and-background.md)
-* [Part 2: Agentic Patterns & Prompting](part-2-agentic-patterns-and-prompting.md)
+* [Part 1: Overview & Background](part-1-overview.md)
+* [Part 2: Agentic Patterns & Prompting](part-2-agent-patterns.md)
 
 ## TL;DR
 
