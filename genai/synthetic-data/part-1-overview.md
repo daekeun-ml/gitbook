@@ -111,6 +111,6 @@ GDPR(일반 데이터 보호 규정), CCPA(캘리포니아 소비자 프라이�
 
 ## Further Reading
 
-* [Seed Data-Based Synthetic Data Generation Approach (Persona-Specific)](part-2-seed.md)
-* [Seedless Synthetic Data Generation Approach (Seedless Methods)](part-3-seedless.md)
-* [Common Strategies to Consider When Generating Synthetic Data](part-4-strategy.md)
+* [Part 2. Seed 데이터 기반 합성 데이터 생성 접근 방식](part-2-seed.md)
+* [Part 3. Seedless 합성 데이터 생성 접근 방식](part-3-seedless.md)
+* [Part 4. 합성 데이터 생성 시 고려해야 할 일반적인 전략](part-4-strategy.md)

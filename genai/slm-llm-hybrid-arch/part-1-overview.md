@@ -49,8 +49,8 @@ _그림 1. SLM/LLM 하이브리드 AI 아키텍처_
 
 ## Further Reading
 
-* [Part 2: Agentic Patterns & Prompting](https://housekdk.gitbook.io/ml/genai/open-source-slm-based-hybrid-agent-ai-architecture/part-2-agentic-patterns-and-prompting)
-* [Part 3: Tool Integration & Fine-Tuning](https://housekdk.gitbook.io/ml/genai/open-source-slm-based-hybrid-agent-ai-architecture/part-3-tool-integration-and-fine-tuning)
+* [Part 2: Agentic Patterns & Prompting](part-2-agent-patterns.md)
+* [Part 3: Tool Integration & Fine-Tuning](part-3-other-patterns.md)
 
 ## References
 
