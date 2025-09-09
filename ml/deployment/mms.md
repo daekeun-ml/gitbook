@@ -2,6 +2,8 @@
 
 ## 1. Introduction
 
+***
+
 ### MMS(Multi Model Server)
 
 * [https://github.com/awslabs/multi-model-server](https://github.com/awslabs/multi-model-server) (2017년 12월 초 MXNet 1.0 릴리스 시 최초 공개, MXNet용 모델 서버로 시작)
@@ -224,6 +226,8 @@
 
 ## 2. How to initialize Multi-Model Endpoint on SageMaker?
 
+***
+
 ### 구현 개요
 
 1. Handler 구현
@@ -401,7 +405,7 @@ class HandlerService(DefaultHandlerService):
         super().initialize(context)
 ```
 
-#### Method 2. MMS 템플릿의 Custom Service 파일 구
+#### Method 2. MMS 템플릿의 Custom Service 파일 구조
 
 * [https://github.com/awslabs/multi-model-server/blob/master/docs/custom\_service.md](https://github.com/awslabs/multi-model-server/blob/master/docs/custom_service.md) 참조
 * SageMaker inference toolkit 클래스를 상속받지 않고 자체 커스텀 서비스 구현

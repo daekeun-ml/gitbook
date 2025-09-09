@@ -4,7 +4,7 @@ description: User Personalization Algorithm Deep Dive
 
 # Amazon Personalize - User Personalization Algorithm Deep Dive
 
-> 본 페이지는 AWS의 완전 관리형 추천 AI 서비스인 Amazon Personalize의 User-Personalization 레시피([https://docs.aws.amazon.com/personalize/latest/dg/native-recipe-new-item-USER\_PERSONALIZATION.html)에](https://docs.aws.amazon.com/personalize/latest/dg/native-recipe-new-item-USER_PERSONALIZATION.html\)%EC%97%90) 대한 심도 있는 이해가 필요한 경우 논문과 함께 참조하시면 좋습니다.
+> 본 페이지는 AWS의 완전 관리형 추천 AI 서비스인 Amazon Personalize의 [User-Personalization 레시피](https://docs.aws.amazon.com/personalize/latest/dg/native-recipe-new-item-USER_PERSONALIZATION.html)에 대한 심도 있는 이해가 필요한 경우 논문과 함께 참조하시면 좋습니다.
 
 ## 1. Background
 

@@ -73,6 +73,8 @@
   * [AgentCore Code Interpreter](aws/amazon-bedrock-agentcore/code-interpreter.md)
   * [AgentCore Browser](aws/amazon-bedrock-agentcore/browser.md)
   * [AgentCore Memory](aws/amazon-bedrock-agentcore/memory.md)
+* [Customer Support](aws/customer-support/README.md)
+  * [GenAI System Checklist](aws/customer-support/genai-system-checklist.md)
 
 ## GenAI
 
