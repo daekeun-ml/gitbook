@@ -24,6 +24,8 @@ icon: user-hair
 
 ## :feet: 약력
 
+{% file src=".gitbook/assets/cv_daekeun.pdf" %}
+
 {% hint style="info" %}
 한줄요약: ML 고군분투러 (not 전문가), GenAI 왕초보 (not 전문가)
 {% endhint %}
@@ -50,9 +52,9 @@ icon: user-hair
 * [\[AI 타임즈\] 패스트캠퍼스 2024 GenCon AI 컨퍼런스 @ 코엑스 발표](https://m.ddaily.co.kr/page/view/2024090909555902427)
 * [\[뉴스핌\] 생성형 AI 서밋 2023 @ 코엑스 발표](https://www.newspim.com/news/view/20230522000996)
 {% endtab %}
-{% endtabs %}
 
-## 📔 Patents (1st author)
+{% tab title="Publications" %}
+### 📔 Patents (1st author)
 
 * Method and Device for Generating Compensation data of Display Device (kr 10-2018-0074907)
 * Display Device and Method for Driving the same (kr 10-2018-0073296)
@@ -61,7 +63,16 @@ icon: user-hair
 * Inspection Method and Device for Flat Panel Display Device (kr 10-2016-0004811)
 * Method and Device of LCD Device for Generating Compensation Data (kr 10-2016-0016214)
 
-## 📝 Tech Blog Contributions
+### :scroll: Papers
+
+* **Daekeun Kim** and Youngjoon Choi (2023). AWS 2nd gen. Inference Accelerator Analysis for Serving High-Performance and Cost-Effective Generative AI Models. _KICS Summer conference,_ 2023.
+* Youngjoon Choi and **Daekeun Kim** (2023). Comparison and Analysis for the Performance of Deep Learning-Based Time Series Prediction Algorithms According to Increasing Model Size. _The Journal of KICS,_ 2023-01 Vol.48, pp.123-128. doi:10.7840/kics.2023.48.1.123.
+* **Daekeun Kim** and Youngjoon Choi (2022). Optimizing Cost-Effective Deep Learning Inference Performance in the AWS Cloud Environment. _KICS Summer conference,_ 2022.
+* Soonam Lee and **Daekeun Kim** (2018). Background Subtraction using the Factored 3-way Restricted Boltzmann Machines. arXiv:1802.01522.
+* Euiyeol Oh, **Daekeun Kim**, Jong Sang Baek, and Yoonsik Choe (2016). A Method on Choosing the Preferred Camera Resolution for Mura Compensation. _IMID,_ 2016.
+* Euiyeol Oh, **Daekeun Kim**, Jong Sang Baek, and Yoonsik Choe (2015). Automatic Micro Defect Detection in Non-repetitive Patterns for High-resolution TFT-LCDs. _IMID,_ 2015.
+
+### 📝 Tech Blog Contributions
 
 * **Daekeun Kim** (2024). [Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML. _Microsoft Tech Community._](https://techcommunity.microsoft.com/blog/machinelearningblog/fine-tuneevaluatequantize-slmllm-using-the-torchtune-on-azure-ml/4285663)
 * **Daekeun Kim** (2024). [Generate Synthetic QnAs from Real-world Data on Azure. _Microsoft Tech Community._](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/generate-synthetic-qnas-from-real-world-data-on-azure/ba-p/4202053)
@@ -75,7 +86,9 @@ icon: user-hair
 * **Daekeun Kim** and Hyeonsang Jeon (2023). [Train a Large Language Model on a single Amazon SageMaker GPU with Hugging Face and LoRA. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/train-a-large-language-model-on-a-single-amazon-sagemaker-gpu-with-hugging-face-and-lora)
 * Sungwon Han, Heewon Ko, Hyojung Kang, Kyungdae Cho, Sanghwa Na, and **Daekeun Kim** (2023). [SK Telecom's Case Study of Building a ML Pipeline Using AWS Inferentia and AWS Step Functions. _AWS Korea Tech Blog._](https://aws.amazon.com/ko/blogs/tech/skt-mlops-using-aws-inferentia-stepfunctions/)
 
-## 📕 Tech book Translation
+### 📕 Tech book Translation
 
 * **Daekeun Kim** and Daeyeol Shim (2023). Co-translated “[Machine Learning System Engineering in Action](https://product.kyobobook.co.kr/detail/S000211556863)”, authored by Ben Wilson.
 * **Daekeun Kim** and Youngmin Kim (2023). Co-translated “[Designing Machine Learning System](https://product.kyobobook.co.kr/detail/S000201212403)”, authored by Chip Huyen.
+{% endtab %}
+{% endtabs %}

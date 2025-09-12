@@ -5,7 +5,7 @@
 ## Miscellaneous
 
 * [Introduction](miscellaneous/about-me/README.md)
-  * [커리어 요약](miscellaneous/about-me/career-1.md)
+  * [커리어 요약](miscellaneous/about-me/career.md)
   * [데이터 과학이란?](miscellaneous/about-me/data-science.md)
 
 ## Machine Learning <a href="#ml" id="ml"></a>
