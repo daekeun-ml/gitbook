@@ -91,6 +91,7 @@
 * [MoE (Mixture-of-Experts)](genai/moe/README.md)
   * [MoE Overview](genai/moe/overview.md)
   * [분산 훈련 기초 개념](genai/moe/distributed-training-basic.md)
+  * [전문가 병렬화 (Expert Parallelism)](genai/moe/expert-parallelism.md)
 * [Open Source SLM-Based Hybrid Agent AI Architecture](genai/slm-llm-hybrid-arch/README.md)
   * [Part 1: Overview & Background](genai/slm-llm-hybrid-arch/part-1-overview.md)
   * [Part 2: Agentic Patterns & Prompting](genai/slm-llm-hybrid-arch/part-2-agent-patterns.md)
