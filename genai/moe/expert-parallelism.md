@@ -168,6 +168,10 @@ DeepEP 라이브러리는 NVLink와 RDMA 간의 이기종 통신 도메인을 �
 
 NVLink-RDMA 영역 분할 기술은 현재 대규모 MoE 모델의 학습 및 추론에 필수적인 최적화 기법으로 자리잡고 있으며, DeepEP 라이브러리를 통해 실제 프로덕션 환경에서 활용되고 있습니다.
 
+
+
+## 3.&#x20;
+
 ## References
 
 * \[1] LSH-MoE: Communication-efficient MoE Training via Locality-Sensitive Hashing: [https://arxiv.org/abs/2411.08446](https://arxiv.org/abs/2411.08446)
