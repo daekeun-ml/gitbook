@@ -170,8 +170,6 @@ NVLink-RDMA 영역 분할 기술은 현재 대규모 MoE 모델의 학습 및 �
 
 
 
-## 3.&#x20;
-
 ## References
 
 * \[1] LSH-MoE: Communication-efficient MoE Training via Locality-Sensitive Hashing: [https://arxiv.org/abs/2411.08446](https://arxiv.org/abs/2411.08446)
