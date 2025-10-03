@@ -215,6 +215,66 @@ $$\epsilon \sim \mathcal{N}(0, 1)$$는 토큰별로 샘플링된 표준 가우�
 
 이렇게 추가된 잡음은 라우팅 결정에 확률성을 도입합니다. 이는 점수가 낮은 전문가들도 선택될 기회를 제공하여 탐색을 촉진하고, 라우터가 너무 일찍 최적이 아닌 할당 패턴에 고착되는 것을 방지할 수 있습니다.
 
+<pre class="language-python" data-title="Noisy Top-K 라우터 구현 예시" data-full-width="false"><code class="lang-python"><strong>class NoisyTopKRouter(nn.Module):
+</strong>    def __init__(self, d_model, num_experts, top_k=2):
+        super().__init__()
+        self.top_k = top_k
+        self.num_experts = num_experts
+        
+        # Layer to generate logits
+        self.gate = nn.Linear(d_model, num_experts)
+        # Layer to generate noise scaling factor
+        self.noise_net = nn.Linear(d_model, num_experts)
+
+    def forward(self, x):
+        # x shape: [TOKENS_PER_BATCH, d_model]
+        logits = self.gate(x)
+        
+        # Add noise during training
+        if self.training:
+            noise_logits = self.noise_net(x)
+            # Use softplus to ensure the noise scaling factor is positive
+            noise = torch.randn_like(logits) * F.softplus(noise_logits)
+            logits = logits + noise
+            
+        # Get the top-k logits and their indices
+        # top_k_logits shape: [TOKENS_PER_BATCH, top_k]
+        # top_k_indices shape: [TOKENS_PER_BATCH, top_k]
+        top_k_logits, top_k_indices = logits.topk(self.top_k, dim=-1)
+        
+        # Apply softmax to the top-k logits to get the weights
+        gating_scores = F.softmax(top_k_logits, dim=-1)
+        
+        # We also need a mask for the load balancing loss
+        # This mask has a 1 for each token-expert pair that was selected
+        # B = TOKENS_PER_BATCH, E = NUM_EXPERTS
+        # zero_mask shape: [B, E]
+        zero_mask = torch.zeros(x.size(0), self.num_experts, device=x.device)
+        # router_mask shape: [B, E]
+        router_mask = zero_mask.scatter(1, top_k_indices, 1)
+
+        return top_k_indices, gating_scores, router_mask
+
+# --- Example Usage ---
+# Configuration
+NUM_EXPERTS = 8
+D_MODEL = 512
+BATCH_SIZE = 4
+SEQ_LEN = 1024
+TOKENS_PER_BATCH = BATCH_SIZE * SEQ_LEN
+
+noisy_router = NoisyTopKRouter(D_MODEL, NUM_EXPERTS, top_k=2)
+noisy_router.train() 
+
+input_tokens = torch.randn(TOKENS_PER_BATCH, D_MODEL)
+indices, scores, mask = noisy_router(input_tokens)
+
+print("Noisy Top-k Router Output:")
+print("Indices Shape:", indices.shape) # [TOKENS_PER_BATCH, 2]
+print("Scores Shape:", scores.shape)   # [TOKENS_PER_BATCH, 2]
+print("Mask Shape:", mask.shape)       # [TOKENS_PER_BATCH, 8]
+</code></pre>
+
 ### 2.5. 전문가 선택 (Expert Choice)
 
 전문가 선택<sup>Expert Choice</sup> 라우팅은 전문가가 주체가 되어 자신에게 도달한 토큰의 점수를 기준으로 상위 $$k$$개의 토큰을 선택하고, 나머지는 버리는 방식입니다. 이 방식은 전문가별 처리량을 균등하게 유지하여 자연스럽게 부하를 분산시키며, 결과적으로 분산 학습 및 추론 과정에서 연산 효율성을 높입니다.

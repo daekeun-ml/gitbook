@@ -1,5 +1,9 @@
 # \[Optional] NVSHMEM (NVIDIA Shared Memory)
 
+{% hint style="success" %}
+NCCL은 여전히 딥러닝 프레임워크의 기본 통신 백엔드로 쓰이지만, NCCL이 최적화하지 못하는 영역(All-to-All, MoE 통신)을 NVSHMEM 기반 커널로 보완하는 DeepEP와 같은 라이브러리들이 등장하고 있습니다. 따라서, 본 문서는 NVSHMEM에 대한 컨셉을 이해하는 용도로 참조하기 바랍니다.&#x20;
+{% endhint %}
+
 ## 1. NVSHMEM 개요
 
 ***
