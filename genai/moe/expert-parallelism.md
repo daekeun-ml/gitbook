@@ -109,6 +109,8 @@ EP의 진정한 가치는 수십\~수백 개의 전문가를 여러 GPU와 노�
 
 EP의 멀티 노드 환경에서 발생하는 주요 난제들을 해결하기 위해 최신 연구와 구현에서는 All-to-All 네트워크 전송이 진행되는 동안 독립적인 계산 작업을 수행하는 비동기 처리 기법과 네트워크 카드(NIC<sup>Network Interface Card</sup>)가 CPU 개입 없이 GPU 메모리에서 다른 노드의 GPU 메모리로 직접 데이터를 전송하는 GPU Direct RDMA 기술을 적극 활용하고 있습니다. 최신 하드웨어와 분산 프레임워크는 비동기 작업을 지원하므로, 통신 작업을 시작한 후 그 통신 결과에 의존하지 않는 계산을 독립적으로 진행할 수 있기에 네트워크 대기 시간을 효과적으로 가릴 수 있습니다. 이러한 접근 방식은 DeepEP와 같은 프레임워크에서 구현되어 성능을 크게 향상시키고 있습니다.
 
+<figure><img src="../../.gitbook/assets/gpu-direct-rdma.png" alt=""><figcaption><p>GPU Direct RDMA 도식</p></figcaption></figure>
+
 {% hint style="success" %}
 비동기 All-to-All 통신 중에 수행할 수 있는 계산 예시는 아래와 같습니다.
 

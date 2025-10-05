@@ -11,11 +11,28 @@ MoE (Mixture-of-Experts) 모델은 거대한 매개변수(파라미터)를 효�
 1. **용량 증가:** 모델이 훨씬 더 많은 수의 파라미터를 포함하게 되어, 토큰 당 계산 비용이 크게 증가하지 않으면서도 더 다양하고 전문화된 기능을 학습합니다.
 2. **상대적 일정한 계산량:** 전체 모델 크기는 커지더라도, 활성화된 전문가 수 $$k$$를 고정함으로써 단일 토큰을 처리하는 데 필요한 계산 비용(FLOPs)은 대략 일정하게 유지되거나 훨씬 느리게 증가하게 됩니다.
 
-아래 그림은 MoE 모델의 레이어 예시로, 라우터가 입력 토큰을 2개의 전문가 FFN에 라우팅하고 해당 전문가의 출력을 취합하는 Top-2 라우팅 방식을 보여줍니다. 이를 통해 한 레이어에서 다중 전문가 FFN들이 동시에 작동하면서도, **각 토큰은 소수 전문가의 출력만 활용**하게 됩니다. Router는 간단한 피드포워드 네트워크(FFN; Feed Forward Network)로, 일반적으로 토큰의 입력 임베딩에 적용되는 단일 선형 레이어와 그 뒤에 오는 소프트맥스 함수로 구성됩니다. 이에 대해서는 아래에 자세히 설명하겠습니다.
+아래 그림은 MoE 모델의 레이어 예시로, 라우터가 입력 토큰을 2개의 전문가 FFN에 라우팅하고 해당 전문가의 출력을 취합하는 Top-2 라우팅 방식을 보여줍니다. 이를 통해 한 레이어에서 다중 전문가 FFN들이 동시에 작동하면서도, **각 토큰은 소수 전문가의 출력만 활용**하게 됩니다. Router는 간단한 피드포워드 네트워크(FFN; Feed Forward Network)로, 일반적으로 토큰의 입력 임베딩에 적용되는 단일 선형 레이어와 그 뒤에 오는 소프트맥스 함수로 구성됩니다. 이에 대해서는 1.2절에서 자세히 설명하겠습니다.
 
 <figure><img src="../../.gitbook/assets/moe-layer.webp" alt=""><figcaption><p>MoE 레이어 (출처: <a href="https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mixture-of-experts">A Visual Guide to Mixture of Experts</a>)</p></figcaption></figure>
 
 <figure><img src="../../.gitbook/assets/moe-overview-01.png" alt=""><figcaption><p>Top-2 라우팅 예시</p></figcaption></figure>
+
+MoE 아키텍처는 전문가의 단위 크기와 라우팅 세분화 정도<sup>granularity</sup>가 얼마나 세세한 단위까지 조정되는가에 따라 Coarse-grained MoE와 Fine-grained MoE로 구별합니다.
+
+#### **Coarse-grained MoE**
+
+Coarse-grained MoE는 비교적 큰 규모의 전문가 단위를 사용합니다. 예를 들어 하나의 MoE 레이어가 8개의 전문가로 구성되어 있고, 각 입력 토큰이 그중 상위 1\~2개의 전문가만 선택되어 전달되는 구조입니다. 이 방식은 각 전문가가 담당하는 영역이 넓고 비교적 독립적으로 구조가 단순하고 안정성이 높으며 구현이 용이하다는 장점이 있으나, 전문가 간의 세밀한 협력이나 표현 조합이 어렵다는 한계가 있습니다.
+
+#### **Fine-grained MoE**
+
+Fine-grained MoE는 전문가를 훨씬 작은 단위로 세분화하기에, 각 토큰은 그 작은 전문가 단위들 사이에서 조합적으로 혹은 더욱 유연하게 라우팅됩니다. 이 방식은 라우팅 선택지가 폭넓어지고 전문가 간의 표현 조합 가능성이 커지는 반면, 라우팅 비용이 더 커지고 최적화 난이도도 상승합니다. DeepSeek, Qwen, GPT-OSS를 비롯한 최신 MoE에서 트랜드로 자리잡았습니다.
+
+최근 MoE 연구는 단순히 전문가의 수를 늘리는 방향에서 벗어나, fine-grained MoE를 정교화하는 방향으로 발전하고 있습니다.
+
+1. **전문가 단위의 세분화 확대**: [Mixture of A Million Experts](https://arxiv.org/abs/2407.04153)와 [Scaling Laws for Fine-Grained Mixture of Experts](https://arxiv.org/abs/2402.07871) 연구에서는 세분화 정도<sup>granularity</sup>가 모델의 스케일링 효율과 성능 향상에 핵심적인 요인임을 보여주었습니다.
+2. **라우팅의 정교화 및 안정성 확보:** Fine-grained 구조에서는 전문가 선택이 많아질수록 라우팅의 불안정성이 커질 수 있습니다. 이를 해결하기 위해 최근에는 전문가-토큰 친화도<sup>affinity</sup>를 기반으로 한 라우팅, 토큰 간 관계를 고려한 라우팅 등이 [Expert-Token Resonance MoE](https://arxiv.org/abs/2406.00023) 논문을 통해 제안되고 있습니다.
+3. **동적 라우팅 및 사후 조정(Post-routing):** 2025년 9월에 공개된 [Ban\&Pick 논문](https://arxiv.org/abs/2509.06346)에서는 학습 이후에도 중요한 전문가를 동적으로 유지하고 불필요한 전문가를 제거하는 방식으로 추론 효율을 높였습니다. 즉, 학습 단계에서 결정된 라우팅을 그대로 두지 않고, 학습 이후에도 지속적으로 조정함으로써 효율성을 극대화하는 방향으로 발전하고 있습니다.
+4. **Chain-of-Experts (CoE):** 기존 MoE는 전문가들이 병렬적으로 독립 작동하지만, 최근에는 전문가 간 상호작용을 허용하거나, 입력이 여러 전문가를 순차적으로 거치는 [Chain-of-Experts (CoE)](https://openreview.net/pdf?id=HobyL1B9CZ) 구조가 등장했습니다. 이 방식은 각 전문가의 출력을 다음 전문가에 전달함으로써 전문가 조합의 다양성과 표현의 깊이를 동시에 확보할 수 있습니다.
 
 ### 1.2. 수학적 정의
 
@@ -84,7 +101,7 @@ $$
 
 #### **Sparse MoE 모델**
 
-Sparse MoE 모델의 경우 많은 전문가들에 걸쳐 방대한 수의 총 파라미터를 포함하고 있을지라도, 주어진 토큰에 대해 활성화되는 파라미터는 그 중 일부에 불과합니다. 예컨대 전문가를 16명에서 64명으로 늘려도 토큰당 FLOPs는 증가하지 않습니다.&#x20;
+[Sparse MoE 모델](https://arxiv.org/abs/1701.06538)의 경우 많은 전문가들에 걸쳐 방대한 수의 총 파라미터를 포함하고 있을지라도, 주어진 토큰에 대해 활성화되는 파라미터는 그 중 일부에 불과합니다. 예컨대 전문가를 16명에서 64명으로 늘려도 토큰당 FLOPs는 증가하지 않습니다.&#x20;
 
 MoE 레이어의 총 파라미터 수는 모든 전문가들의 합입니다.
 
@@ -144,7 +161,7 @@ $$
 
 ### 2.2. 보조 손실 (Auxiliary Loss)
 
-보조 손실의 목표는 라우터의 불균형에 대해 페널티를 주는 손실 항을 만드는 것입니다. 원래 Sparsely-Gated MoE 논문에서 도입된 가장 일반적인 접근법은 배치에서 토큰과 라우터 확률 분포를 기반으로 값을 계산하는 것입니다.
+보조 손실의 목표는 **라우터의 불균형에 대해 페널티를 주는 손실 항을 만드는 것**입니다. 원래 [Sparsely-Gated MoE 논문](https://arxiv.org/abs/1701.06538)에서 도입된 가장 일반적인 접근법은 배치에서 토큰과 라우터 확률 분포를 기반으로 값을 계산하는 것입니다.
 
 #### 보조 손실 함수
 
@@ -161,20 +178,43 @@ $$
 
 <figure><img src="../../.gitbook/assets/moe-auxiliary-loss.png" alt=""><figcaption><p>보조 손실 쉽게 이해하기 (출처: A Visual Guide to Mixture of Experts)</p></figcaption></figure>
 
+#### Router z-손실
+
+MoE 구조에서는 라우터가 softmax 또는 sparse gating 연산을 해서 전문가 선택 확률을 계산하므로, 라우터의 입력 로짓<sup>logits</sup>(정규화 이전 점수)이 매우 커지면 지수<sup>exp</sup> 연산에서 오버플로우, 정밀도 손실<sup>round-off error</sup>, 불안정한 기울기 등 문제가 발생할 수 있습니다. router-z 손실은 전문가 선택 확률과는 직접적인 관계 없는, 라우터의 로짓 값이 너무 커지는 걸 억제하기 위한 보조 손실 항을 추가하여 수치 안정성과 훈련 안정성을 확보하는 기법으로, [ST-MoE 논문](https://arxiv.org/abs/2202.08906)에서 처음 정의되었고 여러 MoE 아키텍처에서 활용하고 있습니다.
+
+$$
+L_z = \frac{1}{B} \sum_{i=1}^B \left( \log \sum_{j=1}^N \exp\bigl(x_j^{(i)}\bigr) \right)^2
+$$
+
+* $$B$$: 배치 내 토큰 수 또는 샘플 수
+* $$x_j^{(i)}$$: $$i$$번째 토큰/샘플의 라우터가 전문가 $$j$$에 대해 계산한 로짓 (softmax 연산 이전 점수)
+* $$\log \sum_{j} \exp(x_j^{(i)})$$: softmax 계산의 정규화<sup>normalization</sup> 정규화 항과 관련이 있는데, 이 값이 지나치게 크면 라우터 로짓 전반이 “스케일이 커진다”는 의미입니다. 그걸 제곱된 항으로 패널티를 주면, 라우터가 무분별하게 큰 값을 쓰지 못하도록 억제하는 역할을 합니다. 그렇게 하면 숫자적으로 안정해지고, softmax 지수부 연산이 과도한 오버플로우나 수치 불안정성을 덜 일으키게 됩니다.
+
 #### 최종 손실 함수
 
-보조 손실은 작업 손실(예: $$L_{\text{task}} = \text{CrossEntropy}(y_{\text{pred}}, y_{\text{true}})$$)과 결합되어 역전파에 사용되는 최종 손실 함수를 형성합니다.
+보조 손실은 작업 손실($$L_{\text{task}} = \text{CrossEntropy}(y_{\text{pred}}, y_{\text{true}})$$)과 결합되어 역전파에 사용되는 최종 손실 함수를 형성합니다.
 
 $$
-L_{total} = L_{task} + \alpha \cdot L_{aux}
+L_{total} = L_{task} + \alpha \cdot L_{aux} + c_z \cdot L_z
 $$
 
-하이퍼파라미터 $$\alpha$$는 종종 `load_balance_loss_coef`라고 불리며, 균형 인센티브의 강도를 제어하는 작은 스칼라 값입니다.
+하이퍼파라미터 $$\alpha$$는 종종 `load_balance_loss_coef`라고 불리며, 보조 손실의 강도를 제어하는 작은 스칼라 값입니다.
 
 * $$\alpha$$가 너무 작으면, 균형 힘이 너무 약해서 전문가 붕괴를 방지할 수 없습니다.
 * $$\alpha$$가 너무 크면, 모델이 주요 작업의 성능을 희생하면서 완벽한 로드 밸런싱을 우선시하여 전체적인 정확도가 떨어질 수 있습니다.
 
-$$\alpha$$에 적합한 값을 찾는 것은 MoE 모델의 하이퍼파라미터 튜닝 과정이며, 일반적인 시작점은 `0.01` 정도의 값입니다. 이 간단하지만 효과적인 메커니즘은 거의 모든 MoE 훈련 파이프라인의 베이스라인입니다.
+하이퍼파라미터 $$c_z$$는 종종 `router_z_loss_coef`라고 불리며, router z-손실의 강도를 제어하는 작은 스칼라 값입니다.
+
+* $$c_z$$가 너무 크면, 훈련 초기 안정성이 떨어지고 loss 진동이 커지거나 라우팅이 지나치게 한 전문가에 몰리는 현상이 발생할 수 있습니다.
+* $$c_z$$가 너무 크면, 라우터가 거의 균등한 확률을 뿌리는 수준에서 굳어 버려, MoE의 장점인 표현 다양성과 전문가 전문화 효과를 떨어뜨릴 위험이 있습니다.
+
+적합한 값을 찾는 것은 MoE 모델의 하이퍼파라미터 튜닝 과정이며, 권장 베이스라인은 $$\alpha=0.01, c_z=0.001$$ 입니다. (참조: [NVIDIA NeMo Framework User Guide](https://docs.nvidia.com/nemo-framework/user-guide/latest/nemotoolkit/features/moe.html))
+
+{% hint style="warning" %}
+스케줄링은 모델과 데이터에 따라 가변적으로 두시는 편이 좋습니다. 현업에서 흔한 전략은 초반에는 규제를 조금 강하게, 이후 완만히 낮추는 방식입니다. 예를 들어 초기에는 보조 손실 가중치 계수를 조금 큰 값으로 시작해서 안정화 구간에 진입할 때 점차 감소시키는 스케줄링을 적용하면, 초기 붕괴를 막으면서 후반에는 전문가 특화 여지를 돌려줄 수 있습니다. 최근 대규모 MoE 훈련 노하우에서도 “부하가 이미 잘 균형을 이루면 보조 손실 계수를 낮추고, 불균형이 크면 일시적으로 올려서 강제 균형을 준다”는 상태 기반 조정을 권합니다.
+
+[파인튜닝 단계에서는 보조 손실 가중치 계수를 크게 낮추거나 0으로 두어도 성능 손실이 크지 않다는 연구 결과](https://cameronrwolfe.substack.com/p/conditional-computation-the-birth)도 있습니다.&#x20;
+{% endhint %}
 
 ### **2.3. 전문가 용량 (Expert Capacity)**
 
@@ -277,7 +317,7 @@ print("Mask Shape:", mask.shape)       # [TOKENS_PER_BATCH, 8]
 
 ### 2.5. 전문가 선택 (Expert Choice)
 
-전문가 선택<sup>Expert Choice</sup> 라우팅은 전문가가 주체가 되어 자신에게 도달한 토큰의 점수를 기준으로 상위 $$k$$개의 토큰을 선택하고, 나머지는 버리는 방식입니다. 이 방식은 전문가별 처리량을 균등하게 유지하여 자연스럽게 부하를 분산시키며, 결과적으로 분산 학습 및 추론 과정에서 연산 효율성을 높입니다.
+[2022년에 공개된 전문가 선택<sup>Expert Choice</sup> 라우팅 기법](https://arxiv.org/abs/2202.09368)은 전문가가 주체가 되어 자신에게 도달한 토큰의 점수를 기준으로 상위 $$k$$개의 토큰을 선택하고, 나머지는 버리는 방식입니다. 이 방식은 전문가별 처리량을 균등하게 유지하여 자연스럽게 부하를 분산시키며, 결과적으로 분산 학습 및 추론 과정에서 연산 효율성을 높입니다.
 
 전문가 선택 라우팅의 동작 과정은 다음과 같습니다. 우선 게이트 네트워크가 모든 <토큰, 전문가> 쌍에 대해 점수를 산출합니다. 이후 각 전문가는 자신의 열에 해당하는 점수를 정렬한 뒤 상위 $$k$$개 capacity에 해당하는 토큰만 선택합니다. 선택된 토큰은 해당 전문가의 FFN을 통과하여 처리되고, 최종적으로 토큰 순서에 맞추어 결과가 다시 집계됩니다. 이 과정에서 capacity를 초과한 토큰은 처리되지 않고 드롭될 수 있으므로, 게이트 네트워크가 전문가 간 점수를 균등하게 분포하도록 학습되는 것이 모델 성능에 중요합니다.&#x20;
 
@@ -322,7 +362,7 @@ $$
 
 ***
 
-{% hint style="info" %}
+{% hint style="success" %}
 아래 베이스라인을 기반으로 특정 애플리케이션과 하드웨어 환경에 맞게 성능, 전문화, 계산 가능성의 균형을 맞춘 MoE 아키텍처를 도출하는 것을 권장합니다.
 {% endhint %}
 
@@ -352,9 +392,25 @@ $$
 
 $$k=2$$를 사용하는 것은 토큰이 여러 전문화된 기능의 혜택을 받을 수 있게 하여 모델 품질을 향상시키는 경우도 있지만, 토큰당 두 명의 전문가를 활성화함으로써 계산량 증가와 잠재적으로 더 높은 통신 및 용량 요구 사항이라는 비용이 따르기 때문에 신중히 검토해야 합니다.
 
-### 3.3. 보조 손실 균형 계수 (alpha) 조정
+### 3.3. Upcycling MoE
 
-$$\alpha$$의 적절한 값은 보통 경험적으로<sup>heuristic</sup> 찾습니다. 일반적인 방법은 다음과 같습니다:
+MoE 모델 파라미터를 처음부터 훈련하는 대신(처음부터 MoE로 학습하는 것은 계산 자원, 통신 인프라, 데이터 양 면에서 매우 부담이 큽니다!), 이미 훈련된 밀집<sup>dense</sup> 모델의 체크포인트를 살려서 전문가 구조를 덧붙이거나 변형하는 방식입니다 [Sparse Upcycling 논문](https://arxiv.org/abs/2212.05055)에서 제안되었고 Qwen을 비롯한 대다수 MoE에서 적용 중인 기법입니다. Megatron-Core에서도 `--moe-use-upcycling`와 `--moe-upcycling-granularity` 파라미터로 업사이클링을 지원하고 있습니다.
+
+* 기본(upcycling 기본 전략; `--moe-upcycling-granularity = 1`)에서는 dense 모델의 MLP (혹은 FFN) 가중치를 그대로 복제하여 여러 전문가로 나누는 방식입니다. 즉, 전문가 hidden size는 dense 모델의 hidden size와 동일하게 유지되고, 여러 복제본을 만드는 것입니다
+* granular upcycling 전략에서는, 각 전문가의 hidden size를 dense의 hidden size를 `--moe-upcycling-granularity`만큼 나눈 값으로 작게 설정합니다. (예를 들어 granularity 값을 2로 하면 각 전문가가 dense의 절반 크기로 세분화됩니다.) 전문가의 크기를 작게 함으로써, 전문가 수를 늘리거나 표현의 다양성을 확보하는 fine-grained 특성을 강화할 수 있게 됩니다.
+
+Upcycling MoE 적용 시 고려해야 할 핵심 요소들은 다음과 같습니다.
+
+1. **전문가 수와 세분화 정도 (granularity) 결정:** Dense 모델의 FFN 층을 MoE로 바꿀 때 몇 개의 전문가로 나눌지, 전문가 하나당 파라미터 크기를 어떻게 조정할지 결정해야 합니다. (Megatron-Core 사용 시, `--moe-upcycling-granularity` 조정)
+2. **전문가 초기화 전략:** dense 모델의 가중치를 그대로 복제하거나 일부 변형하여 여러 전문가로 초기화하는 방식이 기본입니다. 그러나 전문가 간 차별성을 주지 않으면 모든 전문가가 동일하게 동작할 수 있어 specialization이 일어나지 않을 수 있습니다. [Upcycling 논문](https://arxiv.org/abs/2410.07524)에서는 “virtual group initialization” 기법을 제안해 dense 체크포인트에서 MoE 초기화를 할 때 전문가들이 라우터 상에서 top-k 후보군에 골고루 분포하도록 유도합니다. 또 다른 기법으로는 parameter merging, partial reinitialization 등을 병행하여 전문가 다양성을 유도하는 방법도 있습니다. 예를 들어 [Drop-Upcycling 논문](https://arxiv.org/abs/2502.19261)에서는 일부 파라미터를 통계적으로 재초기화하여 전문화 경로를 강화하는 전략을 제시합니다.
+3. **라우터 도입 및 사전 보정 (warm-up / router pre-training):** Dense 모델에는 라우터가 없기 때문에 새로 라우터를 설계해야 합니다. 이때 라우터 파라미터이므로 초기 무작위 초기화가 가능하나, 너무 무작위이면 학습 초기에 routing 붕괴<sup>collapse</sup>가 잘 일어납니다. 따라서 소량의 seed 데이터를 사용해 각 새로운 전문가가 잘 작동하도록 라우터를 미리 보정(pre-optimize)하는 단계를 도입하기도 합니다.&#x20;
+4. **가중치 스케일링 (weight scaling):** Dense → MoE 전환 시, 여러 전문가로 쪼갤 때 가중치 분산이 달라지고 표현 강도가 약해질 수 있어서, 적절한 스케일 보정 (예: 각 전문가 가중치에 상수 계수 곱하기) 전략이 필요합니다. Upcycling 논문에서는 weight scaling을 통해 손실 개선 효과가 있다는 보고가 있습니다.
+5. **점진적 확장 또는 단계적 업사이클링:** 처음부터 Dense → 아주 많은 전문가로 일괄 전환하기보다, 적은 전문가 수로 시작하고 점차 전문가 수를 늘리면서 upcycling을 점진적으로 수행하는 방식도 효과적입니다. [Upcycling Instruction Tuning (UpIT) 논문](https://arxiv.org/abs/2410.01610)에서는 전문가 확장 스테이지<sup>expert expansion stage</sup>를 두고 점진적으로 전문가를 늘려 가는 전략을 사용합니다.
+6. **Drop-Upcycling 전략:** Drop-Upcycling 논문은 dense에서 upcycling한 모델이 초기에는 좋은 성능을 보이나 장기 학습 시 속도가 느려지거나 specialization이 약해지는 문제가 있다고 보고하며, 일부 파라미터를 무작위 재초기화하는 전략을 병행해 학습 성능과 효율을 모두 개선하는 방식을 제안했습니다.
+
+### 3.4. 보조 손실 균형 계수 (alpha) 조정
+
+적절한 값은 보통 경험적으로<sup>heuristic</sup> 찾습니다. 일반적인 방법은 다음과 같습니다:
 
 1. **추천 범위**: 값은 보통 $$10^{-2}$$ 또는 $$10^{-3}$$처럼 작지만, 최적 값은 모델 아키텍처, 작업, 전문가 수, 선택한 보조 손실 공식에 크게 의존합니다. 지나치게 큰 $$\alpha$$는 로드 밸런싱을 우선시하여 전체적인 정확도가 떨어질 수 있고 지나치게 작은 $$\alpha$$는 라우터 불균형을 개선하지 않다는 점을 기억해 주세요.
 2. **모니터링**: 훈련 중에는 아래와 같은 중요한 지표들을 관찰하세요. 모니터링은 Weights & Biases나 텐서보드 같은 툴킷이 매우 유용합니다.&#x20;
@@ -364,7 +420,7 @@ $$\alpha$$의 적절한 값은 보통 경험적으로<sup>heuristic</sup> 찾습
 3. **트레이드-오프**<sup>Trade-off</sup> **분석을 통한** **반복 조정**: 작은 $$\alpha$$로 시작합니다. 만약 심각한 불균형(예: 일부 전문가는 평균보다 훨씬 적은 토큰을 계속 받는 경우)이 관찰되면 $$\alpha$$를 점진적으로 증가시킵니다. $$\alpha$$를 키울 때 주 작업 성능(검증 손실/정확도)이 크게 떨어지지 않도록 주의합니다.
 4. **스케줄링**: 일부 실무자는 훈련 중 $$\alpha$$를 조절합니다. 초반에는 균형 강제를 위해 약간 높은 값으로 시작하고, 훈련이 진행되어 전문가들이 자연스럽게 특화되기 시작하면 점차 값을 줄이는 방식입니다.
 
-### 3.4. 실용적 지침 및 모니터링
+### 3.5. 실용적 지침 및 모니터링
 
 MoE 모델 개발 및 훈련 중에 추적해야 할 중요한 지표는 다음과 같습니다:
 
@@ -374,7 +430,7 @@ MoE 모델 개발 및 훈련 중에 추적해야 할 중요한 지표는 다음�
 4. **전체 모델 성능:** LLM의 BLEU/ROUGE나 다운스트림 작업의 정확도와 같은 표준 지표를 추적합니다. 아키텍처 선택이 최종 성능 향상으로 이어지는지 확인합니다.
 5. **메모리 사용량:** 특히 분산 환경에서 중요하며, 선택한 구성이 장치 메모리 제약 내에 맞는지 확인합니다.
 
-### 3.5. 옵티마이저 및 하이퍼파라미터
+### 3.6. 옵티마이저 및 하이퍼파라미터
 
 MoE 훈련을 위한 최적의 옵티마이저 설정과 하이퍼파라미터 조합을 찾는 것은 일반적으로 경험적인 과정이만, 아래의 베이스라인부터 시작해보는 것을 권장합니다.
 
@@ -394,3 +450,13 @@ MoE 훈련을 위한 최적의 옵티마이저 설정과 하이퍼파라미터 �
 * [MegaBlocks: Efficient Sparse Training with Mixture-of-Experts](https://arxiv.org/abs/2211.15841) (2023)
 * [ST-MoE: Designing Stable and Transferable Sparse Expert Models](https://arxiv.org/abs/2202.08906) (2022)
 * [Mixture-of-Experts with Expert Choice Routing](https://arxiv.org/abs/2202.09368) (2022)
+* [Mixture of A Million Experts](https://arxiv.org/abs/2407.04153) (2024)
+* [Scaling Laws for Fine-Grained Mixture of Experts](https://arxiv.org/abs/2402.07871) (2024)
+* [Expert-Token Resonance MoE: Bidirectional Routing with Efficiency Affinity-Driven Active Selection](https://arxiv.org/abs/2406.00023) (2024)
+* [Ban\&Pick: Ehancing Performance and Efficiency of MoE-LLMs via Smarter Routing](https://arxiv.org/abs/2509.06346) (2025)
+* [Chain-of-Experts: When LLMs Meet Complex Operations Research Problems](https://openreview.net/pdf?id=HobyL1B9CZ) (2024)
+* [Upcycling Large Language Models into Mixture of Experts](https://arxiv.org/abs/2410.07524) (2024)
+* [Drop-Upcycling: Training Sparse Mixture of Experts with Partial Re-initialization](https://arxiv.org/abs/2502.19261) (2025)
+* [Upcycling Instruction Tuning from Dense to Mixture-of-Experts via Parameter Merging](https://arxiv.org/abs/2410.01610) (2024)
+* [NVIDIA NeMo Framework User Guide](https://docs.nvidia.com/nemo-framework/user-guide/latest/nemotoolkit/features/moe.html)
+
