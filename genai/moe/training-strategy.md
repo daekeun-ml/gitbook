@@ -67,7 +67,7 @@
 
 #### 파라미터 설정
 
-**TP 크기를 가능한 작게 유지하세요.**
+**TP 크기를 가능한 작게 유지합니다.**
 
 * 대형 언어 모델의 경우 OOM<sup>Out-of-Memory</sup>을 방지하기 위해 TP가 종종 필요하지만, 이는 통신 오버헤드를 발생시키고 성능을 저하시킬 수 있습니다.
 * 분산 옵티마이저<sup>distributed optimizer</sup>를 사용할 때 마스터 가중치<sup>master weights</sup>와 옵티마이저 상태<sup>optimizer states</sup>는 모든 DP 랭크에 걸쳐 샤딩<sup>sharding</sup>되기에 약간의 통신 오버헤드만 발생합니다. 따라서 학습 중에 여유 GPU 메모리가 많을 경우 TP 크기를 줄이고 DP 크기를 늘리는 것이 좋습니다.
@@ -77,7 +77,7 @@
 * 소형 MoE 모델의 경우 EP8 x TP1이 EP4 x TP2보다 더 좋습니다. MoE 레이어의 계산 그래프가 단순해져 잠재적인 통신-계산 중첩<sup>comm-computation overlapping</sup>을 수행하기에 더 편리하기 때문입니다. 30–70B 모델은 32–64 GPU로도 충분히 빠르게 돌릴 수 있습니다.
 * 모델이 너무 커서 다중 노드에 걸쳐 확장해야 하는 경우에는 TP와 EP보다 PP를 먼저 고려하세요.&#x20;
 
-**모델을 더 확장하려면 PP를 사용하세요.**
+**모델을 더 확장하려면 PP를 사용합니다.**
 
 * Megatron-LM의 경우 `pp_size >= 2`일 때 `num_layers_per_virtual_pipeline_stage`를 설정하여 가상 파이프라인 병렬화(VPP<sup>Virtual Pipeline Parallelism</sup>)를 활성화하면 PP 버블을 줄일 수 있습니다.
 * VPP\_size 튜닝: `vpp_size`의 합법적인 값은 모두 `num_layers/pp_size`의 공약수들입니다. 예컨대 `num_layers=24`, `pp_size=4`이면 vpp\_size는 `{1, 2, 3, 6}` 중에서 선택할 수 있습니다. `vpp_size`가 클수록 파이프라인 버블은 줄어들지만 각 PP 스테이지 간의 P2P 통신이 증가하므로, 휴리스틱하게 중간 값을 베이스라인으로 시작하세요.&#x20;
@@ -148,7 +148,14 @@ Successfully ran diagnostic for group.
 
 **EFA 체크**
 
-* `fi_info -p efa` 로 EFA provider가 로드되는지 노드별로 점검합니다.
+* `fi_info -p efa` 로 EFA provider가 로드되는지 노드별로 점검합니다. SageMaker HyperPod의 경우 별도 설정이 필요 없지만, EC2에서 직접 설정하는 경우 [AWS 공식 가이드](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/efa-start.html)를 참조해서 `aws-efa-installer`를 설치해야 합니다.
+
+```sh
+curl -sS https://efa-installer.amazonaws.com/aws-efa-installer-latest.tar.gz 
+tar -xf aws-efa-installer-latest.tar.gz && cd aws-efa-installer
+sudo ./efa_installer.sh -y
+```
+
 * NCCL 초기화 로그에 libfabric/EFA/GDRDMA 사용 표기가 찍히는지 확인하고 “EFA/libfabric path used” 같은 문구가 보이는지 점검합니다.
 
 **Slurm**
@@ -158,11 +165,11 @@ Successfully ran diagnostic for group.
 
 **버전 확인**
 
-* CUDA / NVIDIA Driver / NCCL / PyTorch / libfabric / aws-ofi-nccl 버전을 확합니다. 특히 NCCL은 환경변수 기반 튜닝 폭이 넓으므로 **해당 버전의** NCCL 문서(Env Vars)를 꼭 확인하세요. 주요 변수(`NCCL_CROSS_NIC, NCCL_{MIN,MAX}_NCHANNELS` 등) 의미가 버전에 따라 미세하게 달라집니다.
+* CUDA / NVIDIA Driver / NCCL / PyTorch / libfabric / aws-ofi-nccl 버전을 확합니다. 특히 NCCL은 환경변수 기반 튜닝 폭이 넓으므로 해당 버전의 NCCL 문서(Env Vars)를 꼭 확인하세요. 주요 변수(`NCCL_CROSS_NIC, NCCL_{MIN,MAX}_NCHANNELS` 등) 의미가 버전에 따라 미세하게 달라집니다.
 
-**EFA 주요 환경 변수 (출처:** [**AWS EFA Cheatsheet**](https://app.gitbook.com/u/A81uOOpezEhPlFs0xy0rsEctTSP2)**)**
+**EFA 및 NCCL 주요 환경 변수 (출처:** [**AWS EFA Cheatsheet**](https://app.gitbook.com/u/A81uOOpezEhPlFs0xy0rsEctTSP2)**)**
 
-<table><thead><tr><th width="270.4765625">설정</th><th>설명</th></tr></thead><tbody><tr><td><code>NCCL_DEBUG=info</code></td><td>NCCL에서 디버그 정보를 얻기 위해 설정합니다. 이를 통해 NCCL이 EFA를 사용하고 있는지와 어떤 버전을 사용하고 있는지 확인할 수 있습니다. 다만, 많은 디버그 정보를 출력하므로 NCCL 문제가 의심되지 않는 한 끄는 것을 권장합니다. 자세한 내용은 <a href="https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html#nccl-debug">NCCL_DEBUG</a> 를 참조하세요.</td></tr><tr><td><code>FI_EFA_USE_HUGE_PAGE=0</code></td><td><code>os.fork()</code>가 <code>OSError: Cannot allocate memory</code>를 발생시킬 때 0으로 설정합니다. 일반적으로 다중 프로세스 PyTorch 데이터 로더에서 발생합니다. 거대 페이지를 비활성화하면 약간의 성능 저하가 있지만, 운영 체제의 거대 페이지 부족으로 인한 fork 실패를 방지하는 데 필요합니다.</td></tr><tr><td><code>FI_EFA_FORK_SAFE=1</code></td><td>kernel>=5.15에서는 필요하지 않습니다. 설정해도 효과는 없지만 문제없습니다. [<a href="https://github.com/ofiwg/libfabric/pull/9112">참조</a>]</td></tr><tr><td><code>FI_EFA_USE_DEVICE_RDMA=1</code></td><td><code>libfabric>=1.18.0</code> 및 <code>aws-ofi-nccl>=1.7.0</code>에서는 설정할 필요가 없습니다.</td></tr><tr><td><code>FI_EFA_SET_CUDA_SYNC_MEMOPS=0</code></td><td><code>efa-installer&#x3C;1.29.1</code> 및 <code>nccl>=2.19.0</code>에서 NCCL 오류 <code>register_rail_mr_buffer:617 NCCL WARN NET/OFI Unable to register memory (type = 2) for device 4. RC: -22, Error: Invalid argument</code>를 방지하기 위해 설정합니다.</td></tr><tr><td><code>FI_EFA_ENABLE_SHM_TRANSFER=1</code></td><td>필요하지 않습니다. 실제로는 <code>no-op</code>이며, 기본값이 이미 SHMEM을 활성화합니다.</td></tr><tr><td><code>FI_PROVIDER=efa</code></td><td><code>aws-ofi-nccl&#x3C;=1.5.0</code> 및 p4/p5 인스턴스에서 사용합니다.</td></tr><tr><td><code>NCCL_PROTO=simple</code></td><td><code>aws-ofi-nccl&#x3C;=1.5.0</code> 및 p4/p5 인스턴스에서 사용합니다.</td></tr><tr><td><code>NCCL_SOCKET_NTHREADS</code></td><td>EFA에는 적용되지 않습니다.</td></tr><tr><td><code>NCCL_SOCKET_IFNAME</code></td><td><code>p5.48xlarge</code>와 <code>p4d(e).24xlarge</code> 모두를 포함하려면 <code>en</code>으로 설정합니다. 다른 인스턴스의 경우 <code>ifconfig</code>를 확인하여 활성 네트워크 인터페이스를 확인하세요.</td></tr><tr><td><code>NCCL_NSOCKS_PERTHREAD</code></td><td>EFA에는 적용되지 않습니다.</td></tr><tr><td><code>NCCL_MIN_CHANNELS=xxx</code></td><td>기본값을 사용하도록 설정하지 않는 것을 권장합니다. 예를 들어, p4d/p4de에서 채널 수는 8이어야 하며, 이는 4-NIC 플랫폼의 최소값입니다. 감소 메시지는 작업의 GPU 수로 나누어진 다음 채널 수로 나누어지므로, 필요 이상의 채널을 가지면 더 작은 메시지가 발생하여 EFA가 데이터 부족 상태가 됩니다.</td></tr><tr><td><code>NCCL_BUFFSIZE=xxx</code></td><td>기본값을 사용하도록 설정하지 않는 것을 권장합니다.</td></tr><tr><td><code>RDMAV_FORK_SAFE=1</code></td><td>사용하지 마세요. 이는 RDMA-core 환경 변수입니다. <code>FI_EFA_FORK_SAFE</code>를 선호하세요(Linux 커널 버전에 따라 여전히 의미가 있는 경우). 둘이 비슷해 보이지만 실제로는 매우 다르게 동작하며, 특히 새로운 커널에서는 <code>RDMAV_FORK_SAFE=1</code>이 문제를 일으킬 수 있습니다.</td></tr><tr><td><code>NCCL_SHM_USE_CUDA_MEMCPY=1</code></td><td>g6/g5에서 NCCL을 실행할 때 설정합니다. 기본 memcpy에 비해 2배의 성능을 제공합니다.</td></tr><tr><td><code>RDMAV_*</code></td><td>사용하지 마세요.</td></tr><tr><td>NCCL 버전</td><td>안정적인 릴리스 중 하나를 권장합니다.</td></tr><tr><td><code>NCCL_TUNER_PLUGIN</code></td><td>특정 NCCL 튜너 플러그인을 로드하도록 설정합니다. <code>aws-ofi-ofi>=1.16.3</code>부터는 이 설정이 더 이상 필요하지 않습니다.</td></tr></tbody></table>
+<table><thead><tr><th width="270.4765625">설정</th><th>설명</th></tr></thead><tbody><tr><td><code>NCCL_DEBUG=info</code></td><td>NCCL에서 디버그 정보를 얻기 위해 설정합니다. 이를 통해 NCCL이 EFA를 사용하고 있는지와 어떤 버전을 사용하고 있는지 확인할 수 있습니다. 다만, 많은 디버그 정보를 출력하므로 NCCL 문제가 의심되지 않는 한 끄는 것을 권장합니다. 자세한 내용은 <a href="https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html#nccl-debug">NCCL_DEBUG</a> 를 참조하세요.</td></tr><tr><td><code>FI_EFA_USE_HUGE_PAGE=0</code></td><td><code>os.fork()</code>가 <code>OSError: Cannot allocate memory</code>를 발생시킬 때 0으로 설정합니다. 일반적으로 다중 프로세스 PyTorch 데이터 로더에서 발생합니다. 거대 페이지를 비활성화하면 약간의 성능 저하가 있지만, 운영 체제의 거대 페이지 부족으로 인한 fork 실패를 방지하는 데 필요합니다.</td></tr><tr><td><code>FI_EFA_FORK_SAFE=1</code></td><td><code>kernel>=5.15</code>에서는 필요하지 않습니다. [<a href="https://github.com/ofiwg/libfabric/pull/9112">참조</a>]</td></tr><tr><td><code>FI_EFA_USE_DEVICE_RDMA=1</code></td><td><code>libfabric>=1.18.0</code> 및 <code>aws-ofi-nccl>=1.7.0</code>에서는 설정할 필요가 없습니다.</td></tr><tr><td><code>FI_EFA_SET_CUDA_SYNC_MEMOPS=0</code></td><td><code>efa-installer&#x3C;1.29.1</code> 및 <code>nccl>=2.19.0</code>에서 NCCL 오류 register_rail_mr_buffer:617 NCCL WARN NET/OFI Unable to register memory (type = 2) for device 4. RC: -22, Error: Invalid argument를 방지하기 위해 설정합니다.</td></tr><tr><td><code>FI_EFA_ENABLE_SHM_TRANSFER=1</code></td><td>필요하지 않습니다. 실제로는 <code>no-op</code>이며, 기본값이 이미 SHMEM을 활성화합니다.</td></tr><tr><td><code>FI_PROVIDER=efa</code></td><td><code>aws-ofi-nccl&#x3C;=1.5.0</code> 및 p4/p5 인스턴스에서 사용합니다.</td></tr><tr><td><code>NCCL_PROTO=simple</code></td><td>GPU 간 통신을 어떤 방식으로 데이터를 주고받을지 (latency 중심? bandwidth 중심?)을 정합니다. LL(Low Latency)은 작은 메시지에 최적화되어 있고, LL128은 중간 크기 메세지용, Simple은 큰 메시지 크기에 설정합니다. <code>aws-ofi-nccl&#x3C;=1.5.0</code> 및 p4/p5 인스턴스에서 사용합니다.</td></tr><tr><td><code>NCCL_SOCKET_NTHREADS</code></td><td>EFA에는 적용되지 않습니다.</td></tr><tr><td><code>NCCL_SOCKET_IFNAME</code></td><td><code>p5.48xlarge</code>와 <code>p4d(e).24xlarge</code> 에서 모두 <code>en</code>으로 설정합니다. 다른 인스턴스의 경우 <code>ifconfig</code>를 확인하여 활성 네트워크 인터페이스를 확인하세요.</td></tr><tr><td><code>NCCL_NSOCKS_PERTHREAD</code></td><td>EFA에는 적용되지 않습니다.</td></tr><tr><td><code>NCCL_MIN_CHANNELS=xxx</code></td><td>기본값을 사용하도록 설정하지 않는 것을 권장합니다. 예를 들어, p4d/p4de에서 채널 수는 8이어야 하며, 이는 4-NIC 플랫폼의 최소값입니다. 감소 메시지는 작업의 GPU 수로 나누어진 다음 채널 수로 나누어지므로, 필요 이상의 채널을 가지면 더 작은 메시지가 발생하여 EFA가 데이터 부족 상태가 됩니다.</td></tr><tr><td><code>NCCL_BUFFSIZE=xxx</code></td><td>GPU 쌍 간 통신에 NCCL이 내부적으로 잡는 버퍼의 크기를 바이트 단위로 지정합니다. 기본값은 4MB(4,194,304)로 처음에는 튜닝하지 마세요.</td></tr><tr><td><code>NCCL_P2P_NET_CHUNKSIZE=xxx</code></td><td>P2P 네트워크 경로에서 송신되는 메시지 조각(청크) 크기를 바이트 단위로 지정합니다. 기본값은 128KB(131,072)로 처음에는 튜닝하지 마세요.</td></tr><tr><td><code>RDMAV_FORK_SAFE=1</code></td><td>사용하지 마세요. 이는 RDMA-core 환경 변수로 신규 커널에서 문제를 일으킬 수 있습니다.</td></tr><tr><td><code>NCCL_SHM_USE_CUDA_MEMCPY=1</code></td><td>g5/g6에서 NCCL을 실행할 때 설정합니다. 기본 memcpy에 비해 2배의 성능을 제공합니다.</td></tr><tr><td><code>RDMAV_*</code></td><td>사용하지 마세요.</td></tr><tr><td>NCCL 버전</td><td>안정적인 릴리스 중 하나를 권장합니다.</td></tr><tr><td><code>NCCL_TUNER_PLUGIN</code></td><td>특정 NCCL 튜너 플러그인을 로드하도록 설정합니다. <code>aws-ofi-ofi>=1.16.3</code>부터는 이 설정이 더 이상 필요하지 않습니다.</td></tr></tbody></table>
 
 ```bash
 export FI_EFA_USE_HUGE_PAGE=0   # 기본 세팅
@@ -170,7 +177,7 @@ export FI_EFA_USE_HUGE_PAGE=0   # 기본 세팅
 # libfabric/EFA 선택 
 # export FI_PROVIDER=efa
 
-# GPU↔EFA 디바이스 RDMA(가능 시) 사용 (
+# GPU↔EFA 디바이스 RDMA(가능 시) 사용
 # export FI_EFA_USE_DEVICE_RDMA=1
 
 # NCCL가 aws-ofi-nccl을 경유하도록 LD_LIBRARY_PATH 확인
@@ -180,10 +187,14 @@ export NCCL_DEBUG=INFO         # 디버그 시 사용
 export NCCL_IB_GID_INDEX=3     # VPC/서브넷에 따라 조정
 export NCCL_NET_GDR_LEVEL=PHB  # 안정성 이슈가 보이면 PHB → PXB → PIX로 단계적으로 보수화
 
-# 알고리즘/프로토콜은 기본 Auto 권장. 병목 시 실험:
+# 버퍼 크기/P2P 청크 크기/알고리즘/프로토콜은 기본 Auto 권장. 병목 시 실험:
+# export NCCL_BUFFSIZE=8388608            # 8MB (8*1024*1024)
+# export NCCL_P2P_NET_CHUNKSIZE=262144    # 256KB (256*1024)
 # export NCCL_ALGO=Tree|Ring
 # export NCCL_PROTO=Simple|LL|LL128
 ```
+
+**추가 팁**
 
 * `NCCL_NET_GDR_LEVEL` (formerly NCCL\_IB\_GDR\_LEVEL): NCCL에서 GPUDirect RDMA(GDR)를 허용할 토폴로지 거리의 최대 수준을 제어하는 환경 변수입니다. 즉, 네트워크 전송 시 GPU 메모리를 직접 NIC(Network Interface Card)에 매핑해서 CPU 메모리 복사를 거치지 않고 통신할 수 있는 GDR 최적화 정도를 지정하는 옵션입니다. 보통 자동 최적화되지만 명시적으로 기재하는 것이 좋습니다.
   * `LOC` (Local) : GDR 항상 비활성화
@@ -192,8 +203,17 @@ export NCCL_NET_GDR_LEVEL=PHB  # 안정성 이슈가 보이면 PHB → PXB → P
   * `PHB` (PCI Host Bridge / NUMA node) : 같은 NUMA 노드(같은 CPU 소켓)면 GDR (트래픽은 CPU 루트를 통과 가능)
   * `SYS` (System-wide) : 소켓 간 링크(UPI/QPI)까지 넘어서도 항상 GDR 사용. GPU와 NIC가 시스템 내 어디에 있든 GPUDirect RDMA 활성화. 가장 공격적이고 호환성 리스크가 있음.
 * 토폴로지 확인: `nvidia-smi topo -m`에서 GPU↔NIC 경로가 PIX/PXB/PHB인지 확인하고 그에 맞춰 GDR 레벨을 선택합니다.
+* \[Optional] 워크로드·토폴로지에 따라 버퍼/청크 크기를 튜닝할 경우 `NCCL_BUFFSIZE`와 `NCCL_P2P_NET_CHUNKSIZE`를 조정합니다. All-Reduce 통신 빈도가 높다면 버퍼를 키우고, All-To-All(MoE) 통신 빈도가 높다면 청크를 너무 크게 하지 않는 것이 권장 사항입니다.
+  * **메모리 vs. 대역폭 트레이드오프**: `NCCL_BUFFSIZE`는 를 키우면 일반적으로 더 높은 스루풋 여지를 주지만 메모리 사용량이 증하가여 OOM 이슈가 발생합니다. 4MB / 8MB 중 하나를 권장합니다.&#x20;
+  * **P2P 성능 안정화**: 일부 환경에선 `NCCL_P2P_NET_CHUNKSIZE`가 너무 작거나 크면 버스 대역폭 저하/측정 편차가 생길 수 있어, 적정값으로 맞춰야 합니다.  128K / 256K / 512K 중 하나를 권장합니다.
 
+```sh
+export NCCL_BUFFSIZE=8388608            # 8MB (8*1024*1024)
+export NCCL_P2P_NET_CHUNKSIZE=262144    # 256KB (256*1024)
 
+# NCCL tests: AllReduce
+./build/all_reduce_perf -b 64K -e 1G -f 2 -g 1  # GPU당 1개 프로세스 예시
+```
 
 ## 2. 실전 체크리스트
 

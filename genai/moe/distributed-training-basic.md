@@ -41,10 +41,12 @@ LLM을 훈련하는 데 필요한 순수 계산 비용(부동소수점 연산, F
 3. **All-Reduce**: Reduce 연산을 수행한 후 그 결과를 모든 노드에 broadcast하는 연산으로 가장 중요한 프리미티브 중 하나입니다. 데이터 병렬에서 그래디언트를 동기화할 때 광범위하게 사용됩니다.
 4. **Scatter**: 루트가 가진 큰 텐서를 조각내어 다른 프로세스에 분배합니다.
 5. **Gather**: 모든 프로세스에서 데이터 청크를 수집하여 루트 프로세스가 하나로 모아 이어붙입니다. (concatenate).
-6. **All-Gather**: Gather로 완전하게 연결된(concatenated) 데이터를 다시 모든 프로세스에 분배합니다. 텐서 병렬에서 모델 가중치 shard를 모아 full weight로 연산할 때 사용합니다.
+6. **All-Gather**: Gather로 완전하게 연결된<sup>concatenated</sup> 데이터를 다시 모든 프로세스에 분배합니다. 텐서 병렬에서 모델 가중치 shard를 모아 full weight로 연산할 때 사용합니다.
 7. **Reduce-Scatter**: 모든 프로세스의 데이터를 먼저 Reduce(합/평균 등)한 뒤, 그 결과를 다시 균등하게 분할하여 각 프로세스에 하나씩 배포합니다. All-Reduce를 최적화할 때 (특히 Ring All-Reduce 구현에서), 집계와 분할을 결합해 통신량을 절감할 때 사용합니다.
 8. **Point-to-Point, `send` / `recv`**: 한 프로세스가 다른 프로세스로 데이터를 직접 전송하는 개별 통신 연산입니다. 이는 파이프라인 병렬의 주요 메커니즘입니다.
 9. **All-to-All:** 각 프로세스가 N개의 조각을 만들어 N개 프로세스 각각에 하나씩 전송하고, 모든 프로세스가 동시에 동일한 작업을 수행합니다. MoE의 전문가 병렬화에서 주로 사용됩니다.
+
+<figure><img src="../../.gitbook/assets/collective-communication (2).png" alt=""><figcaption><p>통신 프리미티브 도식 (출처: <a href="https://images.nvidia.com/events/sc15/pdfs/NCCL-Woolley.pdf">https://images.nvidia.com/events/sc15/pdfs/NCCL-Woolley.pdf</a>)</p></figcaption></figure>
 
 <table><thead><tr><th width="136.1171875">Primitive</th><th width="169.0703125">Direction</th><th width="249.53515625">주요 용도</th><th>결과 데이터 소유</th></tr></thead><tbody><tr><td><strong>Broadcast</strong></td><td>1 → N</td><td>파라미터 초기화/동기화</td><td>모든 GPU 동일 데이터</td></tr><tr><td><strong>Reduce</strong></td><td>N → 1</td><td>Loss 집계</td><td>루트 GPU만 결과</td></tr><tr><td><strong>All-Reduce</strong></td><td>N → N</td><td>그래디언트 평균, 파라미터 동기화</td><td>모든 GPU 동일 결과</td></tr><tr><td><strong>Scatter</strong></td><td>1 → N (분할)</td><td>배치 분배</td><td>각 GPU 일부만</td></tr><tr><td><strong>Gather</strong></td><td>N → 1 (합침)</td><td>결과 모음</td><td>루트 GPU가 전체 보유</td></tr><tr><td><strong>All-Gather</strong></td><td>N → N (합침)</td><td>파라미터 샤딩, 텐서 병합</td><td>모든 GPU 전체 보유</td></tr><tr><td><strong>Reduce-Scatter</strong></td><td>N → N (집계 후 분할)</td><td>All-Reduce 최적화, 통신량 절감</td><td>각 GPU 집계 결과의 일부</td></tr><tr><td><strong>Point-to-Point</strong></td><td>1 ↔ 1</td><td>stage간 활성화/그래디언트 전달</td><td>지정된 GPU만</td></tr><tr><td><strong>All-to-All</strong></td><td>N ↔ N (맞교환)</td><td>MoE, 샤딩 재배치</td><td>GPU별 맞춤 데이터</td></tr></tbody></table>
 
@@ -154,7 +156,7 @@ ZeRO(Stage 1/2/3) 로 모델 상태(옵티마이저→그래디언트→파라�
 
 파라미터·그래디언트·옵티마이저 상태를 전부 샤딩(FULL\_SHARD)하고 필요 시 shard\_grad\_op 등으로 일부 파라미터만 샤딩합니다. (FSDP FULL\_SHARD ≈ DeepSpeed ZeRO-3, FSDP SHARD\_GRAD\_OP ≈ DeepSpeed ZeRO-2)
 
-#### DeepSpeed vs. DeepSpeed
+#### DeepSpeed vs. **FSDP**
 
 DeepSpeed의 ZeRO와 비교했을 때 FSDP는 PyTorch 네이티브 모듈이라는 점이 큰 특징입니다. ZeRO 역시 단계적으로 모델 상태를 분할해 메모리 사용량을 줄이지만, 별도의 런타임 엔진과 설정(JSON 파일 등)을 요구하고, 다양한 최적화 옵션(커스텀 옵티마이저, NVMe offload, 압축 통신 등)이 포함된 더 포괄적인 학습 엔진으로 동작합니다. 반면 FSDP는 PyTorch의 모듈 래핑 API와 밀접하게 통합되어 있고, 자동 래핑 정책을 사용하면 특정 레이어 단위로 손쉽게 shard를 적용할 수 있어 PyTorch 중심 워크플로우에 자연스럽게 녹아듭니다. 기능 면에서 FSDP의 FULL\_SHARD 모드는 ZeRO-3와 거의 동일한 수준의 분할을 제공하지만, 세부 옵션은 DeepSpeed가 더 풍부하고, 통신 최적화와 오프로딩 전략을 세밀하게 제어할 수 있습니다. 반대로 FSDP는 디버깅과 유지보수가 상대적으로 단순하고, 허깅페이스 Accelerate나 PyTorch Lightning 같은 생태계 도구와 바로 호환되기 때문에 PyTorch 기반 연구 환경에서의 접근성이 좋습니다.
 
@@ -212,7 +214,7 @@ DeepSpeed의 ZeRO와 비교했을 때 FSDP는 PyTorch 네이티브 모듈이라�
 
 #### 장점&#x20;
 
-* **대형 모델 훈련:** 레이어 자체가 단일 디바이스의 메모리에 너무 클 때 TP는 필수적입니다.
+* **대규모 모델 훈련:** 레이어 자체가 단일 디바이스의 메모리에 너무 클 때 TP는 필수적입니다.
 * **다른 병렬화 전략과 보완적:** TP는 다른 병렬화 기법과 결합하여 하이브리드 병렬화 접근법을 형성할 수 있습니다 (예: 파이프라인 스테이지 내에서 TP를 사용하고 이를 DP로 복제).
 * **오버랩 가능성:** 정교한 구현은 통신을 연산과 오버랩시켜 대기 시간을 숨길 수 있습니다.
 
@@ -341,3 +343,11 @@ def training_step(micro_batch_data):
     return loss # 또는 관련 메트릭
 ```
 
+
+
+## References
+
+* PyTorch Distributed Training Overview: [https://docs.pytorch.org/tutorials/intermediate/ddp\_tutorial.html](https://docs.pytorch.org/tutorials/intermediate/ddp_tutorial.html)
+* DeepSpeed: [https://github.com/deepspeedai/DeepSpeed](https://github.com/deepspeedai/DeepSpeed)
+* Memory-Efficient Pipeline-Parallel DNN Training: [https://arxiv.org/abs/2006.09503](https://arxiv.org/abs/2006.09503)
+* Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism: [https://arxiv.org/abs/1909.08053](https://arxiv.org/abs/1909.08053)

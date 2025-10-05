@@ -13,7 +13,7 @@ MoE (Mixture-of-Experts) 모델은 거대한 매개변수(파라미터)를 효�
 
 아래 그림은 MoE 모델의 레이어 예시로, 라우터가 입력 토큰을 2개의 전문가 FFN에 라우팅하고 해당 전문가의 출력을 취합하는 Top-2 라우팅 방식을 보여줍니다. 이를 통해 한 레이어에서 다중 전문가 FFN들이 동시에 작동하면서도, **각 토큰은 소수 전문가의 출력만 활용**하게 됩니다. Router는 간단한 피드포워드 네트워크(FFN; Feed Forward Network)로, 일반적으로 토큰의 입력 임베딩에 적용되는 단일 선형 레이어와 그 뒤에 오는 소프트맥스 함수로 구성됩니다. 이에 대해서는 아래에 자세히 설명하겠습니다.
 
-<figure><img src="../../.gitbook/assets/moe-layer.webp" alt=""><figcaption><p>MoE 레이어 (출처: A Visual Guide to Mixture of Experts)</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/moe-layer.webp" alt=""><figcaption><p>MoE 레이어 (출처: <a href="https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mixture-of-experts">A Visual Guide to Mixture of Experts</a>)</p></figcaption></figure>
 
 <figure><img src="../../.gitbook/assets/moe-overview-01.png" alt=""><figcaption><p>Top-2 라우팅 예시</p></figcaption></figure>
 
@@ -387,6 +387,7 @@ MoE 훈련을 위한 최적의 옵티마이저 설정과 하이퍼파라미터 �
 
 ## References
 
+* [A Visual Guide to Mixture of Experts](https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mixture-of-experts) (2024)
 * [Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer](https://arxiv.org/abs/1701.06538) (2017)
 * [Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity](https://arxiv.org/abs/2101.03961) (2022)
 * [GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding](https://arxiv.org/abs/2006.16668) (2020)
