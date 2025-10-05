@@ -6,11 +6,15 @@
 
 ### 1.1. 각 병렬화 기법 리마인더
 
-* DP: 모델이 단일 GPU에 적재 가능하고 배치 확대 여지가 충분할 때 가장 단순하고 강력한 스케일-아웃 기법입니다.
-* Sharded DP (ZeRO/FSDP): 모델이 단일 GPU 메모리에 안 들어갈 때 1순위로 검토합니다. 메모리 절감 극대화 + DP의 단순성을 유지합니다.
-* TP: FFN/어텐션이 초대형이라 레이어 내부를 쪼개야 할 때 필요합니다. 다만 통신 오버헤드가 크므로 고품질 인터커넥트(예: NVLink, NVSwitch)가 필수입니다.&#x20;
-* PP: 깊은 모델에서 메모리/계산을 스테이지로 분할할 때 유용하며 마이크로배치로 버블을 최소화해야 효과가 큽니다.
-* EP: 희소 활성화로 FLOPs를 억제하며 모델 용량(파라미터 수) 을 크게 키우고 싶을 때 유용하며, all-to-all 통신 최적화가 관건입니다.
+{% hint style="success" %}
+리마인더가 필요하면 [분산 훈련 전략](https://housekdk.gitbook.io/ml/genai/moe/distributed-training-basic)을 참고하기 바랍니다.
+{% endhint %}
+
+* **DP**: 모델이 단일 GPU에 적재 가능하고 배치 확대 여지가 충분할 때 가장 단순하고 강력한 스케일-아웃 기법입니다.
+* **Sharded DP (ZeRO/FSDP)**: 모델이 단일 GPU 메모리에 안 들어갈 때 1순위로 검토합니다. 메모리 절감 극대화 + DP의 단순성을 유지합니다.
+* **TP**: FFN/어텐션이 초대형이라 레이어 내부를 쪼개야 할 때 필요합니다. 다만 통신 오버헤드가 크므로 고품질 인터커넥트(예: NVLink, NVSwitch)가 필수입니다.&#x20;
+* **PP**: 깊은 모델에서 메모리/계산을 스테이지로 분할할 때 유용하며 마이크로배치로 버블을 최소화해야 효과가 큽니다.
+* **EP**: 희소 활성화로 FLOPs를 억제하며 모델 용량(파라미터 수) 을 크게 키우고 싶을 때 유용하며, all-to-all 통신 최적화가 관건입니다.
 
 <table><thead><tr><th width="99.80859375">병렬화 기법</th><th>분할 대상</th><th>대표 통신</th><th>대표 라이브러리</th><th>강점</th><th>유의점</th></tr></thead><tbody><tr><td><strong>DP</strong></td><td>데이터 배치</td><td>Grad all-reduce</td><td>PyTorch DDP, NCCL</td><td>단순·안정, 확장 용이</td><td>모델은 1GPU 적재 필요</td></tr><tr><td><strong>Sharded DP</strong></td><td>파라미터/그래드/옵티마 샤딩</td><td>All-gather/Reduce-scatter</td><td>ZeRO(Stage 1-3), FSDP</td><td>메모리 절감 극대화</td><td>통신 증가·overlap 튜닝 중요</td></tr><tr><td><strong>TP</strong></td><td>레이어 내부 텐서</td><td>All-reduce/All-gather</td><td>Megatron-LM</td><td>초대형 레이어 수용</td><td>고성능 인터커넥트 의존</td></tr><tr><td><strong>PP</strong></td><td>레이어 구간(스테이지)</td><td>P2P/Collective</td><td>GPipe, DeepSpeed</td><td>메모리·계산 동시 분할</td><td>파이프라인 버블 관리</td></tr><tr><td><strong>EP</strong></td><td>전문가(FFN) 집합</td><td>All-to-all</td><td>DeepEP, Megatron Core</td><td>희소 활성+대용량</td><td>라우팅/불균형/통신 최적화 필수</td></tr></tbody></table>
 
