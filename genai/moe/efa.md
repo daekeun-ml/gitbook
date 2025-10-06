@@ -94,6 +94,8 @@ SRD는 AWS 내부 네트워크의 다중 경로<sup>multipath</sup> 토폴로지
 * **Massive Scalability:** 연결<sup>Connection</sup>이 아니라 datagram 기반으로 수만 노드까지 확장 가능
 * **Collective 최적화:** NCCL + AWS OFI NCCL Plugin이 SRD 위에서 ring/tree 토폴로지를 구성 → 수천 GPU에서 안정적 스케일링
 
+
+
 ## 3. EFA vs. Infiniband
 
 ***
@@ -112,7 +114,7 @@ Infiniband는 HPC 환경에서 매우 낮은 지연시간을 제공하는 고정
 
 AWS는 이러한 튜닝을 대부분 SageMaker HyperPod이나 DLAMI 내에서 자동으로 설정해 줍니다. 따라서 사용자는 복잡한 저수준 네트워크 설정 없이도 Infiniband 수준의 분산 학습 성능을 얻을 수 있습니다.
 
-### **SRD vs Infiniband**
+#### **SRD vs Infiniband**
 
 * Infiniband: 고정된 물리 패브릭에서 최적화된 저지연 RDMA
 * SRD: 가상화된 클라우드 네트워크 위에서 확장 가능한 RDMA
@@ -121,25 +123,25 @@ AWS는 이러한 튜닝을 대부분 SageMaker HyperPod이나 DLAMI 내에서 �
 
 
 
-## **3. EFA 최적화 가이드**
+## **4. EFA 최적화 가이드**
 
 ***
 
 EFA를 제대로 활용하려면 단순히 “EFA를 켜면 된다”는 수준을 넘어, 여러 설정과 구성 요소를 세밀하게 조정해야 합니다. 이 최적화 작업이 잘 되어 있어야 EFA가 기대하는 저지연·고대역폭 성능을 실현할 수 있습니다. 아래 가이드는 AWS 공식 문서를 바탕으로 한 권장 최적화 전략입니다.
 
-### **3.1. 네트워크 인터페이스 구성 및 대역폭 최대화**
+### **4.1. 네트워크 인터페이스 구성 및 대역폭 최대화**
 
 *   P5나 P6와 같이 네트워크 카드가 다수인 인스턴스의 경우, EFA를 여러 네트워크 카드에 걸쳐 분산 설정하는 것이 중요합니다.
 
     AWS 문서에서는 기본 네트워크 카드(index 0)에 EFA + ENA를 붙이고, 이후 카드에도 추가 EFA 또는 EFA-only 인터페이스를 붙이는 구성을 권장합니다. (출처: [https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-acc-inst-types.html](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-acc-inst-types.html))
 * 특히 P5 인스턴스에서는 다중 NIC / EFA 인터페이스 병렬 사용을 통해 전체 네트워크 대역폭을 극대화할 수 있으므로, 인스턴스를 시작할 때 `--network-interfaces` 옵션으로 각 네트워크 카드의 인덱스와 EFA 인터페이스를 명시하는 것이 좋습니다. (출처: [https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-acc-inst-types.html](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa-acc-inst-types.html))
 
-### **3.2. 보안 그룹 및 VPC 설정**
+### **4.2. 보안 그룹 및 VPC 설정**
 
 * EFA 트래픽은 OS-bypass 경로로 동작하기 때문에, 보안 그룹이 스스로(자기 자신)로부터의 모든 인바운드/아웃바운드 트래픽 허용 규칙을 가져야 합니다. 즉, EFA가 속한 보안 그룹 간의 자유로운 통신이 허용되지 않으면, EFA가 제대로 작동하지 않거나 대체 경로로 TCP에 fallback될 수 있습니다. (출처: [https://kb.brightcomputing.com/knowledge-base/optimizing-hpc-performance-using-elastic-fabric-adapter-for-cloud-nodes](https://kb.brightcomputing.com/knowledge-base/optimizing-hpc-performance-using-elastic-fabric-adapter-for-cloud-nodes))
 * EFA OS-bypass 통신은 서브넷 간 라우팅을 지원하지 않으므로, 동일 서브넷 내에서 통신이 가능하도록 VPC 및 서브넷 구성을 맞추는 것이 필수적입니다.
 
-### **3.3. 소프트웨어 / Libfabric / NCCL 설정**
+### **4.3. 소프트웨어 / Libfabric / NCCL 설정**
 
 **EFA 및 NCCL 주요 환경 변수 (출처:** [**AWS EFA Cheatsheet**](https://app.gitbook.com/u/A81uOOpezEhPlFs0xy0rsEctTSP2)**)**
 
@@ -168,7 +170,7 @@ export NCCL_NET_GDR_LEVEL=PHB  # 안정성 이슈가 보이면 PHB → PXB → P
 # export NCCL_PROTO=Simple|LL|LL128
 ```
 
-### **3.4. 성능 점검 & 검증 방법**
+### **4.4. 성능 점검 & 검증 방법**
 
 * `fi_info -p efa` 커맨드로 EFA provider가 인식되고 FI\_EP\_RDM 타입이 나오는지 확인합니다.
 * nccl-tests 같은 벤치마크 도구를 통해 AllReduce / AllToAll / Broadcast 실험을 수행하고, 로그에서 **프로토콜 선택(LL / LL128 / Simple)** 과 **BusBW, Latency** 수치를 확인합니다. AWS 공식 EFA 문서도 “Maximize network bandwidth” 섹션을 통해 인스턴스별 NIC 설정 방안을 제시합니다. (출처: [https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html))
