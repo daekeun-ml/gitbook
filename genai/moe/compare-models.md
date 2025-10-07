@@ -59,7 +59,7 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
 
 ### 1.3. 학습 전략 및 효율성 최적화 비교
 
-<table><thead><tr><th>모델</th><th>훈련 데이터 / 스테이지</th><th width="204.6015625">훈련 정밀도 / 추론 양자화 </th><th>파이프라인 / 통신 최적화</th><th>기타 훈련 안정성 전략</th></tr></thead><tbody><tr><td><strong>DeepSeek-V2</strong></td><td>8.1T 토큰 + SFT/RL 추가</td><td>BF16 / FP8</td><td>통신/계산 겹치기, 전문가 재배치 전략</td><td>전문가 과부하 제어, auxiliary loss 보정</td></tr><tr><td><strong>DeepSeek-V3</strong></td><td>14.8T 토큰 + MTP + SFT</td><td>FP8 hybrid  / FP8</td><td>통신·파이프라인 중첩 병렬화, 전문가-GPU 재배치</td><td>bias 기반 균형, spike 안정화 기법</td></tr><tr><td><strong>Qwen-3-30B-A3B / Qwen-3-235B-A22B</strong></td><td>36T 토큰 (119 언어), 3단계 학습 (일반 → 지식집약 → 긴 문맥)</td><td>BF16</td><td>배치 RNG 기반 균형, 글로벌 배치 중심</td><td>Thinking/Non-thinking 모드 병합, 안정화 조절</td></tr><tr><td><strong>Qwen-Next</strong></td><td>비공개 세부 (추정: Qwen3 데이터 계승 + 추가 장문 데이터)</td><td>BF16</td><td>파이프라인/스케줄 최적화, 통신 비용 최소화</td><td>안정성 중심 균형 기법, routing stability 최적화</td></tr><tr><td><strong>GPT-OSS-20B</strong></td><td>세부 공개 거의 없음</td><td>BF16 / MXFP4</td><td>라우팅 경로 최적화, cache 메모리 절감 중심</td><td>MoE routing overhead 제어, 배치 안정화</td></tr><tr><td><strong>GPT-OSS-120B</strong></td><td>세부 공개 거의 없음</td><td>BF16 / MXFP4</td><td>통신 최적화, 추론 최적화 중심</td><td>모델 카드 수준 안정성 가이드 제공</td></tr></tbody></table>
+<table><thead><tr><th width="127.8359375">모델</th><th>훈련 데이터 / 스테이지</th><th width="135.87109375">훈련 정밀도 / 추론 양자화 </th><th>파이프라인 / 통신 최적화</th><th>기타 훈련 안정성 전략</th></tr></thead><tbody><tr><td><strong>DeepSeek-V2</strong></td><td>8.1T 토큰 + SFT/RL 추가</td><td>BF16 / FP8</td><td>통신/계산 겹치기, 전문가 재배치 전략</td><td>전문가 과부하 제어, auxiliary loss 보정</td></tr><tr><td><strong>DeepSeek-V3</strong></td><td>14.8T 토큰 + MTP + SFT</td><td>BF16&#x26;FP8 hybrid / FP8</td><td>통신·파이프라인 중첩 병렬화, 전문가-GPU 재배치</td><td>bias 기반 균형, spike 안정화 기법</td></tr><tr><td><strong>Qwen-3-30B-A3B / Qwen-3-235B-A22B</strong></td><td>36T 토큰 (119 언어), 3단계 학습 (일반 → 지식집약 → 긴 문맥)</td><td>BF16</td><td>배치 RNG 기반 균형, 글로벌 배치 중심</td><td>Thinking/Non-thinking 모드 병합, 안정화 조절</td></tr><tr><td><strong>Qwen-Next</strong></td><td>비공개 세부 (Qwen3 데이터 계승 + 추가 장문 데이터)</td><td>BF16</td><td>파이프라인/스케줄 최적화, 통신 비용 최소화</td><td>안정성 중심 균형 기법, routing stability 최적화</td></tr><tr><td><strong>GPT-OSS-20B</strong></td><td>세부 공개 거의 없음</td><td>BF16&#x26;MXFP4 hybrid / MXFP4</td><td>라우팅 경로 최적화, cache 메모리 절감 중심</td><td>MoE routing overhead 제어, 배치 안정화</td></tr><tr><td><strong>GPT-OSS-120B</strong></td><td>세부 공개 거의 없음</td><td>BF16&#x26;MXFP4 hybrid / MXFP4</td><td>통신 최적화, 추론 최적화 중심</td><td>모델 카드 수준 안정성 가이드 제공</td></tr></tbody></table>
 
 #### DeepSeek-v2
 
@@ -281,7 +281,7 @@ OpenAI가 최근 공개한 GPT-OSS 모델(20B / 120B)은 MoE 계층 가중치에
 
 #### **MXFP4 개요**
 
-MXFP4 포맷은 Microscaling Formats (MX)라는 표준화된 데이터 포맷 계열로 E2M1 (2비트 지수<sup>Expononent</sup>, 1비트 가수<sup>Mantissa</sup> +1비트 부호<sup>Sign</sup>) 구조로 표현하는 방식입니다. 참고로ㅡ, 지수는 값의 스케일 범위를 조절하고 가수는 정밀도를 보정합니다. 이 포맷의 핵심 특징은 다음과 같습니다
+MXFP4 포맷은 Microscaling Formats (MX)라는 표준화된 데이터 포맷 계열로 E2M1 (2비트 지수<sup>Expononent</sup>, 1비트 가수<sup>Mantissa</sup> +1비트 부호<sup>Sign</sup>) 구조로 표현하는 방식입니다. 참고로, 지수는 값의 스케일 범위를 조절하고 가수는 정밀도를 보정합니다. 이 포맷의 핵심 특징은 다음과 같습니다
 
 * **블록 단위 공유 스케일링 (microscaling)**: 텐서를 작은 블록(예: 32개의 연속 요소)으로 나누고, 각 블록은 하나의 스케일(지수 계수)을 공유하여 함께 양자화합니다. 즉, 하나의 블록 전체가 같은 지수 배율을 사용합니다.
 * **4비트 표현 (E2M1)**: 각 요소는 부호 비트 1, 지수 비트 2, 가수 비트 1의 조합으로 표현됩니다. 이렇게 하면 값의 동적 범위<sup>dynamic range</sup>을 어느 정도 유지하면서도 메모리를 극도로 절약할 수 있습니다.
