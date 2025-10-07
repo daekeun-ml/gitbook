@@ -90,6 +90,7 @@
   * [\[Use-case w/ Hands-on\] 실제 데이터로부터 합성 QnA 생성하기](genai/synthetic-data/azure-usecase.md)
 * [MoE (Mixture-of-Experts)](genai/moe/README.md)
   * [MoE Overview](genai/moe/overview.md)
+  * [MoE 모델 비교 및 주요 기법 정리](genai/moe/compare-models.md)
   * [분산 훈련 기초 개념](genai/moe/distributed-training-basic.md)
   * [전문가 병렬화 (Expert Parallelism)](genai/moe/expert-parallelism.md)
   * [\[Optional\] NVSHMEM (NVIDIA Shared Memory)](genai/moe/nvshmem.md)
