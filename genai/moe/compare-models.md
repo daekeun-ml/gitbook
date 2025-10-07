@@ -10,7 +10,7 @@
 
 ### **1.1. Transformer / MoE / Attention 구조 비교**
 
-<table data-full-width="true"><thead><tr><th>모델</th><th width="128">총/활성 파라미터</th><th>#Layers</th><th>Vocab size</th><th>Hidden dim</th><th># Query heads</th><th># KV heads</th><th>전문가 수 (총 / 활성)</th><th>어텐션 방식</th></tr></thead><tbody><tr><td><strong>DeepSeek-V2</strong></td><td>236B / 21B</td><td>60</td><td>102,400</td><td>5,120</td><td>128</td><td>128 </td><td>162 / 6 (160 routed + 2 shared)</td><td>MLA</td></tr><tr><td><strong>DeepSeek-V3</strong></td><td>671B / 37B</td><td>61</td><td>129,280</td><td>7,168</td><td>128</td><td>128 </td><td>257 / 8 (256 routed + 1 shared)</td><td>MLA</td></tr><tr><td><strong>Qwen3-30B-A3B</strong></td><td>30.5B / 3.3B</td><td>48</td><td>151,669</td><td>2,048</td><td>32</td><td>4</td><td>128 / 8</td><td>GQA</td></tr><tr><td><strong>Qwen3-235B-A22B</strong></td><td>235B / 22B</td><td>94</td><td>151,669</td><td>4,096</td><td>64</td><td>4</td><td>128 / 8</td><td>GQA</td></tr><tr><td><strong>Qwen-Next-80B-A3B</strong></td><td>80B / 3B</td><td>48</td><td>151,669</td><td>2,048</td><td>16</td><td>2</td><td>512 / 10</td><td>GQA</td></tr><tr><td><strong>GPT-OSS-20B</strong></td><td>20.9B / 3.6B</td><td>24</td><td>201,088</td><td>2,880</td><td>64</td><td>8</td><td>32 / 4</td><td>GQA</td></tr><tr><td><strong>GPT-OSS-120B</strong></td><td>116.8B / 5.1B</td><td>36</td><td>201,088</td><td>2,880</td><td>64</td><td>8</td><td>128 / 4</td><td>GQA</td></tr></tbody></table>
+<table data-full-width="true"><thead><tr><th>모델</th><th width="128">총/활성 파라미터</th><th># Layers</th><th>Vocab size</th><th>Hidden dim</th><th># Query heads</th><th># KV heads</th><th>전문가 수 (총 / 활성)</th><th>어텐션 방식</th></tr></thead><tbody><tr><td><strong>DeepSeek-V2</strong></td><td>236B / 21B</td><td>60</td><td>102,400</td><td>5,120</td><td>128</td><td>128 </td><td>162 / 6 (160 routed + 2 shared)</td><td>MLA</td></tr><tr><td><strong>DeepSeek-V3</strong></td><td>671B / 37B</td><td>61</td><td>129,280</td><td>7,168</td><td>128</td><td>128 </td><td>257 / 8 (256 routed + 1 shared)</td><td>MLA</td></tr><tr><td><strong>Qwen3-30B-A3B</strong></td><td>30.5B / 3.3B</td><td>48</td><td>151,669</td><td>2,048</td><td>32</td><td>4</td><td>128 / 8</td><td>GQA</td></tr><tr><td><strong>Qwen3-235B-A22B</strong></td><td>235B / 22B</td><td>94</td><td>151,669</td><td>4,096</td><td>64</td><td>4</td><td>128 / 8</td><td>GQA</td></tr><tr><td><strong>Qwen-Next-80B-A3B</strong></td><td>80B / 3B</td><td>48</td><td>151,669</td><td>2,048</td><td>16</td><td>2</td><td>512 / 10</td><td>GQA</td></tr><tr><td><strong>GPT-OSS-20B</strong></td><td>20.9B / 3.6B</td><td>24</td><td>201,088</td><td>2,880</td><td>64</td><td>8</td><td>32 / 4</td><td>GQA</td></tr><tr><td><strong>GPT-OSS-120B</strong></td><td>116.8B / 5.1B</td><td>36</td><td>201,088</td><td>2,880</td><td>64</td><td>8</td><td>128 / 4</td><td>GQA</td></tr></tbody></table>
 
 #### **GQA (Grouped Query Attention)**
 
@@ -172,9 +172,50 @@ kv_cache = {
 | 32K     | 32K × d  | 4K × d           | 8x  |
 | 128K    | 128K × d | 4K × d           | 32x |
 
-SWA는 단독으로 쓰이기보다는, 1) 모든 위치를 다 보지 않고 주기적으로 건너뛰는 Dilated / Strided 윈도우와 조합하거나, 2) Attention Sink를 적용하거나, 3) 긴 문맥에서의 불안정을 완화하는 확장 RoPE(Rotary Positional Embedding)인 YaRN과 병행합니다.
+다만 SWA만 적용 시에는 종래 fully dense 어텐션 레이어의 이점인 멀리 떨어진 토큰 간의 장거리 상호 작용을 캡처한다는 이점이 사라지기에, 최근 연구들은 전역과 지역 정보를 병합하는 하이브리드 어텐션 패턴을 더욱 세밀하게 조정하는 방향으로 나아가고 있습니다. 이에 대해 다음 절에서 알아봅니다.
 
-### 2.2. Attention sink
+### **2.2. 하이브리드 어텐션 (Hybrid Attention)**
+
+#### **하이브리드 어텐션의 필요성**
+
+전 층을 SWA로만 구성하면 장거리 의존성 회수에 깊이 의존해야 해 수렴·품질 리스크가 있기에, 최근 연구들은 **전역과 지역 정보를 병합하는 하이브리드 어텐션 패턴을 더욱 세밀하게 조정하는 방향**으로 나아가고 있습니다.
+
+[Longformer 계열 모델](https://huggingface.co/docs/transformers/model_doc/longformer)은 로컬 윈도우와 글로벌 토큰(+ 랜덤/스트라이드 등)을 조합해 전역 의존성을 확보하는 대표적 하이브리드 패턴을 설계했습니다. 2025년 투고된 [Sparse 어텐션 트레이드오프 분석 논문](https://arxiv.org/pdf/2504.17768)에서는 레이어별로 패턴을 다르게 두면 창 크기·어텐션 교대 주기·전역 토큰 비율 등을 바꿔 지연시간↔정확도를 상황에 맞게 조절할 수 있다고 기술합니다. Qwen 계열과 GPT-OSS 계열은 로컬(SWA)과 글로벌(dense) 어텐션을 교대로 사용하는 하이브리드 패턴을 적용하고 있습니다.
+
+#### **Dense 어텐션↔SWA 교대 적층**
+
+GPT-OSS의 공식 모델 카드에는 다음과 같은 문장이 있습니다.
+
+> “The models use alternating dense and locally banded sparse attention patterns.”
+
+{% code title="GPT-OSS 어텐션 코드 스니펫 (출처: https://docs.vllm.ai/en/v0.11.0/api/vllm/model_executor/models/gpt_oss.html#vllm.model_executor.models.gpt_oss)" %}
+```python
+class OAIAttention(nn.Module):
+...    
+    # Only apply sliding window to every other layer
+    sliding_window = config.sliding_window if self.layer_idx % 2 == 0 else None
+    self.attn = Attention(
+        self.num_local_attention_heads,
+        self.head_dim,
+        self.scaling,
+        num_kv_heads=self.num_local_key_value_heads,
+        cache_config=cache_config,
+        quant_config=quant_config,
+        per_layer_sliding_window=sliding_window,
+        attn_type=AttentionType.DECODER,
+        prefix=f"{prefix}.attn",
+        sinks=self.sinks,
+    )
+```
+{% endcode %}
+
+Qwen2 또한 슬라이딩 윈도우와 풀 어텐션을 혼합(a mix of sliding window and full attention)했다고 [허깅페이스 공식 문서에 명시](https://huggingface.co/docs/transformers/en/model_doc/qwen2)하고 있습니다.
+
+즉, 한 층은 완전한 전역 어텐션(Dense) 으로 모든 토큰 간 관계를 계산하고, 다음 층은 Sliding Window Attention(SWA)을 사용하여 주변 일정 범위의 토큰만 집중적으로 처리하는 구조를 반복합니다. 이 교대 구조는 전역 정보와 지역 정보의 균형을 잡으면서, 전체 계산량을 크게 줄이는 전략입니다.
+
+<table><thead><tr><th width="191.7265625">패턴</th><th width="249.85546875">장점</th><th>단점</th></tr></thead><tbody><tr><td><strong>Dense 전층</strong></td><td>전역 문맥 완전 보존</td><td>계산·메모리 비용 과다</td></tr><tr><td><strong>SWA 전층</strong></td><td>효율적, 확장성 높음</td><td>전역 의존성 약화, 정보 전파 지연</td></tr><tr><td><strong>Dense↔SWA 교대</strong></td><td>전역 보강 + 효율적 연산</td><td>설계 복잡도 증가, 주기/윈도우 튜닝 필요</td></tr></tbody></table>
+
+### 2.3. Attention sink
 
 일반 트랜스포머의 어텐션 점수는 다음과 같습니다.
 
@@ -185,7 +226,7 @@ $$
 모든 토큰의 $$z_i$$ (유사도)가 softmax로 정규화되어, 어떤 토큰에도 집중하지 않더라도 합이 1이 되도록 강제됩니다. 따라서 모델은 항상 “어딘가”에 어텐션을 분배해야 하는데, 긴 시퀀스에서는 첫 토큰, 공백·구두점에 어텐션이 쏠리는 어텐션 싱크<sup>attention sink</sup>현상이 발생합니다. 이는 긴 컨텍스트/스트리밍에서 분포가 불안정해지는 원인이 되기도 합니다. 이를 개선하기 위해 아래와 같은 방식을 적용할 수 있습니다.
 
 * **Sink 토큰 방식**: 시퀀스 앞(혹은 특수 위치)에 몇 개의 sink 토큰을 두어 그쪽으로 잉여 확률을 흡수합니다.
-* Off-by-one 방식: 소프트맥스 분모에 상수 1을 더해 널 슬롯을 하나 더 둠으로써 헤드가 어느 토큰에도 어텐션을 주지 않는 선택이 가능해져, 불필요한 ‘강제 분배’를 피할 수 있게 됩니다. 이를 off-by-one 어텐션이나 quiet 어텐션으로도 불리고 [2023년 Evan Miller의 블로그 글 Attention Is Off By One](https://www.evanmiller.org/attention-is-off-by-one.html)에서 대중화되었습니다.&#x20;
+* **Off-by-one 방식**: 소프트맥스 분모에 상수 1을 더해 널 슬롯을 하나 더 둠으로써 헤드가 어느 토큰에도 어텐션을 주지 않는 선택이 가능해져, 불필요한 ‘강제 분배’를 피할 수 있게 됩니다. 이를 off-by-one 어텐션이나 quiet 어텐션으로도 불리고 [2023년 Evan Miller의 블로그 글 Attention Is Off By One](https://www.evanmiller.org/attention-is-off-by-one.html)에서 대중화되었습니다.&#x20;
 
 GPT-OSS는 후자의 방식을 기반으로 소프트맥스 분모에 상수 1을 더하는 대신, 레이어의 각 헤드에 소프트맥스 분모 편향(소프트맥스 분모에 훈련 가능한 헤드별 Null 로짓<sup>logit</sup>)을 덧붙여 필요할 땐 아무 토큰에도 어텐션을 주지 않도록 한 안정화 트릭을 적용했습니다.
 
@@ -212,7 +253,7 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 ```
 
-### 2.3. YaRN (Yet another RoPE extensioN)
+### 2.4. YaRN (Yet another RoPE extensioN)
 
 트랜스포머 아키텍처에서 위치 정보<sup>Positional Encoding</sup>는 토큰의 순서를 모델이 이해할 수 있게 하는 핵심 장치입니다. 그중에서도 RoPE<sup>Rotary Positional Embedding</sup>는 GPT, LLaMA, Qwen 등 최신 대형 언어 모델들이 공통적으로 채택하고 있는 구조로, 토큰의 위치를 벡터 회전<sup>rotation</sup>을 통해 부호화합니다.
 
@@ -277,7 +318,7 @@ $$
 
 <table><thead><tr><th width="144.125">구분</th><th>RoPE</th><th>YaRN</th></tr></thead><tbody><tr><td>회전각 스케일링</td><td>모든 차원 동일 선형 스케일</td><td>주파수별(차원별) 비율로 구간별 보간</td></tr><tr><td>주파수 처리</td><td>고주파·저주파 모두 동일 비율 압축</td><td>고주파 보존, 저주파 확장</td></tr><tr><td>Attention 온도</td><td>고정</td><td>스케일 s에 따라 <span class="math">1/t \approx 0.1\ln s + 1</span>로 조정</td></tr><tr><td>학습 필요 여부</td><td>X (기본 훈련 시 RoPE 고정)</td><td>약 400~600 step 소량 파인 튜닝(0.1% 데이터)</td></tr><tr><td>지원 길이</td><td>훈련 길이까지만 안정</td><td>64K~128K까지 확장 가능</td></tr><tr><td>구현</td><td><span class="math">\theta_{m} = \frac{m}{b^{2i/d}}</span> 고정</td><td><span class="math">\theta_m = f(i, m, s, \alpha, \beta</span>) (piecewise NTK-aware 보간)</td></tr><tr><td>대표 모델</td><td>LLaMA 2/3</td><td>DeepSeek, Yi, Qwen-Next, GPT-OSS 등</td></tr></tbody></table>
 
-### 2.4. MXFP4 (Microscaling Formats FP4)
+### 2.5. MXFP4 (Microscaling Formats FP4)
 
 OpenAI가 최근 공개한 GPT-OSS 모델(20B / 120B)은 MoE 계층 가중치에 대해 MXFP4 양자화(native quantization)를 적용하여, 거의 대부분의 가중치를 4비트 표현으로 압축하면서도 모델 성능을 유지합니다.
 
@@ -328,4 +369,5 @@ MXFP4 포맷은 Microscaling Formats (MX)라는 표준화된 데이터 포맷 �
 * [Qwen3-Next: Towards Ultimate Training & Inference Efficiency](https://qwen.ai/blog?id=4074cca80393150c248e508aa62983f9cb7d27cd\&from=research.latest-advancements-list) (2025)
 * [GPT-OSS-120B & GPT-OSS-20B Model Card](https://app.gitbook.com/u/A81uOOpezEhPlFs0xy0rsEctTSP2) (2025)
 * [GPT-OSS-20B: A Comprehensive Deployment-Centric Analysis of OpenAI's Open-Weight Mixture of Experts Model](https://arxiv.org/abs/2508.16700) (2025)
+* [The Sparse Frontier: Sparse Attention Trade-offs in Transformer LLMs](https://arxiv.org/pdf/2504.17768) (2025)
 
