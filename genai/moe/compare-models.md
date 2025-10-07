@@ -4,6 +4,8 @@
 최신 기술(SoTA)의 오픈소스 MoE 모델은 큰 흐름에서 모두 비슷하지만, 양질의 훈련 데이터 확보, 긴 문맥 처리, 리소스 최적화를 목표로 세부적으로는 약간씩 다르거나 기존 방법에서 개선된 기법들을 적용하고 있습니다. 본 가이드를 통해 최신 MoE 모델의 차이를 빠르게 파악하고 주요 기법을 파악하기 바랍니다.
 {% endhint %}
 
+<figure><img src="../../.gitbook/assets/sota-transformer-block.png" alt=""><figcaption><p>최신 기술의 오픈소스 MoE 모델 트랜스포머 블록 구조</p></figcaption></figure>
+
 ## 1. MoE 모델 비교
 
 ***
