@@ -102,6 +102,8 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
   * 전용 response format 필수 (Instruction Hierarchy: system > developer > user)
   * Low/Medium/High reasoning 레벨 시스템 프롬프트로 설정 가능
 
+
+
 ## 2. 최신 MoE 주요 기법
 
 ***
@@ -118,7 +120,7 @@ Transformer 모델이 긴 문서를 처리할 때 겪는 가장 큰 문제 중 �
 
 또한, 스트리밍 음성 인식, 대화 로그 분석, 로그/코드 긴 파일 요약 등은 최근 주변 맥락만 중요한 경우가 많습니다. 이럴 때 전구간 어텐션은 낭비입니다.
 
-SWA<sup>Sliding Window Attention</sup>는 모델이 모든 토큰을 동시에 보는 대신, 토큰 $$i$$를 중심으로 양쪽으로 $$w/2$$개씩, 총 $$w$$개 토큰만 본다”는 로컬 어텐션 패턴 ($$w(i) = [\max(0, \frac{i-w}{2}), \min(n-1, \frac{i+w}{2}]$$) 으로 각 토큰이 자신의 주변 일정 범위(window) 내의 토큰만 attention하도록 제한합니다. 이렇게 하면 계산 복잡도가 $$O(n \times w)$$로 선형적으로 개선됩니다. ($$w$$: window size)
+SWA<sup>Sliding Window Attention</sup>는 모델이 모든 토큰을 동시에 보는 대신, 토큰 $$i$$를 중심으로 양쪽으로 $$w/2$$개씩, 총 $$w$$개 토큰만 본다”는 로컬 어텐션 패턴 ($$w(i) = [\max(0, \frac{i-w}{2}), \min(n-1, \frac{i+w}{2})]$$) 으로 각 토큰이 자신의 주변 일정 범위(window) 내의 토큰만 attention하도록 제한합니다. 이렇게 하면 계산 복잡도가 $$O(n \times w)$$로 선형적으로 개선됩니다. ($$w$$: window size)
 
 <figure><img src="../../.gitbook/assets/sliding-window-attn.png" alt=""><figcaption><p>Sliding Window Attention (출처: <a href="https://arxiv.org/abs/2310.06825">Mistral 7B</a> 논문)</p></figcaption></figure>
 
