@@ -4,7 +4,7 @@
 최신 기술(SoTA)의 오픈소스 MoE 모델은 큰 흐름에서 모두 비슷하지만, 양질의 훈련 데이터 확보, 긴 문맥 처리, 리소스 최적화를 목표로 세부적으로는 약간씩 다르거나 기존 방법에서 개선된 기법들을 적용하고 있습니다. 본 가이드를 통해 최신 MoE 모델의 차이를 빠르게 파악하고 주요 기법을 파악하기 바랍니다.
 {% endhint %}
 
-<figure><img src="../../.gitbook/assets/sota-transformer-block.png" alt=""><figcaption><p>최신 기술의 오픈소스 MoE 모델 트랜스포머 블록 구조</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/gpt-oss-transformer-block.png" alt=""><figcaption><p>2024-2025년의 오픈소스 MoE 트랜스포머 블록 구조 예시</p></figcaption></figure>
 
 ## 1. MoE 모델 비교
 
@@ -34,7 +34,7 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
 
 <figure><img src="../../.gitbook/assets/mla.png" alt=""><figcaption><p>Multi-head Latent Attention (출처: <a href="https://arxiv.org/abs/2412.19437">DeepSeek-v3 Technical Report</a>)</p></figcaption></figure>
 
-#### **GQA vs. MLA 비교 요약**
+#### **GQA vs. MLA 요약**
 
 {% hint style="info" %}
 한줄요약: GQA가 “여러 쿼리가 같은 K/V를 본다”는 개념이라면, MLA는 “모든 쿼리가 저차원 잠재 표현을 통해 K/V를 본다”는 철학입니다.
@@ -59,7 +59,7 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
 
 <figure><img src="../../.gitbook/assets/shared-experts.png" alt=""><figcaption><p>Shared Experts 적용 예시 (출처: <a href="https://arxiv.org/abs/2412.19437">DeepSeek-v3 Technical Report</a>)</p></figcaption></figure>
 
-### 1.3. 학습 전략 및 효율성 최적화 비교
+### 1.3. 훈련 전략 및 효율성 최적화 비교
 
 <table><thead><tr><th width="127.8359375">모델</th><th>훈련 데이터 / 스테이지</th><th width="135.87109375">훈련 정밀도 / 추론 양자화 </th><th>파이프라인 / 통신 최적화</th><th>기타 훈련 안정성 전략</th></tr></thead><tbody><tr><td><strong>DeepSeek-V2</strong></td><td>8.1T 토큰 + SFT/RL 추가</td><td>BF16 / FP8</td><td>통신/계산 겹치기, 전문가 재배치 전략</td><td>전문가 과부하 제어, auxiliary loss 보정</td></tr><tr><td><strong>DeepSeek-V3</strong></td><td>14.8T 토큰 + MTP + SFT</td><td>BF16&#x26;FP8 hybrid / FP8</td><td>통신·파이프라인 중첩 병렬화, 전문가-GPU 재배치</td><td>bias 기반 균형, spike 안정화 기법</td></tr><tr><td><strong>Qwen-3-30B-A3B / Qwen-3-235B-A22B</strong></td><td>36T 토큰 (119 언어), 3단계 학습 (일반 → 지식집약 → 긴 문맥)</td><td>BF16</td><td>배치 RNG 기반 균형, 글로벌 배치 중심</td><td>Thinking/Non-thinking 모드 병합, 안정화 조절</td></tr><tr><td><strong>Qwen-Next</strong></td><td>비공개 세부 (Qwen3 데이터 계승 + 추가 장문 데이터)</td><td>BF16</td><td>파이프라인/스케줄 최적화, 통신 비용 최소화</td><td>안정성 중심 균형 기법, routing stability 최적화</td></tr><tr><td><strong>GPT-OSS-20B</strong></td><td>세부 공개 거의 없음</td><td>BF16&#x26;MXFP4 hybrid / MXFP4</td><td>라우팅 경로 최적화, cache 메모리 절감 중심</td><td>MoE routing overhead 제어, 배치 안정화</td></tr><tr><td><strong>GPT-OSS-120B</strong></td><td>세부 공개 거의 없음</td><td>BF16&#x26;MXFP4 hybrid / MXFP4</td><td>통신 최적화, 추론 최적화 중심</td><td>모델 카드 수준 안정성 가이드 제공</td></tr></tbody></table>
 
@@ -318,7 +318,7 @@ $$
 t = \frac{1}{(0.1\ln s + 1)^2}
 $$
 
-<table><thead><tr><th width="144.125">구분</th><th>RoPE</th><th>YaRN</th></tr></thead><tbody><tr><td>회전각 스케일링</td><td>모든 차원 동일 선형 스케일</td><td>주파수별(차원별) 비율로 구간별 보간</td></tr><tr><td>주파수 처리</td><td>고주파·저주파 모두 동일 비율 압축</td><td>고주파 보존, 저주파 확장</td></tr><tr><td>Attention 온도</td><td>고정</td><td>스케일 s에 따라 <span class="math">1/t \approx 0.1\ln s + 1</span>로 조정</td></tr><tr><td>학습 필요 여부</td><td>X (기본 훈련 시 RoPE 고정)</td><td>약 400~600 step 소량 파인 튜닝(0.1% 데이터)</td></tr><tr><td>지원 길이</td><td>훈련 길이까지만 안정</td><td>64K~128K까지 확장 가능</td></tr><tr><td>구현</td><td><span class="math">\theta_{m} = \frac{m}{b^{2i/d}}</span> 고정</td><td><span class="math">\theta_m = f(i, m, s, \alpha, \beta</span>) (piecewise NTK-aware 보간)</td></tr><tr><td>대표 모델</td><td>LLaMA 2/3</td><td>DeepSeek, Yi, Qwen-Next, GPT-OSS 등</td></tr></tbody></table>
+<table><thead><tr><th width="144.125">구분</th><th width="256.88671875">RoPE</th><th>YaRN</th></tr></thead><tbody><tr><td>회전각 스케일링</td><td>모든 차원 동일 선형 스케일</td><td>주파수별(차원별) 비율로 구간별 보간</td></tr><tr><td>주파수 처리</td><td>고주파·저주파 모두 동일 비율 압축</td><td>고주파 보존, 저주파 확장</td></tr><tr><td>Attention 온도</td><td>고정</td><td>스케일 s에 따라 <span class="math">1/t \approx 0.1\ln s + 1</span>로 조정</td></tr><tr><td>학습 필요 여부</td><td>X (기본 훈련 시 RoPE 고정)</td><td>약 400~600 step 소량 파인 튜닝(0.1% 데이터)</td></tr><tr><td>지원 길이</td><td>훈련 길이까지만 안정</td><td>64K~128K까지 확장 가능</td></tr><tr><td>구현</td><td><span class="math">\theta_{m} = \frac{m}{b^{2i/d}}</span> 고정</td><td><span class="math">\theta_m = f(i, m, s, \alpha, \beta</span>) (piecewise NTK-aware 보간)</td></tr><tr><td>대표 모델</td><td>LLaMA 2/3</td><td>DeepSeek, Yi, Qwen-Next, GPT-OSS 등</td></tr></tbody></table>
 
 ### 2.5. MXFP4 (Microscaling Formats FP4)
 
@@ -356,11 +356,53 @@ MXFP4 포맷은 Microscaling Formats (MX)라는 표준화된 데이터 포맷 �
 * **하드웨어 제한:** MXFP4은 Hopper (H100) 또는 이후 세대 GPU 아키텍처에서만 제대로 지원된다는 제약이 있습니다. A100도 MXFP4를 지원하지 않기 때문에 사용이 어려울 수 있습니다.
 * **부동소수점 오버헤드 + 복원 비용:** 양자화된 값은 복원 과정이 필요하고, 이 복원 과정이 계산 오버헤드가 됩니다. 구현 효율이 낮으면 오히려 속도가 느려질 수도 있습니다.
 
+### 2.6. RMSNorm 및 Pre-Norm
+
+파운데이션 모델은 정규화<sup>normalization</sup> 방식이 모델의 안정성과 효율성을 좌우하며, 초창기의 트랜스포머 모델은 LayerNorm을 주로 채택하였지만 최근 MoE 모델은 RMSNorm이 주류로 자리 잡았습니다. 그렇다면 RMSNorm은 기존 LayerNorm과 어떻게 다르며, 왜 MoE 모델에서 대세가 되었을까요?
+
+#### **LayerNorm의 기본 구조**
+
+Layer Normalization(층 정규화, 이하 LayerNorm)은 입력 벡터의 평균과 분산을 기준으로 정규화를 수행합니다.
+
+각 토큰의 hidden state를 $$x = (x_1, x_2, …, x_d)$$라 하면, LayerNorm은 다음과 같이 계산됩니다.
+
+$$
+\mu = \frac{1}{d} \sum_{i=1}^d x_i, \quad \sigma^2 = \frac{1}{d} \sum_{i=1}^d (x_i - \mu)^2, \quad
+\hat{x}_i = \frac{x_i - \mu}{\sqrt{\sigma^2 + \varepsilon}}, \quad y_i = \gamma_i \hat{x}_i + \beta_i
+$$
+
+여기서 $$\gamma$$, $$\beta$$는 훈련 가능한 스케일과 시프트 파라미터입니다.
+
+이 방식은 각 샘플(토큰)의 피처 전체에 대해 평균을 제거하고, 분산을 일정하게 맞추는 방식으로 훈련 안정성을 높이고, 내부 표현의 분포 변화를 줄이는 효과가 있습니다. 하지만, 평균 제거와 분산 계산 과정은 추가 연산과 메모리 접근이 필요하므로, MoE와 같은 대형 모델에서는 이 오버헤드가 점점 더 부담으로 작용합니다.
+
+#### **RMSNorm의 기본 구조**
+
+RMSNorm은 LayerNorm에서 평균 제거 과정을 생략하고, 입력 벡터의 제곱평균(Root Mean Square, RMS)만으로 정규화를 수행합니다.
+
+$$
+\text{RMS}(x) = \sqrt{\frac{1}{d} \sum_{i=1}^d x_i^2}, \quad
+\hat{x}_i = \frac{x_i}{\text{RMS}(x) + \varepsilon}, \quad y_i = \gamma_i \hat{x}_i
+$$
+
+즉, 평균 중심화<sup>centering</sup>가 사라지고, 단순히 크기<sup>scale</sup>만 조정하는 구조로 바뀐 것입니다. 이때 $$\beta$$ (shift) 항도 보통 생략되며, 스케일 파라미터 $$\gamma$$만 훈련합니다. 대규모 모델에서는 입력 분포의 평균이 0 근처로 자연스럽게 수렴하는 경향이 있기에, 평균 제거를 하지 않아도 안정적인 훈련이 가능합니다.
+
+MoE는 각 토큰이 다른 전문가로 라우팅되므로, LayerNorm의 평균 제거 연산이 전문가별로 독립된 통계를 요구하게 되는데 이는 오히려 통계적 불안정을 초래할 수 있습니다. 반면 RMSNorm은 RMS만 계산하므로, 전문가 간 통계 일관성<sup>consistency</sup>을 유지하기 쉽고, MoE 구조와 자연스럽게 맞물립니다.
+
+이 단순화 덕분에 RMSNorm은 LayerNorm 대비 1) 메모리 접근이 줄어들고 2) 연산량이 감소하여 계산 효율이 크게 개선됩니다. [RMSNorm 논문](https://arxiv.org/abs/1910.07467)에 따르면 다양한 모델에서 7%\~64% 속도 개선이 있습니다.
+
+RMSNorm은 통신량이 적고, 파라미터 업데이트 시에도 평균 관련 동기화<sup>synchronization</sup>가 필요 없기에 분산 훈련 환경에서 훨씬 빠르고 안정적으로 작동합니다. DeepSeek, GPT-OSS 등 최근의 MoE 모델들이 모두 RMSNorm 계열을 채택한 이유이기도 합니다.
+
+#### Pre-Norm
+
+2025년 기준 현대 파운데이션 모델은 각 서브레이어(어텐션, FFN)의 입력에 정규화를 적용하고, residual 연결 이후에는 별도의 정규화를 두지 않는 Pre-Norm을 사용하고 있습니다. Pre-Norm은 초기 학습에서 loss 감소가 더 빠르며, 학습률을 높게 설정해도 안정적입니다. 이는 Pre-Norm이 입력 분포를 미리 정규화하여, 각 블록의 활성값 폭주를 예방하기 때문입니다. Pre-Norm을 사용하는 자세한 이유와 실험 결과에 대해서는 [On Layer Normalization in the Transformer Architecture 논문](https://app.gitbook.com/u/A81uOOpezEhPlFs0xy0rsEctTSP2)을 참조하기 바랍니다.
+
 
 
 ## References
 
 * [Mistral 7B](https://arxiv.org/abs/2310.06825) (2023)
+* [Root Mean Square Layer Normalization](https://arxiv.org/abs/1910.07467) (2019)
+* [On Layer Normalization in the Transformer Architecture](https://arxiv.org/abs/2002.04745) (2020)
 * [GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2309.00071) (2023)
 * [Attention Is Off By One](https://www.evanmiller.org/attention-is-off-by-one.html) (2023)
 * [Efficient Streaming Language Models with Attention Sinks](https://arxiv.org/pdf/2309.17453) (2023)
