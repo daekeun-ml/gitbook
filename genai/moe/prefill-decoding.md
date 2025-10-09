@@ -205,6 +205,60 @@ NVIDIA Dynamo는 NIXL(NVIDIA InfiniBand eXtensions for LLMs)을 활용하여 GPU
 
 
 
+## 3. vLLM V1의 최적화 기법
+
+***
+
+vLLM V1은 2025년 1월에 알파 버전이 출시된 서빙 아키텍처로, 위에서 논의한 여러 최적화 기법을 통합하고 있습니다. vLLM 측에 따르면 V0 대비 1.7배의 스루풋<sup>throughput</sup> 향상을 달성하면서도 복잡도를 대폭 줄였습니다.
+
+#### 통합 스케줄러
+
+V1의 중앙집중식 스케줄러는 모든 요청에 대한 전역 최적화를 수행합니다. V0의 virtual engine 방식에서는 각 engine이 독립적으로 스케줄링하여 전역 최적화가 불가능했지만, V1은 단일 스케줄러가 전체 요청을 조망하여 최적의 배치를 구성합니다.
+
+vLLM V1은 간단하면서도 유연한 중앙집중식 스케줄러를 도입합니다. 사용자로부터 주어진 프롬프트 토큰과 모델이 생성한 출력 토큰을 균일하게 취급함으로써 전통적인 “프리필(prefill)”과 “디코드(decode)” 단계의 구분을 제거합니다. 스케줄링 결정은 `{request_id: num_tokens}`와 같은 간단한 딕셔너리로 표현되며, 이는 각 단계에서 각 요청에 대해 처리할 토큰 수를 지정합니다.&#x20;
+
+<figure><img src="../../.gitbook/assets/v1_scheduling.png" alt=""><figcaption><p>vLLM V1 스케줄링 (출처: <a href="https://blog.vllm.ai/2025/01/27/v1-alpha-release.html">https://blog.vllm.ai/2025/01/27/v1-alpha-release.html</a>)</p></figcaption></figure>
+
+#### Prefill 최적화: Chunked Prefill
+
+vLLM V1에서는 chunked prefill이 기본적으로 활성화되어 있습니다. 스케줄러는 decode 요청을 우선적으로 배치에 추가한 후, 남은 token budget(`max_num_batched_tokens`)으로 prefill 요청을 처리합니다. 마지막 prefill 요청이 budget을 초과하면 자동으로 chunk로 분할됩니다.
+
+사용자는 `max_num_batched_tokens` 파라미터를 조정하여 워크로드 특성에 맞게 튜닝할 수 있습니다. 작은 값(512-1024)은 ITL을 우선시하고, 큰 값(4096-8192)은 TTFT<sup>Time To First Token</sup>를 우선시합니다. 이는 prefill과 decode 간의 균형을 유연하게 조정할 수 있게 합니다.
+
+#### Decoding 최적화: Zero-Overhead Prefix Caching
+
+vLLM V1의 가장 혁신적인 기능 중 하나는 zero-overhead prefix caching입니다. V0에서는 prefix를 식별하기 위해 매 요청마다 hash 계산이 필요했으며, 이는 TTFT의 10-20%를 차지했습니다. V1은 radix tree를 사용하여 토큰 시퀀스를 자동으로 추적하므로 hash 계산이 불필요합니다.
+
+Request가 추가될 때 토큰 시퀀스를 tree에서 traverse하면서 매칭되는 토큰 수를 자동으로 계산합니다. 이미 cache된 prefix는 재사용되며, 이 과정의 오버헤드는 0.1ms 미만으로 측정됩니다. 반복적인 시스템 프롬프트를 사용하는 애플리케이션에서 특히 효과적입니다.
+
+#### Continuous Batching
+
+vLLM의 continuous batching은 고정된 batch size를 기다리지 않고 동적으로 요청을 그룹화합니다. 요청이 완료되면 즉시 배치에서 제거되고 새로운 요청이 추가됩니다. 이는 GPU가 항상 유용한 작업을 수행하도록 보장하며, 평균 대기 시간을 크게 줄입니다.
+
+V1의 busy synchronous loop는 이를 더욱 효율화합니다. Scheduler는 매 iteration마다 실행 가능한 작업이 있는지 확인하고, 있다면 즉시 execution을 시작합니다. 이는 scheduling overhead를 최소화하며, V0 대비 약 90%의 overhead 감소를 달성합니다.
+
+#### 여러 형태의 Speculative Decoding 지원
+
+vLLM은 여러 형태의 speculative decoding을 지원합니다. 드래프트 모델 방식에서는 작은 모델을 사용하여 토큰을 제안하고 큰 모델로 검증합니다. N-gram matching 방식은 프롬프트 내의 n-gram을 매칭하여 후보 토큰을 생성합니다. Medusa 방식은 추가 decoding head를 사용하여 여러 토큰을 동시에 예측합니다.
+
+사용자는 `speculative_model` 파라미터로 draft 모델을 지정하고, `num_speculative_tokens`로 예측할 토큰 수를 설정할 수 있습니다. 추측 디코딩은 특히 낮은 QPS(queries per second) 환경에서 상당한 성능 이점을 제공하며, 적절한 드래프트 모델 선택 시 최대 2.8배의 속도 향상이 가능합니다.
+
+#### MoE 특화 전문가 병렬화
+
+vLLM V1은 MoE<sup>Mixture-of-Experts</sup> 모델을 위한 전용 최적화를 제공하며 DeepEP와 PPLX 두 가지 dispatch/combine kernel을 지원합니다. DeepEP는 NVIDIA NVSHMEM을 기반으로 하며 멀티 노드 환경에서 우수한 성능을 보입니다. PPLX는 단일 노드 환경과 chunked prefill 시나리오에서 효과적입니다. Expert Placement with Load Balancing(EPLB)은 토큰 라우팅 편향으로 인한 불균형 로드를 자동으로 해결하며, 과도하게 활성화되는 전문가를 여러 GPU에 복제합니다.
+
+#### 데이터 병렬화와 Disaggregated Prefill
+
+vLLM V1은 데이터 병렬화를 통해 모델을 여러 replica로 복제하여 독립적인 요청 배치를 처리할 수 있습니다. 특히 MoE 모델에서는 어텐션 레이어를 DP로 복제하고 전문가 레이어는 EP로 분산시키는 하이브리드 접근법을 사용합니다. 이는 DeepSeek V2/V3/R1과 같은 Multi-head Latent Attention 모델에서 KV cache 중복을 방지하여 메모리 효율을 극대화합니다.
+
+Disaggregated prefill은 실험적 기능으로 제공되며, LMCache와 NIXL 통합을 통해 prefill과 decode instance 간 효율적인 KV cache 전송을 가능하게 합니다. Prefill instance는 `kv_producer`로, decode instance는 `kv_consumer`로 설정되며, router가 요청을 적절히 분배합니다. 이는 TTFT와 ITL을 독립적으로 제어할 수 있게 하여 latency-critical 애플리케이션에 적합합니다.
+
+#### 향상된 멀티모달 지원
+
+vLLM V1은 텍스트와 이미지를 통합 처리하는 멀티모달 아키텍처를 제공합니다. 비전 인코더를 별도의 CUDA stream에서 실행하여 LLM forward pass와 오버랩시킬 수 있습니다. 이미지는 해시<sup>hash</sup>를 통해 캐싱되며, 동일한 이미지가 여러 요청에서 재사용될 때 인코딩을 생략합니다.
+
+텍스트-이미지 interleaving이 완전히 지원되어 복잡한 멀티모달 시퀀스를 처리할 수 있습니다. Qwen-VL, InternVL, Phi-3-Vision과 같은 최신 비전-언어 모델뿐만 아니라 오디오 모델(Gemma Audio, Ultravox)와 비디오 모델도 네이티브하게 지원됩니다.
+
 ## References
 
 #### Prefill 최적화
@@ -231,5 +285,6 @@ NVIDIA Dynamo는 NIXL(NVIDIA InfiniBand eXtensions for LLMs)을 활용하여 GPU
 * Agrawal, A., et al. (2023). "[Sarathi: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills.](https://arxiv.org/abs/2308.16369)" arXiv.
 * Ruhle, V., et al. (2025). "[POD-Attention: Unlocking Full Prefill-Decode Overlap for Faster LLM Inference.](https://arxiv.org/abs/2410.18038)" ASPLOS 2025.
 * vLLM Team. (2025). "[Disaggregated Prefilling.](https://docs.vllm.ai/en/stable/features/disagg_prefill.html)"
+* vLLM Team. (2025). "[vLLM V1: A Major Architectural Upgrade.](https://blog.vllm.ai/2025/01/27/v1-alpha-release.html)" vLLM Blog (2025).
 * Elmeleegy, A., et al. (2025). "[NVIDIA Dynamo, A Low-Latency Distributed Inference Framework for Scaling Reasoning AI Models](https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models)." NVIDIA Blog (2025).&#x20;
 
