@@ -113,7 +113,7 @@ FlashAttention-3은 특히 Hopper 아키텍처 기반 GPU (예: H100, H800 등)�
 
 Prefill이 compute-bound라는 특성을 활용하면 정밀도를 낮추어 처리량을 증가시킬 수 있습니다. FP16 또는 BF16을 사용하면 FP32 대비 약 2배, INT8을 사용하면 4배의 이론적 성능 향상이 가능합니다. 특히 NVIDIA의 텐서 코어는 FP16/BF16 행렬 곱셈에 특화되어 있어, 이를 활용하면 일반 CUDA 코어 대비 약 8배의 처리량을 달성할 수 있습니다.
 
-양자화<sup>Quantization</sup> 기법도 유사한 맥락에서 활용됩니다. Post-training quantization(PTQ)은 추가 학습 없이 가중치를 INT8 또는 INT4로 양자화하여 메모리 사용량과 데이터 이동량을 줄이면서, compute-bound 영역에서는 낮은 정밀도 연산의 높은 처리량을 활용합니다.
+양자화 기법도 유사한 맥락에서 활용됩니다. Post-training quantization(PTQ)은 추가 학습 없이 가중치를 INT8 또는 INT4로 양자화하여 메모리 사용량과 데이터 이동량을 줄이면서, compute-bound 영역에서는 낮은 정밀도 연산의 높은 처리량을 활용합니다. 양자화에 대한 자세한 내용은 3장을 참조하기 바랍니다.
 
 #### Batch 최적화: Continuous Batching 및 Dynamic SplitFuse
 
@@ -205,7 +205,137 @@ NVIDIA Dynamo는 NIXL(NVIDIA InfiniBand eXtensions for LLMs)을 활용하여 GPU
 
 
 
-## 3. vLLM V1의 최적화 기법
+## 3. 양자화 (Quantization)
+
+***
+
+양자화는 높은 정밀도의 값(일반적으로 32비트 또는 16비트 부동 소수점)을 더 낮은 비트 표현(예: 8비트, 4비트, 심지어 1비트)으로 변환하는 과정으로 모델의 가중치<sup>weights</sup>와 활성화 값<sup>activations</sup>의 정밀도를 낮추어 메모리 사용량을 줄이고  계산 효율성을 향상시킵니다. 양자화는 Prefill 단계(더 긴 컨텍스트의 처리)와 Decode 단계(토큰 생성 속도 향상 및 메모리 대역폭 요구 사항 감소)에 모두 적용 가능합니다.
+
+#### 양자화의 주요 유형
+
+* **Post-Training Quantization (PTQ)**: 사전 훈련된 모델의 가중치를 양자화하는 방식으로, 추가 훈련 없이 적용할 수 있어 간단하고 효율적입니다. GPTQ와 AWQ가 이 범주에 속합니다.
+* **Quantization-Aware Training (QAT)**: 훈련 과정 중에 양자화를 고려하여 모델을 최적화하는 방식입니다. 더 높은 정확도를 제공하지만 전체 모델을 재훈련해야 합니다.
+* **Weight-only Quantization**: 모델의 가중치만 양자화하고 활성화 값은 그대로 유지하는 방식입니다. 구현이 간단하고 성능 손실이 적습니다.
+* **Weight and Activation Quantization**: 가중치와 활성화 값 모두를 양자화하는 방식으로, 더 큰 메모리 절약과 속도 향상이 가능하지만 정확도 손실이 커질 수 있습니다.
+
+### 3.1. 주요 양자화 기술
+
+#### GPTQ (Generative Pre-trained Transformer Quantization)
+
+GPTQ는 2023년 Frantar 등에 의해 ICLR 2023에서 발표된 양자화 기법으로, 대규모 언어 모델을 위한 레이어별 일괄<sup>One-shot</sup> 가중치 양자화 방법입니다. GPTQ는 Optimal Brain Quantizer(OBQ) 방법에서 영감을 받았으며, 가중치를 양자화할 때 발생하는 오류를 최소화하기 위해 2차 정보(second-order information)를 활용합니다. 이 방법은 각 가중치를 양자화한 후 나머지 가중치를 조정하여 양자화 오류를 보정하는 방식으로 작동합니다.
+
+**핵심 원리**
+
+1. **임의 순서 양자화(Arbitrary Order Quantization)**: 가중치를 양자화하는 순서가 큰 영향을 미치지 않는다는 관찰을 바탕으로, 모든 행에 동일한 순서를 적용하여 계산 효율성을 향상시킵니다.
+2. **지연 배치 업데이트(Lazy Batch Updates)**: 헤시안<sup>Hessian</sup> 행렬의 업데이트를 배치 단위로 수행하여 연산 오버헤드를 줄입니다.
+3. **콜레스키 리포뮬레이션(Cholesky Reformulation)**: 수치적으로 안정적인 방법으로 헤시안 역행렬을 계산하여 정확도를 향상시킵니다.
+
+**주요 특징**
+
+* 가중치 전용 양자화 기법으로, 활성화 값은 양자화하지 않습니다.
+* 2비트, 3비트, 4비트 양자화를 지원하며, 특히 4비트에서 우수한 성능을 보입니다.
+* 교정 데이터셋c<sup>alibration dataset</sup>을 사용하여 양자화 품질을 최적화합니다.
+
+**장점**
+
+* 낮은 비트 정밀도(3-4비트)에서도 원본 모델과 거의 동일한 성능을 유지합니다.
+* 단일 GPU에서 대규모 모델 실행이 가능해집니다. (예: OPT-175B를 단일 A100 GPU에서 실행)
+* 구현이 잘 되어 있어 다양한 플랫폼(Hugging Face, AutoGPTQ 등)에서 사용할 수 있습니다
+
+**단점**
+
+* 교정 데이터셋의 품질에 따라 성능이 크게 달라질 수 있습니다.
+* 대용량 모델의 경우 양자화 과정 자체가 상당한 계산 리소스를 필요로 합니다.
+* 주로 GPU 추론에 최적화되어 있어 CPU 기반 추론에는 적합하지 않을 수 있습니다.
+
+#### AWQ (Activation-aware Weight Quantization)
+
+AWQ는 2023년 MIT-Han Lab에서 개발한 가중치 양자화 기법으로, 2024년 MLSys에서 Best Paper Award를 수상했습니다. AWQ는 "모든 가중치가 동등하게 중요하지 않다"는 가설에 기반하여 활성화 값의 분포를 고려해 중요한 가중치를 보호하는 방식으로 양자화의 정확도를 향상시킵니다.
+
+**핵심 원리**
+
+1. **중요 가중치 식별**: 활성화 값의 분포를 분석하여 모델 출력에 큰 영향을 미치는 중요한 가중치 채널을 식별합니다.
+2. **채널별 스케일링**: 중요한 가중치 채널을 스케일링하여 양자화 과정에서 보호합니다. 이는 혼합 정밀도 양자화 없이도 정확도를 유지할 수 있게 합니다.
+3. **스케일링 매개변수 검색**: 양자화 오류를 최소화하는 최적의 스케일링 매개변수를 검색합니다.
+
+**주요 특징**
+
+* 전체 가중치의 약 1%만 보호해도 양자화 오류를 크게 줄일 수 있음을 증명했습니다.
+* 가중치 전용 양자화로, 주로 3비트 및 4비트 정밀도를 사용합니다.
+* Backpropagation이나 재구성 과정 없이 양자화가 가능하며, 교정 데이터셋에 과적합되지 않고 모델의 일반화 능력을 잘 보존합니다.
+
+**장점:**
+
+* 다양한 도메인과 모달리티에서 우수한 일반화 성능을 보이며, GPTQ보다 빠른 추론 속도를 제공하는 경우가 많습니다.
+* 지시 조정<sup>instruction-tuned</sup> 모델과 다중 모달 모델에 특히 효과적입니다..
+* TinyChat과 같은 효율적인 추론 프레임워크와 함께 사용하여 모바일 GPU를 포함한 다양한 디바이스에서 실행 가능합니다.
+
+**단점:**
+
+* GPTQ보다 구현이 복잡하며, 최적의 성능을 위해서는 특별한 커널이 필요합니다.
+* 일부 최신 아키텍처(예: Gemma, DeciLM)는 아직 완전히 지원되지 않을 수 있습니다.
+
+#### GGUF/GGML
+
+GGUF<sup>Georgi Gerganov's Universal Format</sup>는 Georgi Gerganov가 개발한 LLM 파일 포맷으로, 이전의 GGML<sup>Georgi Gerganov's Machine Learning</sup> 포맷을 개선했습니다. llama.cpp 라이브러리와 함께 사용되어 CPU에서도 효율적인 LLM 추론이 가능합니다.
+
+{% hint style="success" %}
+GGUF는 더 구조화된 메타데이터 저장 방식을 제공하고, 양자화 옵션이 다양하며, llama.cpp와 같은 최신 추론 엔진과의 호환성이 더 뛰어납니다. 반면 GGML은 이전 형식으로 메타데이터 지원이 제한적이고 구형 추론 엔진에서만 완전히 지원됩니다. 대부분의 최신 LLM 애플리케이션은 GGUF 포맷을 선호하며, 많은 GGML 모델들이 GGUF로 전환되고 있습니다.
+{% endhint %}
+
+**핵심 원리**
+
+1. **블록 단위 처리**: 가중치를 32개 값의 블록으로 처리하며, 각 블록마다 스케일 팩터(delta)를 계산합니다.
+2. **효율적인 메모리 패킹**: 양자화된 가중치를 효율적으로 패킹하여 메모리 사용량을 최소화합니다.
+3. **CPU 최적화**: CPU에서의 효율적인 추론을 위한 다양한 최적화 기법을 적용합니다.
+
+**주요 특징**
+
+* 다양한 양자화 수준 지원: Q4\_0, Q4\_1, Q5\_0, Q5\_1, Q8\_0 등 (숫자는 비트 수)
+* CPU에서 LLM을 실행하면서도 일부 레이어를 GPU로 오프로드할 수 있는 유연성을 제공합니다.
+* llama.cpp 라이브러리와 통합되어 사용하기 쉬운 인터페이스를 제공합니다.
+
+**장점**
+
+* CPU 기반 추론에 최적화되어 있어 GPU 없이도 LLM을 실행할 수 있습니다.
+* Apple Silicon(Mac)을 포함한 다양한 하드웨어에서 작동하고 메모리 효율적이며 추론 속도가 빠릅니다.
+* 사용자 친화적인 많은 GUI 도구(Text Generation WebUI, LM Studio 등)와 통합되어 있습니다.
+
+**단점**
+
+* GPU에서 실행할 때 GPTQ나 AWQ보다 느릴 수 있습니다.
+* 교차 플랫폼 호환성 문제가 발생할 수 있으며, 최적의 성능을 위해 C/C++ 코드 컴파일이 필요한 경우가 있습니다.
+
+#### BitNet (1.58-bit Quantization)
+
+BitNet은 Microsoft Research에서 개발한 혁신적인 양자화 접근법으로, 모델 가중치를 극단적으로 낮은 비트 수준(1비트 또는 1.58비트)으로 줄이는 것을 목표로 합니다. 구체적으로 모델 가중치를 세 가지 값(-1, 0, +1)만을 사용하는 삼진법(ternary) 표현으로 제한합니다. 이 방식은 평균적으로 가중치당 1.58비트의 저장 공간만 필요로 합니다(log₂(3) ≈ 1.58).
+
+**핵심 원리**
+
+1. **BitLinear 변환**: 기존 Transformer의 nn.Linear 레이어를 BitLinear로 대체합니다.
+2. **absmean 양자화**: 가중치를 -1, 0, +1의 삼진 값으로 양자화합니다.
+3. **네이티브 훈련**: 기존 모델을 양자화하는 것이 아니라, 처음부터 저비트 정밀도로 모델을 훈련합니다.
+
+**주요 특징**
+
+* 극도로 낮은 비트 정밀도(1.58비트)를 사용합니다.
+* 기존 양자화 방식과 달리 사전 훈련 단계부터 저비트 정밀도로 훈련하고 8비트 활성화 값(W1.58A8)을 사용합니다.
+* 정수 덧셈 연산만으로 행렬 곱셈을 수행하여 계산 효율성을 크게 향상시킵니다.
+
+**장점**
+
+* 메모리 절감 및 추론 지연 시간 절감 (예: 70B 모델의 경우 기존 방식보다 약 7배 적은 메모리 사용).
+* 동일한 모델 크기와 훈련 토큰을 사용하는 전체 정밀도(FP16/BF16) 모델과 비슷한 성능을 달성합니다.
+
+**단점:**
+
+* 처음부터 훈련이 필요하여 기존 모델을 간단히 변환할 수 없습니다 (최근에는 파인 튜닝을 통한 변환 방법이 연구되고 있습니다).
+* 최적의 성능을 위해 bitnet.cpp와 같은 특수 추론 프레임워크가 필요합니다.
+* 트랜스포머 라이브러리에서 직접 사용 시 특화된 커널이 없어 효율성 이점을 활용하기 어렵습니다.
+
+
+
+## 4. vLLM V1의 최적화 기법
 
 ***
 
@@ -215,7 +345,7 @@ vLLM V1은 2025년 1월에 알파 버전이 출시된 서빙 아키텍처로, �
 
 V1의 중앙집중식 스케줄러는 모든 요청에 대한 전역 최적화를 수행합니다. V0의 virtual engine 방식에서는 각 engine이 독립적으로 스케줄링하여 전역 최적화가 불가능했지만, V1은 단일 스케줄러가 전체 요청을 조망하여 최적의 배치를 구성합니다.
 
-vLLM V1은 간단하면서도 유연한 중앙집중식 스케줄러를 도입합니다. 사용자로부터 주어진 프롬프트 토큰과 모델이 생성한 출력 토큰을 균일하게 취급함으로써 전통적인 “프리필(prefill)”과 “디코드(decode)” 단계의 구분을 제거합니다. 스케줄링 결정은 `{request_id: num_tokens}`와 같은 간단한 딕셔너리로 표현되며, 이는 각 단계에서 각 요청에 대해 처리할 토큰 수를 지정합니다.&#x20;
+vLLM V1은 간단하면서도 유연한 중앙집중식 스케줄러를 도입합니다. 사용자로부터 주어진 프롬프트 토큰과 모델이 생성한 출력 토큰을 균일하게 취급함으로써 전통적인 prefill과 decode 단계의 구분을 제거합니다. 스케줄링 결정은 `{request_id: num_tokens}`와 같은 간단한 딕셔너리로 표현되며, 이는 각 단계에서 각 요청에 대해 처리할 토큰 수를 지정합니다.&#x20;
 
 <figure><img src="../../.gitbook/assets/v1_scheduling.png" alt=""><figcaption><p>vLLM V1 스케줄링 (출처: <a href="https://blog.vllm.ai/2025/01/27/v1-alpha-release.html">https://blog.vllm.ai/2025/01/27/v1-alpha-release.html</a>)</p></figcaption></figure>
 
@@ -259,32 +389,45 @@ vLLM V1은 텍스트와 이미지를 통합 처리하는 멀티모달 아키텍�
 
 텍스트-이미지 interleaving이 완전히 지원되어 복잡한 멀티모달 시퀀스를 처리할 수 있습니다. Qwen-VL, InternVL, Phi-3-Vision과 같은 최신 비전-언어 모델뿐만 아니라 오디오 모델(Gemma Audio, Ultravox)와 비디오 모델도 네이티브하게 지원됩니다.
 
+
+
 ## References
 
 #### Prefill 최적화
 
-* Dao, T., et al. (2022). "[FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.](https://arxiv.org/abs/2205.14135)" NeurIPS 2022.
-* Dao, T. (2023). "[FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning.](https://arxiv.org/abs/2307.08691)" ICLR 2024.
-* Dao, T., et al. (2024). "[FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision.](https://arxiv.org/abs/2407.08608)" NeurIPS 2024.
+* Dao, T., et al. (2022). "[FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness.](https://arxiv.org/abs/2205.14135)" NeurIPS 2022. arXiv:2205.14135.
+* Dao, T. (2024). "[FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning.](https://arxiv.org/abs/2307.08691)" ICLR 2024. arXiv:2307.08691.
+* Dao, T., et al. (2024). "[FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision.](https://arxiv.org/abs/2407.08608)" NeurIPS 2024. arXiv:2407.08608.
 
 #### Decoding 최적화
 
-* Kwon, W., et al. (2023). "[Efficient Memory Management for Large Language Model Serving with PagedAttention.](https://arxiv.org/abs/2309.06180)" SOSP.
-* Shazeer, N. (2019). "[Fast Transformer Decoding: One Write-Head is All You Need.](https://arxiv.org/abs/1911.02150)" arXiv.
-* Ye, Z., et al. (2025). "[FlashInfer: Accelerating Self-Attentions for LLM Serving.](https://www.arxiv.org/abs/2501.01005)" arXiv.
+* Kwon, W., et al. (2023). "[Efficient Memory Management for Large Language Model Serving with PagedAttention.](https://arxiv.org/abs/2309.06180)" SOSP. arXiv:2309.06180.
+* Shazeer, N. (2019). "[Fast Transformer Decoding: One Write-Head is All You Need.](https://arxiv.org/abs/1911.02150)" arXiv:1911.02150.
+* Ye, Z., et al. (2025). "[FlashInfer: Accelerating Self-Attentions for LLM Serving.](https://www.arxiv.org/abs/2501.01005)" arXiv:2501.01005.
 
 #### Speculative Decoding
 
-* Leviathan, Y., et al. (2022). "[Fast Inference from Transformers via Speculative Decoding.](https://arxiv.org/abs/2211.17192)" ICML 2023.
-* Cai, T., et al. (2024). "[Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads.](https://arxiv.org/abs/2401.10774)" ICML 2024.
-* Fu, Y., et al. (2024). "[Break the Sequential Dependency of LLM Inference Using Lookahead Decoding.](https://arxiv.org/abs/2402.02057)" arXiv.
+* Leviathan, Y., et al. (2023). "[Fast Inference from Transformers via Speculative Decoding.](https://arxiv.org/abs/2211.17192)" ICML 2023. arXiv:2211.17192.
+* Cai, T., et al. (2024). "[Medusa: Simple LLM Inference Acceleration Framework with Multiple Decoding Heads.](https://arxiv.org/abs/2401.10774)" ICML 2024. arXiv:2401.10774.
+* Fu, Y., et al. (2024). "[Break the Sequential Dependency of LLM Inference Using Lookahead Decoding.](https://arxiv.org/abs/2402.02057)" arXiv:2402.02057.
 
 #### Disaggregated Serving
 
-* Zhong, Y., et al. (2024). "[DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving.](https://arxiv.org/abs/2401.09670)" OSDI 2024.
-* Agrawal, A., et al. (2023). "[Sarathi: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills.](https://arxiv.org/abs/2308.16369)" arXiv.
-* Ruhle, V., et al. (2025). "[POD-Attention: Unlocking Full Prefill-Decode Overlap for Faster LLM Inference.](https://arxiv.org/abs/2410.18038)" ASPLOS 2025.
-* vLLM Team. (2025). "[Disaggregated Prefilling.](https://docs.vllm.ai/en/stable/features/disagg_prefill.html)"
+* Zhong, Y., et al. (2024). "[DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving.](https://arxiv.org/abs/2401.09670)" OSDI 2024. arXiv:2401.09670.
+* Agrawal, A., et al. (2023). "[Sarathi: Efficient LLM Inference by Piggybacking Decodes with Chunked Prefills.](https://arxiv.org/abs/2308.16369)" arXiv:2308.16369.
+* Ruhle, V., et al. (2025). "[POD-Attention: Unlocking Full Prefill-Decode Overlap for Faster LLM Inference.](https://arxiv.org/abs/2410.18038)" ASPLOS 2025. arXiv:2410.18038.
+* vLLM Team. (2025). "[Disaggregated Prefilling.](https://docs.vllm.ai/en/stable/features/disagg_prefill.html)" vLLM Documentation (2025).
 * vLLM Team. (2025). "[vLLM V1: A Major Architectural Upgrade.](https://blog.vllm.ai/2025/01/27/v1-alpha-release.html)" vLLM Blog (2025).
 * Elmeleegy, A., et al. (2025). "[NVIDIA Dynamo, A Low-Latency Distributed Inference Framework for Scaling Reasoning AI Models](https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models)." NVIDIA Blog (2025).&#x20;
+
+#### 양자화
+
+* Frantar, E., et al. (2023). [GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers](https://arxiv.org/abs/2210.17323). ICLR 2023. arXiv:2210.17323.
+* Lin, J., et al. (2023). [AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration](https://arxiv.org/abs/2306.00978). MLSys 2024. arXiv:2306.00978.
+* Ma, S., et al. (2024). [The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits](https://arxiv.org/abs/2402.17764). arXiv:2402.17764.
+* Xiao, G., et al. (2022). [SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models](https://arxiv.org/abs/2211.10438). arXiv:2211.10438.
+* Dettmers, T., et al. (2022). [LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale](https://arxiv.org/abs/2208.07339). NeurIPS 2022. arXiv:2208.07339.
+* Labonne, M. (2024). [Quantize Llama models with GGUF and llama.cpp](https://towardsdatascience.com/quantize-llama-models-with-ggml-and-llama-cpp-3612dfbcc172/). Towards Data Science.
+* Grootendorst, M. (2023). [Which Quantization Method is Right for You? (GPTQ vs. GGUF vs. AWQ)](https://newsletter.maartengrootendorst.com/p/which-quantization-method-is-right). \
+  Exploring Language Models Blog.
 
