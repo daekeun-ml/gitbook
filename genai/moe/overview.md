@@ -91,13 +91,42 @@ Sparse MoE 접근법은 모델 크기(매개변수 수)와 계산 비용(토큰�
 
 #### **Dense 모델**
 
-밀집<sup>dense</sup> 모델에서는 주어진 층의 모든 입력 토큰이 모든 파라미터에 의해 처리기에 토큰당 FLOPs는 밀집 계층 파라미터의 크기에 비례합니다. 입력/출력 차원이 $$d_{\text{model}}$$이고 중간 차원이 $$d_{\text{ffn}}$$인 FFN의 경우, 단일 토큰에 필요한 파라미터 수와 계산량은 모델의 차원, 특히 $$d_{\text{model}}$$과 $$d_{\text{ffn}}$$에 정비례합니다.
+밀집<sup>dense</sup> 모델에서는 주어진 층의 모든 입력 토큰이 모든 파라미터에 의해 처리하기에 토큰당 FLOPs는 밀집 계층 파라미터의 크기에 비례합니다. 입력/출력 차원이 $$d_{\text{model}}$$이고 중간 차원이 $$d_{\text{ffn}}$$인 FFN의 경우, 단일 토큰에 필요한 파라미터 수와 계산량은 모델의 차원, 특히 $$d_{\text{model}}$$과 $$d_{\text{ffn}}$$에 정비례합니다.
 
 $$
 \text{FLOPs}_{\text{dense}} \approx 2 \times \text{batch_size} \times \text{seq_len} \times d_{\text{model}} \times d_{\text{ffn}}
 $$
 
 이 식은 $$d_{\text{ffn}}$$을 증가시켜 모델을 더 똑똑하게 만들려면 방대한 계산 비용을 지불해야 한다는 것을 보여줍니다.
+
+{% hint style="success" %}
+Llama3-70B 파라미터 예시
+
+* 모델 구성
+  * 레이어 개수: 80
+  * Hidden dim: 8,192
+  * Vocab size: 100,000
+  * Query heads: 64개
+  * Key/Value heads: 8개 (8:1 그룹핑)
+  * Head dim: 128
+* 레이어당 멀티헤드 어텐션 파라미터 개수
+  * Query projection: 8,192 × (64 × 128) = 8,192 × 8,192 ≈ 67M
+  * Key projection: 8,192 × (8 × 128) = 8,192 × 1,024 ≈ 8.4M
+  * Value projection: 8,192 × (8 × 128) = 8,192 × 1,024 ≈ 8.4M
+  * Output projection: 8,192 × 8,192 ≈ 67M
+  * 총 파라미터: 약 151M (A)
+* 레이어당 FFN 파라미터 개수
+  * Intermediate size: 28,672: 표준 FFN은 4 × hidden\_size = 32,768이나 SwiGLU는 gating 때문에 약간 작게 설정 (2/3 × 4 ≈ 2.67배)하고 메타에서 하드웨어 최적화를 위해 256의 배수로 조정하면서 조정한 최적 수치입니다.
+  * Gate projection: 8,192 × 28,672 ≈ 235M
+  * Up projection: 8,192 × 28,672 ≈ 235M
+  * Down projection: 28,672 × 8,192 ≈ 235M
+  * 총 파라미터 : 약 705M (B)
+* LayerNorm 파라미터 개수: 8,192 × 2 ≈ 16K (C)
+* 레이어당 파라미터 개수: A + B + C ≈ 약 856M
+* 80개 레이어이므로 856M × 80 ≈ 68.5B
+
+**FFN에서만 705M × 80 ≈ 58.4B 파라미터를 점유하며, 이는 총 파라메터의 85%입니다.**
+{% endhint %}
 
 #### **Sparse MoE 모델**
 
@@ -223,6 +252,8 @@ $$
 
 [파인튜닝 단계에서는 보조 손실 가중치 계수를 크게 낮추거나 0으로 두어도 성능 손실이 크지 않다는 연구 결과](https://cameronrwolfe.substack.com/p/conditional-computation-the-birth)도 있습니다.&#x20;
 {% endhint %}
+
+<figure><img src="../../.gitbook/assets/moe-loss.png" alt=""><figcaption><p>최종 손실 함수 요약</p></figcaption></figure>
 
 ### **2.3. 전문가 용량 (Expert Capacity)**
 
@@ -425,8 +456,6 @@ Upcycling MoE 적용 시 고려해야 할 핵심 요소들은 다음과 같습�
 6. **Drop-Upcycling 전략:** Drop-Upcycling 논문은 dense에서 upcycling한 모델이 초기에는 좋은 성능을 보이나 장기 학습 시 속도가 느려지거나 specialization이 약해지는 문제가 있다고 보고하며, 일부 파라미터를 무작위 재초기화하는 전략을 병행해 학습 성능과 효율을 모두 개선하는 방식을 제안했습니다.
 
 ### 3.4. 도메인별 토큰 분포를 MoE 훈련에 반영
-
-
 
 도메인별 토큰 분포을 MoE 모델 학습 및 라우팅 설계에 반영하려면 아래 전략들을 고려하시는 것이 좋습니다.
 

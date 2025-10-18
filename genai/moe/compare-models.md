@@ -36,11 +36,11 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
 
 #### **GQA vs. MLA 요약**
 
-{% hint style="info" %}
+{% hint style="success" %}
 한줄요약: GQA가 “여러 쿼리가 같은 K/V를 본다”는 개념이라면, MLA는 “모든 쿼리가 저차원 잠재 표현을 통해 K/V를 본다”는 철학입니다.
 {% endhint %}
 
-<table><thead><tr><th width="161.0703125">구분</th><th>GQA (Grouped Query Attention)</th><th>MLA (Multi-head Latent Attention)</th></tr></thead><tbody><tr><td><strong>핵심 아이디어</strong></td><td>여러 Query 헤드들이 <strong>소수의 KV 그룹</strong>을 공유 (예: 32 Q 헤드가 4 KV 그룹)</td><td>K/V를 저차원 latent로 압축하여 저장</td></tr><tr><td><strong>KV 캐시 절감 방식</strong></td><td>헤드 그룹화 (헤드 수 축소)</td><td>차원 축소 (latent 공간 활용)</td></tr><tr><td><strong>표현력</strong></td><td>다소 제한적 (공유로 인한 손실)</td><td>압축복원 구조 + up-projection 가능 → 더 높은 표현력 유지 가능</td></tr><tr><td><strong>적용 모델</strong></td><td>LLaMA, Qwen 등</td><td>DeepSeek-V2 / V3</td></tr><tr><td><strong>범용성 / 변환 가능성</strong></td><td>기존 모델들과 연결성 좋음</td><td>GQA를 포함하는 일반화된 구조로 GQA는 MLA로 변환 가능</td></tr><tr><td><strong>계산 비용 / 대역폭 절감</strong></td><td>절감되지만 제한적</td><td>더 큰 절감 가능, 특히 inference 단계에서 유리</td></tr></tbody></table>
+<table><thead><tr><th width="161.0703125">구분</th><th>GQA (Grouped Query Attention)</th><th>MLA (Multi-head Latent Attention)</th></tr></thead><tbody><tr><td><strong>핵심 아이디어</strong></td><td>여러 Query 헤드들이 소수의 KV 그룹을 공유 (예: 32 Q 헤드가 4 KV 그룹)</td><td>K/V를 저차원 latent로 압축하여 저장</td></tr><tr><td><strong>KV 캐시 절감 방식</strong></td><td>헤드 그룹화 (헤드 수 축소)</td><td>차원 축소 (latent 공간 활용)</td></tr><tr><td><strong>표현력</strong></td><td>다소 제한적 (공유로 인한 손실)</td><td>압축복원 구조 + up-projection 가능 → 더 높은 표현력 유지 가능</td></tr><tr><td><strong>적용 모델</strong></td><td>LLaMA, Qwen 등</td><td>DeepSeek-V2 / V3</td></tr><tr><td><strong>범용성 / 변환 가능성</strong></td><td>기존 모델들과 연결성 좋음</td><td>GQA를 포함하는 일반화된 구조로 GQA는 MLA로 변환 가능</td></tr><tr><td><strong>계산 비용 / 대역폭 절감</strong></td><td>절감되지만 제한적</td><td>더 큰 절감 가능, 특히 inference 단계에서 유리</td></tr></tbody></table>
 
 ### 1.2. MoE 설정 비교
 

@@ -95,6 +95,7 @@
   * [전문가 병렬화 (Expert Parallelism)](genai/moe/expert-parallelism.md)
   * [\[Optional\] NVSHMEM (NVIDIA Shared Memory)](genai/moe/nvshmem.md)
   * [분산 훈련에서의 AWS 네트워킹: EFA (Elastic Fabric Adapter)](genai/moe/efa.md)
+  * [AWS에서 MoE 모델을 효율적으로 훈련하기](genai/moe/aws-moe.md)
   * [분산 훈련 전략](genai/moe/training-strategy.md)
   * [ML 엔지니어와 인프라 엔지니어 간 분산 훈련 협업 가이드 및 체크리스트](genai/moe/collabration.md)
   * [추론 최적화 개요 (Prefill과 Decoding에 따른 주요 기법 정리)](genai/moe/prefill-decoding.md)

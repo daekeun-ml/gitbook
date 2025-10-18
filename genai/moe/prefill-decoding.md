@@ -12,6 +12,57 @@
 
 <figure><img src="../../.gitbook/assets/prefill-decode.png" alt=""><figcaption><p>LLM의 Prefill 단계와 Decode 단계</p></figcaption></figure>
 
+#### 주요 추론 성능 지표
+
+<figure><img src="../../.gitbook/assets/e2e-latency.png" alt=""><figcaption><p>레이턴시 및 벤치마크 타임스탬프 </p></figcaption></figure>
+
+**레이턴시 (Latency)**
+
+* **Time to First Token (TTFT)**: 요청을 보낸 후 첫 토큰을 생성하는 데 걸리는 시간입니다. 모델이 응답을 시작하는 속도를 반영합니다.
+* **Time per Output Token (TPOT)**: 각 후속 토큰(보통 첫 토큰은 제외)을 생성하는 평균 시간 간격입니다. TPOT가 낮을수록 모델이 토큰을 더 빨리 생성할 수 있어 초당 토큰 수가 증가합니다.&#x20;
+
+$$
+\text{TPOT} = \frac{\text{E2EL – TTFT}}{\text{Total Output Tokens} - 1}
+$$
+
+* **Inter-Token Latency (ITL)**: 연속된 두 토큰 사이의 실제 시간 간격입니다. 단일 요청에서는 ITL=TPOT이지만, 여러 요청에 걸쳐서는 평균을 내는 방식이 다릅니다.
+
+$$
+\text{단일  요청: Average ITL} = \text{TPOT}
+$$
+
+$$
+\text{여러 요청: Average ITL} = \frac{\text{Sum of all ITLs across Requests}}{\text{Total Output Tokens across Requests}}
+$$
+
+* **End-to-End Latency (E2EL)**: 요청을 보낸 시점부터 사용자 측에서 최종 토큰을 받을 때까지의 시간입니다.&#x20;
+
+{% hint style="warning" %}
+TPOT은 request-weighted 방식으로 생성된 토큰 수와 관계 없이 요청별 평균 지연을 확인하는 데 유용하고, ITL은 token-weighted 방식으로 많은 토큰을 생성하는 요청에 가중치를 주므로 스트리밍 품질 평가에 유용합니다.
+
+\
+요청 A: T1 ─(100ms)→ T2 ─(100ms)→ T3\
+ITL\_A: \[100, 100]\
+TPOT\_A = 200 / 2 = 100 ms\
+\
+요청 B: T1 ─(50ms)→ T2 ─(50ms)→ T3 ─(50ms)→ T4 ─(50ms)→ T5\
+ITL\_B: \[50, 50, 50, 50]\
+TPOT\_B = 200 / 4 = 50 ms\
+\
+Average TPOT = (TPOT\_A + TPOT\_B) / 2 = (100 + 50) / 2 = 75 ms\
+All ITLs = concat(ITL\_A, ITL\_B) = \[100, 100, 50, 50, 50, 50] # 요청 B가 더 많은 토큰을 생성해서 더 큰 영향을 줌\
+Average ITL = (100 + 100 + 50 + 50 + 50 + 50) / 6 = 400 / 6 = 66.67 ms\
+\
+LLM마다 서로 다른 토크나이저를 사용하기에 다른 LLM간의 토큰 생성 속도를 직접 비교하면 오해의 소지가 생길 수 있습니다.  벤치마킹 시에는 토큰화 방식을 같이 확인하기 바랍니다.&#x20;
+{% endhint %}
+
+**스루풋 (Throughput)**
+
+* **Requests per Second (RPS)**: LLM이 1초 동안 성공적으로 완료할 수 있는 요청 수를 나타냅니다. RPS에 영향을 미치는 요인은 주로 프롬프트의 복잡성 및 길이 / 모델 크기 및 하드웨어 사양 / 최적화 기법 (예: 배칭, 캐싱, 추론 엔진) / 요청당 레이턴시 입니다.
+* **Tokens per Second (TPS)**: 추론 워크로드의 성격에 따라 입력 TPS와 출력 TPS을 따로 보기도 합니다. TPS에 영향을 미치는 요인은 주로 배치 크기 / KV 캐시 효율성과 메모리 사용량 /프롬프트 길이 및 생성 길이 / GPU 메모리 대역폭 및 연산 활용률 입니다.
+
+
+
 ## 1. 루프라인 차트/Prefill/Decode
 
 ***
@@ -70,6 +121,8 @@ Decoding 단계는 LLM이 응답을 생성할 때 수행되는 반복적인 토�
 ## 2. Prefill/Decoding 단계 최적화
 
 ***
+
+<figure><img src="../../.gitbook/assets/inference-optimization.png" alt="" width="563"><figcaption></figcaption></figure>
 
 ### 2.1. Prefill 단계 최적화: Compute-Bound 극복
 
@@ -183,6 +236,8 @@ Medusa-1은 기존 모델에 head만 추가하여 fine-tuning하며 generation �
 최근 가장 주목받는 최적화 기법인 prefill 단계와 decode 단계를 아예 별도의 하드웨어 클러스터에서 처리합니다. 이렇게 하면 두 단계 간의 리소스 간섭<sup>interference</sup>을 줄이고, 각 단계에 최적화된 하드웨어/설정/병렬화 전략을 독립적으로 적용할 수 있게 됩니다.
 
 <figure><img src="../../.gitbook/assets/disaggregated-serving.png" alt=""><figcaption><p>Disaggregated Serving (출처: <a href="https://developer.nvidia.com/blog/introducing-nvidia-dynamo-a-low-latency-distributed-inference-framework-for-scaling-reasoning-ai-models">NVIDIA 블로그</a>)</p></figcaption></figure>
+
+<figure><img src="../../.gitbook/assets/disaggregated-serving-aws.png" alt="" width="375"><figcaption><p>AWS의 Disaggregated Serving</p></figcaption></figure>
 
 Disaggregation의 핵심 컨셉은 각 단계의 고유한 병목을 독립적으로 최적화하는 것입니다. Prefill 서버는 프롬프트 배치를 병렬로 처리하고 KV cache를 생성합니다. Decode 서버는 캐싱된 KV state를 사용하여 효율적으로 토큰을 생성하며, 작은 배치 크기에서도 작동합니다. 이를 통해 더 높은 처리량(효율적인 배치와 병렬화), 더 낮은 지연(최적화된 메모리 접근과 전문 하드웨어), 그리고 파이프라인 병렬화(한 요청의 prefill을 다른 요청의 decode와 중첩)가 가능합니다.
 

@@ -1,10 +1,16 @@
 # 분산 훈련 기초 개념
 
-## 1. 분산 훈련의 필요성&#x20;
+## 1. 분산 훈련의 필요성 및 제약&#x20;
 
 ***
 
-### 1.1. 메모리 제약
+### 1.1. 분산 훈련의 필요성
+
+최근 대규모 GenAI 모델의 발전으로 모델 규모가 수십억에서 수천억 개의 파라미터에 이르면서, 단일 GPU 또는 단일 노드 환경에서의 훈련은 사실상 불가능해졌습니다. 이러한 초대형 모델은 막대한 양의 파라미터, 연산량, 그리고 훈련 데이터를 필요로 하며, 단일 장비가 제공할 수 있는 메모리와 계산 자원으로는 이를 모두 감당할 수 없습니다. 따라서 여러 GPU나 여러 노드에 걸쳐 모델의 파라미터, 데이터, 또는 계산을 분산시켜 병렬로 처리하는 분산 훈련<sup>distributed training</sup>이 필수적입니다. 분산 훈련은 단순히 훈련 속도를 높이는 것을 넘어, 메모리 용량 한계를 극복하고 대규모 모델을 실제로 학습 가능한 형태로 구현하는 핵심 기술로 자리 잡고 있습니다.
+
+<figure><img src="../../.gitbook/assets/distributed-training-overview.png" alt=""><figcaption><p>분산 훈련 플로우 </p></figcaption></figure>
+
+### 1.2. 메모리 제약
 
 1. **모델 파라미터 (Model Parameters)**: FP32가 아닌 FP16 또는 BFloat16(BF16)과 같은 16비트 형식을 사용하더라도 파라미터 저장만으로도 단일 GPU 메모리를 초과할 수 있습니다. 예컨대, FP16이나 BF16(파라미터당 2바이트) 형식의 70B 모델은 140GB의 메모리가 필요합니다.
 2. **그래디언트:** 역전파<sup>backpropagation</sup> 동안 각 파라미터에 대한 그래디언트가 계산되는데, 그래디언트는 일반적으로 파라미터 자체와 동일한 차원을 가지며 동일한 정밀도를 필요로 합니다. 따라서 모델 파라미터와 동일한 140GB의 메모리가 필요합니다.
@@ -18,7 +24,7 @@
 활성화를 저장하는 대신 역전파 동안 활성화를 재계산하여 메모리를 절약하는 대가로 계산 시간을 늘리는 활성화 체크포인팅<sup>activation checkpointing</sup> 또는 그래디언트 체크포인팅<sup>gradient checkpointing</sup>과 같은 기법도 종종 사용됩니다.
 {% endhint %}
 
-### 1.2. 계산 제약
+### 1.3. 계산 제약
 
 LLM을 훈련하는 데 필요한 순수 계산 비용(부동소수점 연산, FLOPs로 측정)은 천문학적입니다. 수십억 매개변수를 가진 모델에 대한 단일 forward pass/backward pass만 하더라도 수조 회의 계산이 필요합니다.
 
@@ -110,6 +116,8 @@ print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=10))
 ## 3. 데이터 병렬화/텐서 병렬화/파이프라인 병렬화
 
 ***
+
+<figure><img src="../../.gitbook/assets/distributed-training-techstack.png" alt=""><figcaption></figcaption></figure>
 
 ### 3.1. 데이터 병렬화 (DP)
 
