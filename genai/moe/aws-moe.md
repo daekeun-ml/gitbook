@@ -58,7 +58,7 @@ AWS Neuron SDK는 Trainium 전용 컴파일러와 런타임을 제공하며, XLA
 
 SageMaker Training Job은 AWS에서 가장 손쉽게 사용할 수 있는 분산 훈련 환경입니다. 사용자가 인프라 프로비저닝, 클러스터 구성, 장애 처리 등의 운영 부담 없이 훈련 스크립트에만 집중할 수 있고 `estimator.fit()` 호출 한 번으로 훈련 클러스터를 자동 생성한다는 점이 가장 큰 장점입니다.
 
-<figure><img src="../../.gitbook/assets/sagemaker-architecture.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/sagemaker-train-arch.png" alt=""><figcaption></figcaption></figure>
 
 ### 2.1. 아키텍처 개요
 
@@ -93,7 +93,7 @@ SageMaker HyperPod는 대규모 모델 훈련, 특히 수십억\~수조 파라�
 
 HyperPod는 두 가지 모드(Slurm, EKS)를 지원하는데, Slurm은 전통적인 HPC 스타일의 배치 기반 워크로드에, EKS는 컨테이너 오케스트레이션 기반의 유연한 클러스터 관리에 적합합니다.
 
-<figure><img src="../../.gitbook/assets/hyperpod-slurm-architecture.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/hyperpod-slurm-arch.png" alt=""><figcaption></figcaption></figure>
 
 ### 3.1. 아키텍처 개요
 
@@ -185,6 +185,8 @@ MoE 모델에서는 전문가 간 로드 불균형이 흔한 문제이므로, �
 ***
 
 SageMaker HyperPod의 EKS(Elastic Kubernetes Service) 기반 옵션은 쿠버네티스 생태계의 유연성과 확장성을 활용하고자 하는 팀을 위한 선택지입니다. 컨테이너 기반 워크플로우, GitOps, 서비스 메시 등 클라우드 네이티브 패턴을 선호하는 조직에 적합하며, ML 파이프라인의 다른 구성 요소들과 일관된 오케스트레이션을 제공합니다.
+
+<figure><img src="../../.gitbook/assets/hyperpod-eks-arch.png" alt=""><figcaption></figcaption></figure>
 
 ### 4.1. 아키텍처 개요
 

@@ -14,6 +14,8 @@ Amazon SageMaker의 Large Model Inference (이하 LMI) 컨테이너는 이러한
 
 ### 1.1. LMI 동작 원리
 
+<figure><img src="../../.gitbook/assets/sagemaker-lmi.png" alt="" width="375"><figcaption><p>SageMaker Large Model Inference (LMI) 컨테이너</p></figcaption></figure>
+
 LMI는 크게 3가지 계층 구조로 구성됩니다.
 
 * **프론트엔드 레이어: DJL Serving -** HTTP/gRPC 요청을 처리하는 핵심 서버 계층
