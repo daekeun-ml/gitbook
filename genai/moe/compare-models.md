@@ -55,7 +55,7 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
 
 * DeepSeek 시리즈는 shared 전문가를 도입해 “공통 지식/표현”을 전문가 간 중복 없이 공유하게 유도합니다.
 * DeepSeek-V3는 균형을 맞추기 위해 보조 손실<sup>auxiliary loss</sup> 없이 편향<sup>bias</sup>만 조정하는 방식으로 로드밸런싱을 처리합니다.
-* Qwen-Next는 더 높은 희소 정도(512 전문가) + shared 조합 + 하이브리드 어텐션 설계 등 복합 전략을 취하고 있습니다.
+* Qwen-Next는 더 높은 희소 정도(512 전문가) + shared 조합 + 1x Gated Attention과 3x Gated DeltaNet의 하이브리드 어텐션 설계 등 복합 전략을 취하고 있습니다.
 
 <figure><img src="../../.gitbook/assets/shared-experts.png" alt=""><figcaption><p>Shared Experts 적용 예시 (출처: <a href="https://arxiv.org/abs/2412.19437">DeepSeek-v3 Technical Report</a>)</p></figcaption></figure>
 
@@ -255,6 +255,22 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 ```
 
+#### Gated Attention
+
+2025년 6월 Qwen 모델 연구진이 기고한 [Gated Attention](https://arxiv.org/pdf/2505.06708)은 표준 소프트맥스 어텐션에 게이트를 덧대어 어텐션 싱크를 실질적으로 제거하는 방법을 제시합니다.&#x20;
+
+$$
+Y = \text{softmax}\left( \frac{Q K^\top}{\sqrt{d_k}} \right) V, \quad Y’ = Y \odot \sigma(X W_g)
+$$
+
+$$X$$: 입력 토큰의 hidden state, $$W_g$$: 훈련 가능한 게이트 가중치, $$\sigma$$: 게이트 활성화 함수 (시그모이드)
+
+<figure><img src="../../.gitbook/assets/gated-attn-fig.png" alt=""><figcaption><p>Gated Attention 실험 결과 (출처: Gated Attention 논문: <a href="https://arxiv.org/pdf/2505.06708">https://arxiv.org/pdf/2505.06708</a>)</p></figcaption></figure>
+
+해당 논문에서는 상기 그림과 같이 게이트를 여러 위치에 붙여 (G1: 소프트맥스 어텐션;SDPA<sup>Scaled Dot Product Attention</sup> 출력 뒤, G2\~G4: Q/K/V 선형사상 뒤, G5: Dense 레이어 출력 뒤) 실험적으로 비교해 보았는데 어텐션 뒤(G1) 가 퍼플렉시티와 벤치마크에서 가장 큰 개선을 보였고, 게이트 스코어 분포 분석 결과 G1의 희소성이 가장 뚜렷했습니다.
+
+기존 LLM에서 흔히 보이는 어텐션 싱크는 소프트맥스의 비음수 정규화가 누적되며 생기는 비효율적 패턴으로 알려져 있습니다. G1 게이트는 질의별 희소성을 통해 이 누적을 끊어 sink를 경감시키는 역할을 합니다. 실험에서 레이어 평균으로 첫 토큰에 몰리던 어텐션 비중이 46.7% → 4.8% 로 감소하고, 특정 레이어(예: 21층)의 극단적인 어텐션 집중(83%)도 4%로 대폭 줄었습니다. 이 변화는 길이 일반화에도 도움을 주어, 32k→128k 확장(YaRN) 이후에 RULER 벤치마크에서 10점 이상 이득을 보였습니다.
+
 ### 2.4. YaRN (Yet another RoPE extensioN)
 
 트랜스포머 아키텍처에서 위치 정보<sup>Positional Encoding</sup>는 토큰의 순서를 모델이 이해할 수 있게 하는 핵심 장치입니다. 그중에서도 RoPE<sup>Rotary Positional Embedding</sup>는 GPT, LLaMA, Qwen 등 최신 대형 언어 모델들이 공통적으로 채택하고 있는 구조로, 토큰의 위치를 벡터 회전<sup>rotation</sup>을 통해 부호화합니다.
@@ -414,4 +430,6 @@ RMSNorm은 통신량이 적고, 파라미터 업데이트 시에도 평균 관�
 * [GPT-OSS-120B & GPT-OSS-20B Model Card](https://app.gitbook.com/u/A81uOOpezEhPlFs0xy0rsEctTSP2) (2025)
 * [GPT-OSS-20B: A Comprehensive Deployment-Centric Analysis of OpenAI's Open-Weight Mixture of Experts Model](https://arxiv.org/abs/2508.16700) (2025)
 * [The Sparse Frontier: Sparse Attention Trade-offs in Transformer LLMs](https://arxiv.org/pdf/2504.17768) (2025)
+* [Gated Attention for Large Language Models: Non-linearity, Sparsity,\
+  and Attention-Sink-Free](https://arxiv.org/pdf/2505.06708) (2025)
 
