@@ -12,7 +12,7 @@
 
 ### **1.1. Transformer / MoE / Attention 구조 비교**
 
-<table data-full-width="true"><thead><tr><th>모델</th><th width="128">총/활성 파라미터</th><th># Layers</th><th>Vocab size</th><th>Hidden dim</th><th># Query heads</th><th># KV heads</th><th>전문가 수 (총 / 활성)</th><th>어텐션 방식</th></tr></thead><tbody><tr><td><strong>DeepSeek-V2</strong></td><td>236B / 21B</td><td>60</td><td>102,400</td><td>5,120</td><td>128</td><td>128 </td><td>162 / 6 (160 routed + 2 shared)</td><td>MLA</td></tr><tr><td><strong>DeepSeek-V3</strong></td><td>671B / 37B</td><td>61</td><td>129,280</td><td>7,168</td><td>128</td><td>128 </td><td>257 / 8 (256 routed + 1 shared)</td><td>MLA</td></tr><tr><td><strong>Qwen3-30B-A3B</strong></td><td>30.5B / 3.3B</td><td>48</td><td>151,669</td><td>2,048</td><td>32</td><td>4</td><td>128 / 8</td><td>GQA</td></tr><tr><td><strong>Qwen3-235B-A22B</strong></td><td>235B / 22B</td><td>94</td><td>151,669</td><td>4,096</td><td>64</td><td>4</td><td>128 / 8</td><td>GQA</td></tr><tr><td><strong>Qwen-Next-80B-A3B</strong></td><td>80B / 3B</td><td>48</td><td>151,669</td><td>2,048</td><td>16</td><td>2</td><td>512 / 10</td><td>GQA</td></tr><tr><td><strong>GPT-OSS-20B</strong></td><td>20.9B / 3.6B</td><td>24</td><td>201,088</td><td>2,880</td><td>64</td><td>8</td><td>32 / 4</td><td>GQA</td></tr><tr><td><strong>GPT-OSS-120B</strong></td><td>116.8B / 5.1B</td><td>36</td><td>201,088</td><td>2,880</td><td>64</td><td>8</td><td>128 / 4</td><td>GQA</td></tr></tbody></table>
+<table data-full-width="true"><thead><tr><th>모델</th><th width="128">총/활성 파라미터</th><th># Layers</th><th>Vocab size</th><th>Hidden dim</th><th># Query heads</th><th># KV heads</th><th>전문가 수 (총 / 활성)</th><th>어텐션 방식</th></tr></thead><tbody><tr><td><strong>DeepSeek-V2</strong></td><td>236B / 21B</td><td>60</td><td>102,400</td><td>5,120</td><td>128</td><td>128 </td><td>162 / 6 (160 routed + 2 shared)</td><td>MLA</td></tr><tr><td><strong>DeepSeek-V3</strong></td><td>671B / 37B</td><td>61</td><td>129,280</td><td>7,168</td><td>128</td><td>128 </td><td>257 / 8 (256 routed + 1 shared)</td><td>MLA</td></tr><tr><td><strong>Qwen3-30B-A3B</strong></td><td>30.5B / 3.3B</td><td>48</td><td>151,669</td><td>2,048</td><td>32</td><td>4</td><td>128 / 8</td><td>GQA</td></tr><tr><td><strong>Qwen3-235B-A22B</strong></td><td>235B / 22B</td><td>94</td><td>151,669</td><td>4,096</td><td>64</td><td>4</td><td>128 / 8</td><td>GQA</td></tr><tr><td><strong>Qwen3-Next-80B-A3B</strong></td><td>80B / 3B</td><td>48</td><td>151,669</td><td>2,048</td><td>16</td><td>2</td><td>512 / 10</td><td>GQA</td></tr><tr><td><strong>GPT-OSS-20B</strong></td><td>20.9B / 3.6B</td><td>24</td><td>201,088</td><td>2,880</td><td>64</td><td>8</td><td>32 / 4</td><td>GQA</td></tr><tr><td><strong>GPT-OSS-120B</strong></td><td>116.8B / 5.1B</td><td>36</td><td>201,088</td><td>2,880</td><td>64</td><td>8</td><td>128 / 4</td><td>GQA</td></tr></tbody></table>
 
 #### **GQA (Grouped Query Attention)**
 
@@ -42,6 +42,14 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
 
 <table><thead><tr><th width="161.0703125">구분</th><th>GQA (Grouped Query Attention)</th><th>MLA (Multi-head Latent Attention)</th></tr></thead><tbody><tr><td><strong>핵심 아이디어</strong></td><td>여러 Query 헤드들이 소수의 KV 그룹을 공유 (예: 32 Q 헤드가 4 KV 그룹)</td><td>K/V를 저차원 latent로 압축하여 저장</td></tr><tr><td><strong>KV 캐시 절감 방식</strong></td><td>헤드 그룹화 (헤드 수 축소)</td><td>차원 축소 (latent 공간 활용)</td></tr><tr><td><strong>표현력</strong></td><td>다소 제한적 (공유로 인한 손실)</td><td>압축복원 구조 + up-projection 가능 → 더 높은 표현력 유지 가능</td></tr><tr><td><strong>적용 모델</strong></td><td>LLaMA, Qwen 등</td><td>DeepSeek-V2 / V3</td></tr><tr><td><strong>범용성 / 변환 가능성</strong></td><td>기존 모델들과 연결성 좋음</td><td>GQA를 포함하는 일반화된 구조로 GQA는 MLA로 변환 가능</td></tr><tr><td><strong>계산 비용 / 대역폭 절감</strong></td><td>절감되지만 제한적</td><td>더 큰 절감 가능, 특히 inference 단계에서 유리</td></tr></tbody></table>
 
+#### Qwen3-Next의 하이브리드 어텐션
+
+* **Gated DeltaNet**: 소프트맥스 어텐션은 문맥 길이가 커질수록 계산·메모리 비용이 $$O(N^2)$$ 수준으로 증가하고, 긴 문맥(long-context)이나 검색 기반(in-context retrieval) 작업에서 효율이 떨어질 수 있습니다. 이에 어텐션 커널을 변형하여 계산 복잡도를 선형으로 낮추는 기법이 2020년 소개되었습니다. 하지만 이런 선형 어텐션 구조는 종래 RNN에서 종종 보이는 장기 의존성 문제가 보였기에 이를 완화하기 위해 다양한 연구가 수행되었습니다. Gated DeltaNet은 LSTM의 게이팅 메커니즘과 델타 업데이트 규칙을 결합하여 해당 단점을 보완하였습니다.
+* **Gated Attention**: RAG 시스템에서 문맥이 길 때 흔히 발생하는 문제가 맨 앞이나 맨 뒤의 문맥 위주로 파악하고 중간 문맥을 잘 파악하지 못하는 것입니다. 주 원인은 특정 토큰(보통 첫번째 토큰)에 어텐션이 집중되는 어텐션 싱크 현상으로 이를 완화하기 위한 다양한 연구가 수행되었습니다. Gated Attention은 기존의 Scaled Dot-Product 어텐션에 게이트를 추가해, 각 토큰의 어텐션 출력을 비선형적으로 조절하는 방식입니다. 이 단순한 수정만으로 학습 안정성이 높아지고, 어텐션 싱크 현상이 완화되며, 롱컨텍스트에서도 성능이 개선되는 것으로 보고되었습니다. 보다 자세한 내용은 [2.3절의 Gated Attention](https://housekdk.gitbook.io/ml/genai/moe/compare-models#id-2.3)을 참조 바랍니다.
+* **하이브리드 어텐션**: Gated DeltaNet은 긴 문맥에서의 효율성을 확보하지만 정밀한 정보 처리 및 기억 능력이 부족합니다. Gated Attention은 소프트맥스 어텐션 기반이기에 복잡도가 $$O(N^2)$$입니다. Qwen3-Next에서는 Gated DeltaNet과 Gated Attention 두 메커니즘의 특성을 서로 보완하도록 설계함으로써 (Gated DeltaNet과 Gated Attention을 3:1 비율로 배치) '긴 문맥을 효율적으로 다루되, 필요한 부분에서는 정밀한 정보 처리 및 기억 기능을 유지하는 균형점'을 실현했습니다.
+
+<figure><img src="../../.gitbook/assets/qwen3-next-arch.png" alt=""><figcaption><p>Qwen3-Next의 하이브리드 어텐션 (출처: <a href="https://qwen.ai/blog?id=4074cca80393150c248e508aa62983f9cb7d27cd&#x26;from=research.latest-advancements-list">Qwen 블로그</a>)</p></figcaption></figure>
+
 ### 1.2. MoE 설정 비교
 
 | 모델                                    | 전문가 구성 (총／활성)  | 토큰 당 활성 전문가 수                | 라우팅 제한 / 디바이스 제약     | 라우팅 균형 방식              |
@@ -49,7 +57,7 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
 | **DeepSeek-V2**                       | 160 + 2 shared | top-6 routed (＋shared)       | 디바이스 제한 (최대 3 노드 통신) | 보조 손실(auxiliary) 기반 균형 |
 | **DeepSeek-V3**                       | 256 + 1 shared | top-8 routed (＋shared 항상 포함) | 노드 제한 (최대 4 노드)      | 보조 손실 없이 편향만 조정        |
 | **Qwen-3-30B-A3B / Qwen-3-235B-A22B** | 128            | top-8                        | 일반 MoE (제한 없음 명시 없음) | 글로벌 배치 기반 균형           |
-| **Qwen-Next (80B-A3B)**               | 512 + 1 shared | top-10 routed + shared       | 하드웨어/통신 제약 고려된 설계    | 안정성 중심 균형 최적화 전략       |
+| **Qwen3-Next (80B-A3B)**              | 512 + 1 shared | top-10 routed + shared       | 하드웨어/통신 제약 고려된 설계    | 안정성 중심 균형 최적화 전략       |
 | **GPT-OSS-20B**                       | 32             | top-4                        | —                    | 표준 MoE routing         |
 | **GPT-OSS-120B**                      | 128            | top-4                        | —                    | 표준 MoE routing         |
 
@@ -61,7 +69,7 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
 
 ### 1.3. 훈련 전략 및 효율성 최적화 비교
 
-<table><thead><tr><th width="127.8359375">모델</th><th>훈련 데이터 / 스테이지</th><th width="135.87109375">훈련 정밀도 / 추론 양자화 </th><th>파이프라인 / 통신 최적화</th><th>기타 훈련 안정성 전략</th></tr></thead><tbody><tr><td><strong>DeepSeek-V2</strong></td><td>8.1T 토큰 + SFT/RL 추가</td><td>BF16 / FP8</td><td>통신/계산 겹치기, 전문가 재배치 전략</td><td>전문가 과부하 제어, auxiliary loss 보정</td></tr><tr><td><strong>DeepSeek-V3</strong></td><td>14.8T 토큰 + MTP + SFT</td><td>BF16&#x26;FP8 hybrid / FP8</td><td>통신·파이프라인 중첩 병렬화, 전문가-GPU 재배치</td><td>bias 기반 균형, spike 안정화 기법</td></tr><tr><td><strong>Qwen-3-30B-A3B / Qwen-3-235B-A22B</strong></td><td>36T 토큰 (119 언어), 3단계 학습 (일반 → 지식집약 → 긴 문맥)</td><td>BF16</td><td>배치 RNG 기반 균형, 글로벌 배치 중심</td><td>Thinking/Non-thinking 모드 병합, 안정화 조절</td></tr><tr><td><strong>Qwen-Next</strong></td><td>비공개 세부 (Qwen3 데이터 계승 + 추가 장문 데이터)</td><td>BF16</td><td>파이프라인/스케줄 최적화, 통신 비용 최소화</td><td>안정성 중심 균형 기법, routing stability 최적화</td></tr><tr><td><strong>GPT-OSS-20B</strong></td><td>세부 공개 거의 없음</td><td>BF16&#x26;MXFP4 hybrid / MXFP4</td><td>라우팅 경로 최적화, cache 메모리 절감 중심</td><td>MoE routing overhead 제어, 배치 안정화</td></tr><tr><td><strong>GPT-OSS-120B</strong></td><td>세부 공개 거의 없음</td><td>BF16&#x26;MXFP4 hybrid / MXFP4</td><td>통신 최적화, 추론 최적화 중심</td><td>모델 카드 수준 안정성 가이드 제공</td></tr></tbody></table>
+<table><thead><tr><th width="127.8359375">모델</th><th>훈련 데이터 / 스테이지</th><th width="135.87109375">훈련 정밀도 / 추론 양자화 </th><th>파이프라인 / 통신 최적화</th><th>기타 훈련 안정성 전략</th></tr></thead><tbody><tr><td><strong>DeepSeek-V2</strong></td><td>8.1T 토큰 + SFT/RL 추가</td><td>BF16 / FP8</td><td>통신/계산 겹치기, 전문가 재배치 전략</td><td>전문가 과부하 제어, auxiliary loss 보정</td></tr><tr><td><strong>DeepSeek-V3</strong></td><td>14.8T 토큰 + MTP + SFT</td><td>BF16&#x26;FP8 hybrid / FP8</td><td>통신·파이프라인 중첩 병렬화, 전문가-GPU 재배치</td><td>bias 기반 균형, spike 안정화 기법</td></tr><tr><td><strong>Qwen-3-30B-A3B / Qwen-3-235B-A22B</strong></td><td>36T 토큰 (119 언어), 3단계 학습 (일반 → 지식집약 → 긴 문맥)</td><td>BF16</td><td>배치 RNG 기반 균형, 글로벌 배치 중심</td><td>Thinking/Non-thinking 모드 병합, 안정화 조절</td></tr><tr><td><strong>Qwen3-Next (80B-A3B)</strong></td><td>비공개 세부 (Qwen3 데이터 계승 + 추가 장문 데이터)</td><td>BF16</td><td>파이프라인/스케줄 최적화, 통신 비용 최소화</td><td>안정성 중심 균형 기법, routing stability 최적화</td></tr><tr><td><strong>GPT-OSS-20B</strong></td><td>세부 공개 거의 없음</td><td>BF16&#x26;MXFP4 hybrid / MXFP4</td><td>라우팅 경로 최적화, cache 메모리 절감 중심</td><td>MoE routing overhead 제어, 배치 안정화</td></tr><tr><td><strong>GPT-OSS-120B</strong></td><td>세부 공개 거의 없음</td><td>BF16&#x26;MXFP4 hybrid / MXFP4</td><td>통신 최적화, 추론 최적화 중심</td><td>모델 카드 수준 안정성 가이드 제공</td></tr></tbody></table>
 
 #### DeepSeek-v2
 
@@ -88,7 +96,7 @@ DeepSeek에서 적용한 MLA(Multi-head Latent Attention)는 모델이 어텐션
   * Stage 1-2: Reasoning (long CoT finetuning + RL for math/code)
   * Stage 3-4: Unified training (both modes) + general RL
 
-#### **Qwen-Next** (Qwen3-Next-80B-A3B)
+#### **Qwen3-Next** (Qwen3-Next-80B-A3B)
 
 * **GPU 시간**: Qwen3-32B-Base 대비 10% 훈련 비용
 * **Hybrid Attention**

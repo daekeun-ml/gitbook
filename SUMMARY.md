@@ -99,7 +99,7 @@
   * [분산 훈련 전략](genai/moe/training-strategy.md)
   * [ML 엔지니어와 인프라 엔지니어 간 분산 훈련 협업 가이드 및 체크리스트](genai/moe/collabration.md)
   * [추론 최적화 개요 (Prefill과 Decoding에 따른 주요 기법 정리)](genai/moe/prefill-decoding.md)
-  * [SageMaker Large Model Inference (LMI)를 활용한 모델 서빙 및 최적화 가이드](genai/moe/sagemaker-large-model-inference-lmi.md)
+  * [SageMaker Large Model Inference (LMI)를 활용한 모델 서빙 및 최적화 가이드](genai/moe/sagemaker-lmi-serving.md)
 * [Open Source SLM-Based Hybrid Agent AI Architecture](genai/slm-llm-hybrid-arch/README.md)
   * [Part 1: Overview & Background](genai/slm-llm-hybrid-arch/part-1-overview.md)
   * [Part 2: Agentic Patterns & Prompting](genai/slm-llm-hybrid-arch/part-2-agent-patterns.md)
