@@ -1,4 +1,4 @@
-# Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML
+# \[Use-case w/ Hands-on] Azure ML에서 torchtune을 사용한 언어 모델 미세 조정/평가/양자화
 
 > _이 글은 저자가 마이크로소프트 AIML 기술 커뮤니티에 기고한_ [_Fine-tune/Evaluate/Quantize SLM/LLM using the torchtune on Azure ML_](https://techcommunity.microsoft.com/blog/machinelearningblog/fine-tuneevaluatequantize-slmllm-using-the-torchtune-on-azure-ml/4285663) _을 직접 한국어로 번역 및 편집하였습니다._
 
@@ -513,4 +513,4 @@ if DOWNLOAD_TO_LOCAL:
 * [Azure ML Fine-tuning (Florence-2) Blog](https://techcommunity.microsoft.com/t5/ai-machine-learning-blog/fine-tuning-florence-2-for-vqa-visual-question-answering-using/ba-p/4181123)
 * [Synthetic QnA Generation Blog](https://techcommunity.microsoft.com/t5/ai-azure-ai-services-blog/generate-synthetic-qnas-from-real-world-data-on-azure/ba-p/4202053)
 * [torchtune official website](https://github.com/pytorch/torchtune)
-* [Fine-tune Meta Llama 3.1 models using torchtune on Amazon SageMaker](https://aws.amazon.com/blogs/machine-learning/fine-tune-meta-llama-3-1-models-using-torchtune-on-amazon-sagemaker/)\
+* [Fine-tune Meta Llama 3.1 models using torchtune on Amazon SageMaker](https://aws.amazon.com/blogs/machine-learning/fine-tune-meta-llama-3-1-models-using-torchtune-on-amazon-sagemaker/)<br>

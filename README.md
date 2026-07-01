@@ -24,7 +24,7 @@ icon: user-hair
 
 ## :feet: 약력
 
-{% file src=".gitbook/assets/cv_daekeun.pdf" %}
+{% file src=".gitbook/assets/cv_daekeun (4).pdf" %}
 
 {% hint style="info" %}
 한줄요약: ML 고군분투러 (not 전문가), GenAI 왕초보 (not 전문가)

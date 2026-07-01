@@ -1,4 +1,4 @@
-# Zero-Shot Text-to-Image Generation (DALL-E)
+# \[Paper Review] Zero-Shot Text-to-Image Generation (DALL-E)
 
 ## 1. Preliminaries
 
@@ -139,8 +139,7 @@ q(\mathbf{z} = \mathbf{e}_k|\mathbf{x}) =
     \end{cases} \tag{14}
 $$
 
-VQ-VAE의 학습 과정을 그림으로 표현하면 아래와 같다.\
-
+VQ-VAE의 학습 과정을 그림으로 표현하면 아래와 같다.<br>
 
 ![](<../../.gitbook/assets/va-vae (1).png>)
 
