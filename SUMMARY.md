@@ -72,6 +72,7 @@
   * [07. 옵저버빌리티 & CLI 운영 (Slurm)](aws/amazon-sagemaker-hyperpod-slurm/07.observability.md)
   * [08. EKS vs Slurm — 오케스트레이터 결정 가이드](aws/amazon-sagemaker-hyperpod-slurm/08.eks-vs-slurm.md)
   * [09. 최근 기능 타임라인 (Slurm, 2023-H2 → 2026-H1)](aws/amazon-sagemaker-hyperpod-slurm/09.timeline.md)
+  * [10. 고급 시나리오 (Advanced)](aws/amazon-sagemaker-hyperpod-slurm/10.advanced.md)
 * [Amazon Personalize](aws/amazon-personalize/README.md)
   * [Amazon Personalize - User Personalization Algorithm Deep Dive](aws/amazon-personalize/amazon-personalize-deep-dive.md)
   * [Amazon Personalize Updates(\~2021.04) 및 FAQ](aws/amazon-personalize/updates.md)
