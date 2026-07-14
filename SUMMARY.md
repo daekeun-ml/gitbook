@@ -71,7 +71,7 @@
   * [06. 체크포인트 & 스토리지 (Slurm)](aws/amazon-sagemaker-hyperpod-slurm/06.checkpoint.md)
   * [07. 옵저버빌리티 & CLI 운영 (Slurm)](aws/amazon-sagemaker-hyperpod-slurm/07.observability.md)
   * [08. EKS vs Slurm — 오케스트레이터 결정 가이드](aws/amazon-sagemaker-hyperpod-slurm/08.eks-vs-slurm.md)
-  * [09. 최근 기능 타임라인 (Slurm, 2023-H2 → 2026-H1)](aws/amazon-sagemaker-hyperpod-slurm/09.timeline.md)
+  * [09. 최근 기능 업데이트 타임라인](aws/amazon-sagemaker-hyperpod-slurm/09.timeline.md)
   * [10. 고급 시나리오 (Advanced)](aws/amazon-sagemaker-hyperpod-slurm/10.advanced.md)
   * [11. 트러블슈팅 — 파일시스템 멈춤(stall)으로 인한 대량 노드 drain](aws/amazon-sagemaker-hyperpod-slurm/11.troubleshooting-fsx-stall.md)
 * [Amazon Personalize](aws/amazon-personalize/README.md)
