@@ -65,6 +65,11 @@ icon: user-hair
 
 ### :scroll: Papers
 
+(\*: Equal contribution)
+
+* Miso Choi<sup>\*</sup>, **Daekeun Kim**<sup>**\***</sup>, Eunji Kim, and Jungbeom Lee (2026). V-LUMEN: Visual Lookup Memory for Embedding Scaling in Vision-Language Models. _NeurIPS 2026_ (accepted).&#x20;
+* **Daekeun Kim** (2026). Naver-News-KO: A Korean News Summarization Dataset for Open-Source Fine-Tuning of Summarization Models. arXiv:2607.20442.
+* **Daekeun Kim** (2026). GLAN-QnA-KR: A Seedless Taxonomy-Driven Korean Instruction Corpus. arXiv:2607.20443.
 * **Daekeun Kim** and Youngjoon Choi (2023). AWS 2nd gen. Inference Accelerator Analysis for Serving High-Performance and Cost-Effective Generative AI Models. _KICS Summer conference,_ 2023.
 * Youngjoon Choi and **Daekeun Kim** (2023). Comparison and Analysis for the Performance of Deep Learning-Based Time Series Prediction Algorithms According to Increasing Model Size. _The Journal of KICS,_ 2023-01 Vol.48, pp.123-128. doi:10.7840/kics.2023.48.1.123.
 * **Daekeun Kim** and Youngjoon Choi (2022). Optimizing Cost-Effective Deep Learning Inference Performance in the AWS Cloud Environment. _KICS Summer conference,_ 2022.
